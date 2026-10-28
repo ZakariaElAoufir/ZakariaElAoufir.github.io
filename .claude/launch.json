@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "maquettes",
+      "runtimeExecutable": "python",
+      "runtimeArgs": ["-m", "http.server", "4400"],
+      "port": 4400
+    }
+  ]
+}

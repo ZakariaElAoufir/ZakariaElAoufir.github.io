@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Certifications · Zakaria El Aoufir</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@500;700;800&family=Archivo:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="noir.css">
+<script>document.documentElement.classList.add('js')</script>
+<style>
+.intro { padding-top: 150px; }
+.intro p.lead { max-width: 60ch; font-size: 19px; margin-top: -24px; }
+.mock { display: inline-flex; align-items: center; gap: 10px; margin-top: 24px; padding: 10px 16px; background: var(--raise); font-size: 15px; color: var(--ivory); }
+.mock i { width: 9px; height: 9px; background: var(--red-text); transform: rotate(45deg); }
+
+.certs { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; margin-top: 64px; }
+.cert { display: flex; flex-direction: column; background: var(--deep); clip-path: var(--step); padding-top: 28px; transition: transform .5s var(--ease), background .4s; }
+.cert:hover { transform: translateY(-8px); background: var(--raise); }
+
+/* the certificate itself, drawn as a small framed document */
+.paper { position: relative; margin: 0 28px; aspect-ratio: 16/9; background: var(--ivory); color: var(--night); display: grid; place-items: center; text-align: center; padding: 22px; overflow: hidden; }
+.paper::before { content: ""; position: absolute; inset: 10px; border: 2px solid var(--night); outline: 1px solid var(--night); outline-offset: -6px; }
+.paper .org { position: relative; font: 700 14px/1 var(--display); letter-spacing: .16em; text-transform: uppercase; }
+.paper .name { position: relative; display: block; margin-top: 10px; font: 800 clamp(22px, 2.2vw, 30px)/1 var(--display); text-transform: uppercase; }
+.paper .to { position: relative; display: block; margin-top: 10px; font-size: 14px; }
+.seal { position: absolute; right: 22px; bottom: 18px; width: 54px; height: 54px; border-radius: 50%; background: var(--red); color: var(--ivory); display: grid; place-items: center; transition: transform .8s var(--ease); }
+.seal .i { width: 26px; height: 26px; }
+.cert:hover .seal { transform: rotate(-24deg) scale(1.08); }
+
+.cert .body { padding: 26px 28px 30px; display: flex; flex-direction: column; flex: 1; }
+.cert .meta { display: flex; flex-wrap: wrap; gap: 8px 18px; font-size: 15px; color: var(--ash); }
+.cert .meta span { display: inline-flex; align-items: center; gap: 7px; }
+.cert h2 { font: 600 22px/1.25 var(--text); margin: 12px 0 0; }
+.cert .chips { margin-top: 16px; }
+.cert .links { margin-top: auto; padding-top: 24px; }
+
+.empty { margin-top: 64px; padding: 56px 40px; background: var(--deep); text-align: center; }
+.empty h2 { font: 800 40px/1 var(--display); text-transform: uppercase; }
+.empty p { color: var(--ash); margin-top: 12px; }
+
+@media (max-width: 960px) {
+  .certs { grid-template-columns: 1fr; }
+  .paper { margin: 0 18px; }
+  .cert .body { padding: 22px 18px 26px; }
+}
+</style>
+</head>
+<body>
+<div class="city" aria-hidden="true"><img src="media/ville-1933.jpg" alt=""></div>
+
+<header class="top" id="top">
+  <a class="wordmark" href="accueil.html">Zakaria <b>El Aoufir</b></a>
+  <nav aria-label="Navigation principale">
+    <a href="accueil.html">Accueil</a>
+    <a href="projets.html">Projets</a>
+    <a href="certifications.html" aria-current="page">Certifications</a>
+  </nav>
+  <a class="lang" href="#"><b>FR</b> / EN</a>
+  <a class="btn small" href="../public/cv/Zakaria_El_Aoufir_CV_FR.pdf"><svg class="i"><use href="icons.svg#download"/></svg>CV</a>
+  <button class="burger" aria-label="Ouvrir le menu" aria-expanded="false"><svg class="i" style="width:26px;height:26px"><use href="icons.svg#menu"/></svg></button>
+</header>
+
+<main>
+  <section class="block intro">
+    <div class="instant">
+      <h1 class="big reveal">Certifications</h1>
+      <p class="lead reveal" style="--d:150ms">Les cours en ligne que j'ai suivis en plus de ma formation d'ingénieur, avec leur lien de vérification.</p>
+      <p class="mock reveal" style="--d:250ms"><i></i>Maquette : certificats fictifs, remplacés par les vrais plus tard.</p>
+    </div>
+
+    <div class="certs">
+      <article class="cert reveal">
+        <div class="paper"><div><span class="org">Coursera · Université exemple</span><span class="name">Certificat exemple A</span><span class="to">décerné à Zakaria El Aoufir</span></div><span class="seal"><svg class="i"><use href="icons.svg#award"/></svg></span></div>
+        <div class="body">
+          <div class="meta"><span><svg class="i"><use href="icons.svg#award"/></svg>Coursera</span><span><svg class="i"><use href="icons.svg#calendar"/></svg>Mois 2024</span></div>
+          <h2>Intitulé du certificat A</h2>
+          <div class="chips"><span>Compétence 1</span><span>Compétence 2</span><span>Compétence 3</span></div>
+          <div class="links"><a href="#"><svg class="i"><use href="icons.svg#check"/></svg>Vérifier le certificat</a></div>
+        </div>
+      </article>
+      <article class="cert reveal" style="--d:120ms">
+        <div class="paper"><div><span class="org">Coursera · Université exemple</span><span class="name">Certificat exemple B</span><span class="to">décerné à Zakaria El Aoufir</span></div><span class="seal"><svg class="i"><use href="icons.svg#award"/></svg></span></div>
+        <div class="body">
+          <div class="meta"><span><svg class="i"><use href="icons.svg#award"/></svg>Coursera</span><span><svg class="i"><use href="icons.svg#calendar"/></svg>Mois 2024</span></div>
+          <h2>Intitulé du certificat B</h2>
+          <div class="chips"><span>Compétence 1</span><span>Compétence 2</span></div>
+          <div class="links"><a href="#"><svg class="i"><use href="icons.svg#check"/></svg>Vérifier le certificat</a></div>
+        </div>
+      </article>
+      <article class="cert reveal">
+        <div class="paper"><div><span class="org">Coursera · Entreprise exemple</span><span class="name">Certificat exemple C</span><span class="to">décerné à Zakaria El Aoufir</span></div><span class="seal"><svg class="i"><use href="icons.svg#award"/></svg></span></div>
+        <div class="body">
+          <div class="meta"><span><svg class="i"><use href="icons.svg#award"/></svg>Coursera</span><span><svg class="i"><use href="icons.svg#calendar"/></svg>Mois 2025</span></div>
+          <h2>Intitulé du certificat C</h2>
+          <div class="chips"><span>Compétence 1</span><span>Compétence 2</span><span>Compétence 3</span><span>Compétence 4</span></div>
+          <div class="links"><a href="#"><svg class="i"><use href="icons.svg#check"/></svg>Vérifier le certificat</a></div>
+        </div>
+      </article>
+      <article class="cert reveal" style="--d:120ms">
+        <div class="paper"><div><span class="org">Coursera · Université exemple</span><span class="name">Certificat exemple D</span><span class="to">décerné à Zakaria El Aoufir</span></div><span class="seal"><svg class="i"><use href="icons.svg#award"/></svg></span></div>
+        <div class="body">
+          <div class="meta"><span><svg class="i"><use href="icons.svg#award"/></svg>Coursera</span><span><svg class="i"><use href="icons.svg#calendar"/></svg>Mois 2025</span></div>
+          <h2>Intitulé du certificat D</h2>
+          <div class="chips"><span>Compétence 1</span><span>Compétence 2</span></div>
+          <div class="links"><a href="#"><svg class="i"><use href="icons.svg#check"/></svg>Vérifier le certificat</a></div>
+        </div>
+      </article>
+    </div>
+
+    <div class="empty reveal">
+      <h2>Bientôt d'autres</h2>
+      <p>C'est aussi l'aspect de la page tant qu'aucun certificat n'est publié.</p>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <span>Zakaria El Aoufir, 2026</span>
+  <nav><a href="mailto:zakaria.elaoufir@gmail.com">E-mail</a><a href="https://www.linkedin.com/in/zakaria-el-aoufir-329627282">LinkedIn</a><a href="https://github.com/ZakariaElAoufir">GitHub</a><a href="https://github.com/ZakariaElAoufir/ZakariaElAoufir.github.io">Code du site</a></nav>
+  <p class="credit">Photo de fond : <a href="https://commons.wikimedia.org/wiki/File:Rockefeller_Center,_December_1933.jpg">Rockefeller Center, décembre 1933</a>, Samuel H. Gottscho, domaine public.</p>
+</footer>
+
+<script src="noir.js"></script>
+</body>
+</html>

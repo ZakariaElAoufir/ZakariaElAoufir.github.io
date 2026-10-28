@@ -1,0 +1,90 @@
+/* Shared foundation of the "Metropolis noir" mockups: tokens, city background, header, buttons, reveal, footer. */
+:root {
+  --night: #0d0e10;
+  --deep: #17191d;
+  --raise: #24272d;
+  --ivory: #efe9dc;
+  --ash: #a9adb5;
+  --red: #b3262f;
+  --red-dark: #6e161c;
+  --red-text: #e0565e;
+  --display: "Big Shoulders Display", "Bebas Neue", sans-serif;
+  --text: "Archivo", "Helvetica Neue", sans-serif;
+  --margin: clamp(20px, 5vw, 72px);
+  --ease: cubic-bezier(.2,.7,.2,1);
+  --step: polygon(0 28px, 28px 28px, 28px 0, calc(100% - 28px) 0, calc(100% - 28px) 28px, 100% 28px, 100% 100%, 0 100%);
+}
+* { box-sizing: border-box; margin: 0; }
+html { scroll-behavior: smooth; }
+body { background: var(--night); color: var(--ivory); font: 400 17px/1.6 var(--text); -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+a { color: inherit; text-decoration: none; }
+img { display: block; max-width: 100%; }
+svg.i { width: 1.1em; height: 1.1em; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; flex: none; }
+:focus-visible { outline: 2px solid var(--red-text); outline-offset: 4px; }
+::selection { background: var(--red); color: var(--ivory); }
+
+/* a 1930s city seen from above at night, softly out of focus, drifting very slowly behind every page */
+.city { position: fixed; inset: 0; z-index: -1; overflow: hidden; pointer-events: none; background: var(--night); }
+.city img { position: absolute; inset: -4%; width: 108%; height: 108%; object-fit: cover; object-position: center 72%;
+  filter: blur(3px) brightness(.62) sepia(.18); animation: drift 60s ease-in-out infinite alternate; }
+.city::after { content: ""; position: absolute; inset: 0; background: radial-gradient(ellipse 90% 80% at 50% 40%, rgba(13,14,16,.35), rgba(13,14,16,.85)); }
+@keyframes drift { from { transform: scale(1) translate3d(0, 0, 0); } to { transform: scale(1.08) translate3d(-1.5%, -2%, 0); } }
+
+/* ---------- header ---------- */
+.top { position: fixed; inset: 0 0 auto; z-index: 50; display: flex; align-items: center; gap: 36px; padding: 20px var(--margin); transition: background .4s, padding .4s; }
+.top.scrolled, .top.open { background: rgba(13,14,16,.94); padding-block: 12px; }
+.wordmark { font: 800 clamp(19px, 2vw, 24px)/1 var(--display); letter-spacing: .06em; text-transform: uppercase; white-space: nowrap; }
+.wordmark b { color: var(--red-text); font-weight: 800; }
+.top nav { display: flex; gap: 30px; margin-left: auto; }
+.top nav a { font-size: 15px; color: var(--ash); padding: 6px 0; background: linear-gradient(var(--red), var(--red)) left bottom / 0 2px no-repeat; transition: background-size .4s var(--ease), color .3s; }
+.top nav a:hover, .top nav a[aria-current] { color: var(--ivory); background-size: 100% 2px; }
+.lang { font-size: 15px; color: var(--ash); }
+.lang b { color: var(--red-text); font-weight: 600; }
+.burger { display: none; background: none; border: 0; color: var(--ivory); padding: 0; cursor: pointer; }
+
+.btn { display: inline-flex; align-items: center; gap: 10px; padding: 14px 24px; font: 700 16px/1 var(--display); letter-spacing: .1em; text-transform: uppercase; background: var(--red); color: var(--ivory); border: 0; cursor: pointer;
+  clip-path: polygon(10px 0, calc(100% - 10px) 0, 100% 10px, 100% calc(100% - 10px), calc(100% - 10px) 100%, 10px 100%, 0 calc(100% - 10px), 0 10px); transition: background .3s, color .3s, transform .3s var(--ease); }
+.btn:hover { background: var(--ivory); color: var(--night); transform: translateY(-2px); }
+.btn:active { transform: translateY(0) scale(.98); }
+.btn.ghost { background: var(--raise); }
+.btn.ghost:hover { background: var(--ash); color: var(--night); }
+.btn.small { padding: 11px 18px; font-size: 15px; }
+.private { display: inline-flex; align-items: center; gap: 7px; font-size: 15px; color: var(--ash); }
+
+/* ---------- shared blocks ---------- */
+section.block { padding: clamp(100px, 14vw, 190px) var(--margin) 0; max-width: 1320px; margin: 0 auto; }
+h2.big, h1.big { font: 800 clamp(52px, 8vw, 120px)/.9 var(--display); text-transform: uppercase; letter-spacing: -.005em; margin-bottom: clamp(40px, 6vw, 72px); display: flex; align-items: flex-end; gap: 24px; }
+h2.big::after, h1.big::after { content: ""; flex: 1; height: 10px; margin-bottom: .14em; background: repeating-linear-gradient(90deg, var(--red) 0 4px, transparent 4px 10px); opacity: .6; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 20px; }
+.chips span { font-size: 14px; padding: 6px 12px; background: var(--raise); transition: background .3s; }
+.chips span:hover { background: var(--red); }
+.links { display: flex; flex-wrap: wrap; align-items: center; gap: 18px; font-size: 15px; }
+.links a { display: inline-flex; align-items: center; gap: 7px; transition: color .3s; }
+.links a:hover { color: var(--red-text); }
+
+footer { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 16px; margin-top: clamp(100px, 12vw, 160px); padding: 28px var(--margin); background: var(--deep); font-size: 15px; color: var(--ash); }
+footer nav { display: flex; flex-wrap: wrap; gap: 22px; }
+footer a:hover { color: var(--red-text); }
+footer .credit { flex-basis: 100%; font-size: 13px; }
+footer .credit a { text-decoration: underline; text-underline-offset: 3px; }
+
+/* reveal on scroll; content stays visible without script */
+.js .reveal { opacity: 0; transform: translateY(32px); transition: opacity .8s var(--ease), transform .8s var(--ease); transition-delay: var(--d, 0ms); }
+.js .reveal.from-left { transform: translateX(-48px); }
+.js .reveal.from-right { transform: translateX(48px); }
+.js .reveal.is-in { opacity: 1; transform: none; }
+.js .instant .reveal { animation: rise 1s var(--ease) forwards; animation-delay: var(--d, 0ms); }
+@keyframes rise { to { opacity: 1; transform: none; } }
+
+@media (max-width: 960px) {
+  .top { gap: 14px; }
+  .top nav, .lang { display: none; }
+  .burger { display: block; margin-left: auto; }
+  .top.open { flex-wrap: wrap; }
+  .top.open nav { display: flex; flex-direction: column; gap: 4px; order: 9; flex-basis: 100%; padding: 12px 0 8px; }
+  .top.open nav a { font-size: 18px; padding: 10px 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+  .js .reveal { opacity: 1; transform: none; }
+}

@@ -1,0 +1,334 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Zakaria El Aoufir · Ingénieur logiciel Full Stack</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@500;700;800&family=Archivo:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="noir.css">
+<script>document.documentElement.classList.add('js')</script>
+<style>
+/* hero */
+.hero { min-height: 100svh; padding: 130px var(--margin) 80px; display: grid; grid-template-columns: 1fr auto; align-items: center; gap: clamp(32px, 6vw, 96px); max-width: 1440px; margin: 0 auto; }
+.role { font: 700 clamp(18px, 1.6vw, 22px)/1.2 var(--display); letter-spacing: .14em; text-transform: uppercase; color: var(--red-text); }
+h1 { font: 800 clamp(72px, 11vw, 180px)/.84 var(--display); text-transform: uppercase; letter-spacing: -.01em; margin: 18px 0 30px; }
+h1 span { display: block; }
+h1 span + span { color: transparent; -webkit-text-stroke: 1.5px var(--ivory); }
+.status { display: inline-flex; align-items: center; gap: 12px; padding: 9px 16px; background: var(--raise); font-size: 15px; }
+.status i { width: 9px; height: 9px; background: var(--red-text); transform: rotate(45deg); animation: blink 1.6s steps(2) infinite; }
+@keyframes blink { 50% { opacity: .25; } }
+.summary { max-width: 54ch; margin: 22px 0 32px; color: var(--ivory); font-size: 18px; }
+.actions { display: flex; flex-wrap: wrap; gap: 14px; }
+.socials { display: flex; gap: 22px; margin-top: 30px; font-size: 15px; }
+.socials a { display: inline-flex; align-items: center; gap: 8px; color: var(--ash); transition: color .3s; }
+.socials a:hover { color: var(--red-text); }
+
+/* the portrait: a plain square frame, the photo left exactly as it is */
+.portrait { width: min(clamp(260px, 30vw, 420px), 56svh); padding: 12px; background: var(--deep); outline: 1px solid rgba(239,233,220,.35); outline-offset: 8px; transition: outline-offset .5s var(--ease), outline-color .4s; }
+.portrait:hover { outline-offset: 14px; outline-color: var(--red-text); }
+.portrait img { width: 100%; aspect-ratio: 1; object-fit: cover; object-position: center 22%; }
+
+/* formation: two stacked floors */
+.floors { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.floor { background: var(--deep); padding: 56px 36px 36px; clip-path: var(--step); transition: background .4s; }
+.floor:hover { background: var(--raise); }
+.floor .years { font: 700 46px/1 var(--display); color: var(--red-text); }
+.floor h3 { font: 600 22px/1.25 var(--text); margin: 16px 0 8px; }
+.floor p { color: var(--ash); }
+.meta { display: inline-flex; align-items: center; gap: 6px; margin-top: 12px; font-size: 15px; color: var(--ash); }
+
+/* experiences: an elevator floor dial follows the reader */
+.lift { display: grid; grid-template-columns: 320px 1fr; gap: clamp(32px, 6vw, 96px); align-items: start; }
+.dial { position: sticky; top: 120px; text-align: center; }
+.dial svg { width: 100%; overflow: visible; }
+.dial .arc { fill: none; stroke: var(--red-dark); stroke-width: 2; }
+.dial .tick { stroke: var(--red); stroke-width: 2; }
+.dial text { font: 700 17px var(--display); fill: var(--ash); letter-spacing: .05em; transition: fill .4s; }
+.dial text.on { fill: var(--red-text); }
+.dial .needle { transform-origin: 160px 160px; transition: transform 1s cubic-bezier(.5,1.6,.4,1); }
+.dial .needle line { stroke: var(--ivory); stroke-width: 3; }
+.dial .hub { fill: var(--red-text); }
+.dial p { margin-top: 14px; font: 700 18px/1.2 var(--display); letter-spacing: .14em; text-transform: uppercase; color: var(--red-text); }
+.jobs { display: grid; gap: 20px; }
+.job { background: var(--deep); padding: 40px; border-left: 4px solid var(--raise); transition: border-color .4s, background .4s; }
+.job.active { border-color: var(--red-text); background: #1d2024; }
+.job .when { font: 700 18px/1.2 var(--display); letter-spacing: .12em; text-transform: uppercase; color: var(--red-text); }
+.job h3 { font: 800 40px/1 var(--display); text-transform: uppercase; margin: 10px 0 6px; }
+.job .post { font-weight: 500; }
+.job .where { display: flex; align-items: center; gap: 6px; color: var(--ash); font-size: 15px; margin: 4px 0 16px; }
+.job ul { padding-left: 20px; display: grid; gap: 8px; color: var(--ash); max-width: 68ch; }
+.job li::marker { color: var(--red-text); }
+.to-project { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px; margin-top: 24px; }
+
+/* three featured projects as towers of different heights */
+.towers { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; align-items: end; }
+.proj { display: flex; flex-direction: column; background: var(--deep); clip-path: var(--step); padding-top: 28px; transition: transform .5s var(--ease), background .4s; }
+.proj:nth-child(2) { margin-bottom: 60px; }
+.proj:hover { transform: translateY(-10px); background: var(--raise); }
+.facade { position: relative; display: block; aspect-ratio: 4/3; margin: 0 28px; background: var(--night); overflow: hidden; }
+.facade::before { content: ""; position: absolute; inset: 0; transition: opacity .6s; background:
+  linear-gradient(90deg, transparent 0 46%, var(--deep) 46% 54%, transparent 54%),
+  repeating-linear-gradient(90deg, rgba(179,38,47,.14) 0 10%, transparent 10% 14%),
+  repeating-linear-gradient(0deg, var(--night) 0 6%, transparent 6% 14%); }
+.proj:hover .facade::before { opacity: .4; }
+.facade strong { position: absolute; left: 18px; bottom: 16px; right: 18px; font: 800 30px/.95 var(--display); text-transform: uppercase; }
+.facade em { position: absolute; top: 14px; right: 14px; font: 700 14px/1 var(--display); letter-spacing: .12em; font-style: normal; text-transform: uppercase; background: var(--red); padding: 6px 10px; transform: translateY(-140%); transition: transform .4s var(--ease); }
+.proj:hover .facade em { transform: none; }
+.proj .body { padding: 26px 28px 30px; display: flex; flex-direction: column; flex: 1; }
+.proj .years { font: 700 17px/1 var(--display); letter-spacing: .12em; text-transform: uppercase; color: var(--red-text); }
+.proj h3 { font: 600 22px/1.2 var(--text); margin: 10px 0; }
+.proj p { color: var(--ash); font-size: 16px; }
+.proj .chips { margin-top: 16px; }
+.proj .links { margin-top: auto; padding-top: 22px; }
+.all { display: flex; justify-content: center; margin-top: 56px; }
+
+/* skills: one long departure board */
+.board { display: grid; grid-template-columns: 220px 1fr; background: var(--deep); }
+.board > * { padding: 22px 28px; }
+.board dt { font: 700 20px/1.3 var(--display); letter-spacing: .1em; text-transform: uppercase; color: var(--red-text); background: var(--raise); }
+.board dd { margin: 0; display: flex; flex-wrap: wrap; gap: 8px 22px; align-items: center; }
+.board dd span { transition: color .3s; }
+.board dd span:hover { color: var(--red-text); }
+.board dt:nth-of-type(n+2), .board dd:nth-of-type(n+2) { border-top: 2px solid var(--night); }
+
+/* contact */
+.marquee-wrap { margin-top: clamp(100px, 14vw, 190px); background: var(--red); overflow: hidden; padding: 18px 0; }
+.marquee { display: flex; width: max-content; animation: run 28s linear infinite; }
+.marquee span { font: 800 clamp(40px, 6vw, 84px)/1 var(--display); text-transform: uppercase; padding-right: .6em; white-space: nowrap; }
+.marquee span::after { content: "◆"; font-size: .35em; vertical-align: middle; margin-left: .6em; }
+@keyframes run { to { transform: translateX(-50%); } }
+.contact { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: end; }
+.contact h2.big { margin-bottom: 20px; }
+.contact h2.big::after { display: none; }
+.contact p { color: var(--ash); max-width: 46ch; }
+.contact-list { display: grid; gap: 4px; }
+.contact-list a { display: flex; align-items: center; gap: 16px; padding: 22px 26px; background: var(--deep); font-size: 18px; transition: background .3s, padding .4s var(--ease); }
+.contact-list a:hover { background: var(--raise); padding-left: 36px; }
+.contact-list a .i:last-child { margin-left: auto; color: var(--red-text); }
+
+@media (max-width: 960px) {
+  .hero { grid-template-columns: 1fr; padding-top: 110px; }
+  .portrait { order: -1; width: min(280px, 76%); margin: 10px 0 12px 8px; }
+  .floors, .lift, .towers, .contact { grid-template-columns: 1fr; }
+  .dial { display: none; }
+  .proj:nth-child(2) { margin-bottom: 0; }
+  .board { grid-template-columns: 1fr; }
+  .board dd:nth-of-type(n+2) { border-top: 0; }
+  .job { padding: 28px 22px; }
+  .contact > * { min-width: 0; }
+  .contact-list a { padding: 18px 16px; font-size: 16px; overflow-wrap: anywhere; }
+}
+</style>
+</head>
+<body>
+<div class="city" aria-hidden="true"><img src="media/ville-1933.jpg" alt=""></div>
+
+<header class="top" id="top">
+  <a class="wordmark" href="accueil.html">Zakaria <b>El Aoufir</b></a>
+  <nav aria-label="Navigation principale">
+    <a href="accueil.html" aria-current="page">Accueil</a>
+    <a href="projets.html">Projets</a>
+    <a href="certifications.html">Certifications</a>
+  </nav>
+  <a class="lang" href="#"><b>FR</b> / EN</a>
+  <a class="btn small" href="../public/cv/Zakaria_El_Aoufir_CV_FR.pdf"><svg class="i"><use href="icons.svg#download"/></svg>CV</a>
+  <button class="burger" aria-label="Ouvrir le menu" aria-expanded="false"><svg class="i" style="width:26px;height:26px"><use href="icons.svg#menu"/></svg></button>
+</header>
+
+<main>
+  <section class="hero instant">
+    <div>
+      <p class="role reveal" style="--d:100ms">Ingénieur logiciel · Full Stack Java / Angular</p>
+      <h1 class="reveal" style="--d:220ms"><span>Zakaria</span><span>El Aoufir</span></h1>
+      <p class="status reveal" style="--d:400ms"><i></i>Ouvert à un CDI</p>
+      <p class="summary reveal" style="--d:500ms">Ingénieur diplômé de l'EMSI, option MIAGE. Je bâtis des applications Java et Angular sur des architectures microservices, Spring Boot, Kafka et Docker, et j'y intègre de l'intelligence artificielle.</p>
+      <div class="actions reveal" style="--d:600ms">
+        <a class="btn" href="projets.html">Voir mes projets<svg class="i"><use href="icons.svg#arrow"/></svg></a>
+        <a class="btn ghost" href="../public/cv/Zakaria_El_Aoufir_CV_FR.pdf"><svg class="i"><use href="icons.svg#download"/></svg>Télécharger le CV</a>
+      </div>
+      <div class="socials reveal" style="--d:700ms">
+        <a href="https://github.com/ZakariaElAoufir"><svg class="i"><use href="icons.svg#github"/></svg>GitHub</a>
+        <a href="https://www.linkedin.com/in/zakaria-el-aoufir-329627282"><svg class="i"><use href="icons.svg#linkedin"/></svg>LinkedIn</a>
+        <a href="mailto:zakaria.elaoufir@gmail.com"><svg class="i"><use href="icons.svg#mail"/></svg>E-mail</a>
+      </div>
+    </div>
+    <figure class="portrait reveal" style="--d:300ms">
+      <img src="../public/images/profile.png" alt="Portrait de Zakaria El Aoufir" width="543" height="644">
+    </figure>
+  </section>
+
+  <section class="block" id="formation">
+    <h2 class="big reveal">Formation</h2>
+    <div class="floors">
+      <article class="floor reveal">
+        <p class="years">2022 – 2026</p>
+        <h3>EMSI, École Marocaine des Sciences de l'Ingénieur</h3>
+        <p>Diplôme d'ingénieur d'État en Ingénierie Informatique et Réseaux, option MIAGE</p>
+        <p class="meta"><svg class="i"><use href="icons.svg#pin"/></svg>Rabat</p>
+      </article>
+      <article class="floor reveal" style="--d:120ms">
+        <p class="years">2019 – 2021</p>
+        <h3>Lycée Louis Le Grand</h3>
+        <p>Baccalauréat en Sciences Expérimentales, option Physique</p>
+        <p class="meta"><svg class="i"><use href="icons.svg#pin"/></svg>Rabat</p>
+      </article>
+    </div>
+  </section>
+
+  <section class="block" id="experiences">
+    <h2 class="big reveal">Expériences</h2>
+    <div class="lift">
+      <div class="dial" aria-hidden="true">
+        <svg viewBox="0 0 320 180">
+          <path class="arc" d="M20 160a140 140 0 0 1 280 0"/>
+          <line class="tick" x1="36" y1="160" x2="52" y2="160"/>
+          <line class="tick" x1="160" y1="20" x2="160" y2="36"/>
+          <line class="tick" x1="284" y1="160" x2="268" y2="160"/>
+          <line class="tick" x1="61" y1="61" x2="72" y2="72"/>
+          <line class="tick" x1="259" y1="61" x2="248" y2="72"/>
+          <text x="6" y="150" data-i="3">2023</text>
+          <text x="40" y="52" data-i="2">2024</text>
+          <text x="236" y="52" data-i="1">2025</text>
+          <text x="270" y="150" data-i="0">2026</text>
+          <g class="needle" id="needle" style="transform:rotate(80deg)"><line x1="160" y1="160" x2="160" y2="44"/></g>
+          <circle class="hub" cx="160" cy="160" r="10"/>
+        </svg>
+        <p id="dial-label">DXC Technology</p>
+      </div>
+      <div class="jobs">
+        <article class="job reveal" data-angle="80" data-i="0">
+          <p class="when">Février – juillet 2026</p>
+          <h3>DXC Technology</h3>
+          <p class="post">Stagiaire développeur Full Stack</p>
+          <p class="where"><svg class="i"><use href="icons.svg#pin"/></svg>Technopolis, Sala Al Jadida</p>
+          <ul>
+            <li>Conception et développement, selon une méthodologie Agile Scrum (sprints, daily stand-ups), d'une plateforme intelligente de suivi et d'engagement des stagiaires, intégrant intelligence artificielle, gamification et architecture microservices (Spring Boot, Angular, Kafka, PostgreSQL, Docker).</li>
+            <li>Intégration d'un agent conversationnel basé sur l'IA pour automatiser le support, l'orientation et le suivi des stagiaires, réduisant la charge de traitement manuel des demandes.</li>
+          </ul>
+          <div class="chips"><span>Java</span><span>Spring Boot</span><span>Angular</span><span>Kafka</span><span>PostgreSQL</span><span>Docker</span><span>Python</span></div>
+          <div class="to-project"><a class="btn small" href="projets.html#projet-stagiaires">Voir le projet<svg class="i"><use href="icons.svg#arrow"/></svg></a><span class="private"><svg class="i"><use href="icons.svg#lock"/></svg>Dépôt privé, démo reconstituée</span></div>
+        </article>
+        <article class="job reveal" data-angle="40" data-i="1">
+          <p class="when">Juillet – août 2025</p>
+          <h3>DXC Technology</h3>
+          <p class="post">Stagiaire développeur Full Stack</p>
+          <p class="where"><svg class="i"><use href="icons.svg#pin"/></svg>Technopolis, Sala Al Jadida</p>
+          <ul><li>Développement, au sein d'une équipe Agile Scrum, d'une application web full stack (Java, Spring Boot, Angular, MySQL) pour la gestion centralisée des incidents et le suivi des engagements de niveau de service (SLA).</li></ul>
+          <div class="chips"><span>Java</span><span>Spring Boot</span><span>Angular</span><span>MySQL</span></div>
+          <div class="to-project"><a class="btn small" href="projets.html#projet-incidents">Voir le projet<svg class="i"><use href="icons.svg#arrow"/></svg></a><span class="private"><svg class="i"><use href="icons.svg#lock"/></svg>Dépôt privé, démo reconstituée</span></div>
+        </article>
+        <article class="job reveal" data-angle="-40" data-i="2">
+          <p class="when">Juillet – août 2024</p>
+          <h3>Holding Al Omrane</h3>
+          <p class="post">Stagiaire informatique</p>
+          <p class="where"><svg class="i"><use href="icons.svg#pin"/></svg>Rabat, Mahaj</p>
+          <ul>
+            <li>Déploiement et configuration de Snipe-IT, solution de gestion des actifs informatiques, sur un hyperviseur Nutanix avec Ubuntu Server.</li>
+            <li>Migration et intégration de l'inventaire complet des actifs depuis Excel vers la nouvelle solution, fiabilisant le suivi du parc informatique.</li>
+          </ul>
+          <div class="chips"><span>Snipe-IT</span><span>Ubuntu Server</span><span>Nutanix</span><span>Excel</span></div>
+        </article>
+        <article class="job reveal" data-angle="-80" data-i="3">
+          <p class="when">Septembre 2023</p>
+          <h3>DXC Technology</h3>
+          <p class="post">Stagiaire réseaux</p>
+          <p class="where"><svg class="i"><use href="icons.svg#pin"/></svg>Technopolis, Sala Al Jadida</p>
+          <ul><li>Étude et comparaison des protocoles de routage RIP, OSPF et EIGRP à l'aide de simulations Cisco Packet Tracer.</li></ul>
+          <div class="chips"><span>Cisco Packet Tracer</span></div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="projets">
+    <h2 class="big reveal">Projets</h2>
+    <div class="towers">
+      <article class="proj reveal">
+        <a class="facade" href="projets.html#home-energy-tracker" aria-label="Ouvrir Home Energy Tracker"><strong>Home Energy Tracker</strong><em>Voir la démo</em></a>
+        <div class="body">
+          <p class="years">2026</p>
+          <h3>Suivi énergétique en microservices</h3>
+          <p>Relevés d'appareils connectés transportés par Kafka, stockés dans InfluxDB, alertes e-mail et conseils d'une IA locale.</p>
+          <div class="chips"><span>Spring Boot</span><span>Kafka</span><span>InfluxDB</span><span>Keycloak</span></div>
+          <div class="links"><a href="#"><svg class="i"><use href="icons.svg#play"/></svg>Démo</a><a href="#"><svg class="i"><use href="icons.svg#layers"/></svg>Architecture</a><a href="https://github.com/ZakariaElAoufir/Microservice-Home-Energy-Tracker"><svg class="i"><use href="icons.svg#code"/></svg>Code</a></div>
+        </div>
+      </article>
+      <article class="proj reveal" style="--d:120ms">
+        <a class="facade" href="projets.html#agrigpt" aria-label="Ouvrir AgriGPT"><strong>AgriGPT</strong><em>Voir la démo</em></a>
+        <div class="body">
+          <p class="years">2026</p>
+          <h3>Assistant agricole avec IA locale</h3>
+          <p>Répond aux questions à partir de documents agricoles en PDF (RAG), cite ses sources et garde l'historique.</p>
+          <div class="chips"><span>Python</span><span>FastAPI</span><span>Ollama</span><span>FAISS</span></div>
+          <div class="links"><a href="#"><svg class="i"><use href="icons.svg#play"/></svg>Démo</a><a href="#"><svg class="i"><use href="icons.svg#layers"/></svg>Architecture</a><a href="https://github.com/ZakariaElAoufir/AgriGPT"><svg class="i"><use href="icons.svg#code"/></svg>Code</a></div>
+        </div>
+      </article>
+      <article class="proj reveal" style="--d:240ms">
+        <a class="facade" href="projets.html#the-wall" aria-label="Ouvrir The Wall"><strong>The Wall</strong><em>Voir la démo</em></a>
+        <div class="body">
+          <p class="years">2025 – 2026</p>
+          <h3>Réseau social mobile, en binôme</h3>
+          <p>Fil en temps réel, amis et messagerie privée avec images. Ma part : la messagerie et la gestion des amis.</p>
+          <div class="chips"><span>Flutter</span><span>Dart</span><span>Supabase</span></div>
+          <div class="links"><a href="#"><svg class="i"><use href="icons.svg#play"/></svg>Démo</a><a href="#"><svg class="i"><use href="icons.svg#layers"/></svg>Architecture</a><a href="https://github.com/ZakariaElAoufir/TheWall_Flutter"><svg class="i"><use href="icons.svg#code"/></svg>Code</a></div>
+        </div>
+      </article>
+    </div>
+    <div class="all reveal"><a class="btn ghost" href="projets.html">Voir tous les projets<svg class="i"><use href="icons.svg#arrow"/></svg></a></div>
+  </section>
+
+  <section class="block" id="competences">
+    <h2 class="big reveal">Compétences</h2>
+    <dl class="board reveal">
+      <dt>Langages</dt><dd><span>Java</span><span>Python</span><span>JavaScript</span><span>Dart</span><span>C</span><span>C++</span><span>C#</span><span>PL/SQL</span><span>HTML</span><span>CSS</span></dd>
+      <dt>Backend</dt><dd><span>Spring Boot</span><span>Spring Cloud</span><span>Microservices</span><span>Keycloak</span><span>Django</span><span>FastAPI</span></dd>
+      <dt>Frontend</dt><dd><span>Angular</span><span>React</span><span>Java Swing</span></dd>
+      <dt>Mobile</dt><dd><span>Android Room</span><span>Flutter</span></dd>
+      <dt>Données</dt><dd><span>PostgreSQL</span><span>MySQL</span><span>SQLite</span><span>InfluxDB</span><span>Supabase</span></dd>
+      <dt>IA</dt><dd><span>RAG</span><span>Ollama</span><span>FAISS</span><span>Spring AI</span></dd>
+      <dt>DevOps et Cloud</dt><dd><span>Docker</span><span>Kafka</span><span>Prometheus</span><span>Grafana</span><span>Azure</span><span>Linux</span></dd>
+      <dt>Outils</dt><dd><span>Git</span><span>GitHub</span><span>IntelliJ IDEA</span><span>VS Code</span></dd>
+      <dt>Langues</dt><dd><span>Français</span><span>Arabe</span><span>Anglais</span></dd>
+    </dl>
+  </section>
+
+  <div class="marquee-wrap" aria-hidden="true"><div class="marquee"><span>Ouvert à un CDI</span><span>Java</span><span>Angular</span><span>Spring Boot</span><span>Kafka</span><span>Ouvert à un CDI</span><span>Java</span><span>Angular</span><span>Spring Boot</span><span>Kafka</span></div></div>
+
+  <section class="block contact" id="contact">
+    <div class="reveal">
+      <h2 class="big">Contact</h2>
+      <p>Un poste de développeur full stack Java / Angular à pourvoir ? Écrivez-moi.</p>
+    </div>
+    <div class="contact-list reveal" style="--d:120ms">
+      <a href="mailto:zakaria.elaoufir@gmail.com"><svg class="i"><use href="icons.svg#mail"/></svg>zakaria.elaoufir@gmail.com<svg class="i"><use href="icons.svg#arrow"/></svg></a>
+      <a href="https://www.linkedin.com/in/zakaria-el-aoufir-329627282"><svg class="i"><use href="icons.svg#linkedin"/></svg>LinkedIn<svg class="i"><use href="icons.svg#arrow"/></svg></a>
+      <a href="https://github.com/ZakariaElAoufir"><svg class="i"><use href="icons.svg#github"/></svg>GitHub<svg class="i"><use href="icons.svg#arrow"/></svg></a>
+      <a href="../public/cv/Zakaria_El_Aoufir_CV_FR.pdf"><svg class="i"><use href="icons.svg#download"/></svg>CV en PDF<svg class="i"><use href="icons.svg#arrow"/></svg></a>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <span>Zakaria El Aoufir, 2026</span>
+  <nav><a href="mailto:zakaria.elaoufir@gmail.com">E-mail</a><a href="https://www.linkedin.com/in/zakaria-el-aoufir-329627282">LinkedIn</a><a href="https://github.com/ZakariaElAoufir">GitHub</a><a href="https://github.com/ZakariaElAoufir/ZakariaElAoufir.github.io">Code du site</a></nav>
+  <p class="credit">Photo de fond : <a href="https://commons.wikimedia.org/wiki/File:Rockefeller_Center,_December_1933.jpg">Rockefeller Center, décembre 1933</a>, Samuel H. Gottscho, domaine public.</p>
+</footer>
+
+<script src="noir.js"></script>
+<script>
+  // the elevator needle points at the year of the experience being read
+  const needle = document.getElementById('needle'), label = document.getElementById('dial-label');
+  const years = document.querySelectorAll('.dial text'), jobs = document.querySelectorAll('.job');
+  const lift = new IntersectionObserver(es => es.forEach(e => {
+    if (!e.isIntersecting) return;
+    jobs.forEach(j => j.classList.toggle('active', j === e.target));
+    needle.style.transform = `rotate(${e.target.dataset.angle}deg)`;
+    label.textContent = e.target.querySelector('h3').textContent;
+    years.forEach(t => t.classList.toggle('on', t.dataset.i === e.target.dataset.i));
+  }), { rootMargin: '-45% 0px -45% 0px' });
+  jobs.forEach(j => lift.observe(j));
+</script>
+</body>
+</html>

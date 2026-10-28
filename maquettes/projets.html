@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Projets · Zakaria El Aoufir</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@500;700;800&family=Archivo:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="noir.css">
+<script>document.documentElement.classList.add('js')</script>
+<style>
+.intro { padding-top: 150px; }
+.intro p.lead { max-width: 60ch; font-size: 19px; margin-top: -24px; }
+.legend { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 28px; }
+
+/* one project per row: the picture on the left, everything to read on the right */
+.list { display: grid; gap: 28px; margin-top: 64px; overflow-x: clip; }
+.row { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); background: var(--deep); scroll-margin-top: 100px; transition: background .4s; }
+.row:hover, .row:target { background: #1d2024; }
+.row:target { box-shadow: inset 4px 0 0 var(--red-text); }
+
+.shot { position: relative; display: block; min-height: 300px; overflow: hidden; background: var(--night); }
+.shot .art { position: absolute; inset: 0; transition: transform 1.1s var(--ease), filter .6s;
+  background:
+    linear-gradient(90deg, transparent 0 47%, var(--deep) 47% 53%, transparent 53%),
+    repeating-linear-gradient(90deg, rgba(179,38,47,.16) 0 8%, transparent 8% 12%),
+    repeating-linear-gradient(0deg, var(--night) 0 5%, transparent 5% 12%); }
+.shot strong { position: absolute; left: 28px; right: 28px; bottom: 26px; font: 800 clamp(34px, 3.4vw, 52px)/.92 var(--display); text-transform: uppercase; transition: transform .6s var(--ease); }
+.shot::before { content: ""; position: absolute; inset: 0; z-index: 1; background: linear-gradient(105deg, transparent 35%, rgba(239,233,220,.16) 50%, transparent 65%); transform: translateX(-110%); transition: transform 1s var(--ease); }
+.shot .cue { position: absolute; z-index: 2; top: 50%; left: 50%; display: inline-flex; align-items: center; gap: 10px; padding: 12px 18px; background: var(--red); font: 700 16px/1 var(--display); letter-spacing: .12em; text-transform: uppercase; opacity: 0; transform: translate(-50%, -30%); transition: opacity .4s, transform .5s var(--ease); }
+.shot:hover .art, .shot:focus-visible .art { transform: scale(1.08); filter: brightness(.6); }
+.shot:hover::before, .shot:focus-visible::before { transform: translateX(110%); }
+.shot:hover strong, .shot:focus-visible strong { transform: translateY(-6px); }
+.shot:hover .cue, .shot:focus-visible .cue { opacity: 1; transform: translate(-50%, -50%); }
+
+.info { padding: 40px 44px; display: flex; flex-direction: column; }
+.tags { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px; }
+.type { display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px; font: 700 15px/1 var(--display); letter-spacing: .1em; text-transform: uppercase; }
+.type.stage { background: var(--red); }
+.type.perso { background: var(--ivory); color: var(--night); }
+.type.acad { background: var(--raise); box-shadow: inset 0 0 0 1px var(--ash); }
+.date { display: inline-flex; align-items: center; gap: 7px; font-size: 15px; color: var(--ash); }
+.info h2 { font: 800 clamp(30px, 3vw, 42px)/1 var(--display); text-transform: uppercase; margin: 18px 0 14px; }
+.info p { color: var(--ash); max-width: 64ch; }
+.info p + p { margin-top: 10px; }
+.info p strong { color: var(--ivory); font-weight: 500; }
+.info .links { margin-top: auto; padding-top: 26px; gap: 12px; }
+
+@media (max-width: 960px) {
+  .row { grid-template-columns: 1fr; }
+  .js .reveal.from-left, .js .reveal.from-right { transform: translateY(32px); }
+  .js .reveal.is-in { transform: none; }
+  .shot { min-height: 220px; }
+  .shot .cue { opacity: 1; top: 22px; left: auto; right: 18px; transform: none; }
+  .shot:hover .cue { transform: none; }
+  .info { padding: 28px 22px; }
+}
+</style>
+</head>
+<body>
+<div class="city" aria-hidden="true"><img src="media/ville-1933.jpg" alt=""></div>
+
+<header class="top" id="top">
+  <a class="wordmark" href="accueil.html">Zakaria <b>El Aoufir</b></a>
+  <nav aria-label="Navigation principale">
+    <a href="accueil.html">Accueil</a>
+    <a href="projets.html" aria-current="page">Projets</a>
+    <a href="certifications.html">Certifications</a>
+  </nav>
+  <a class="lang" href="#"><b>FR</b> / EN</a>
+  <a class="btn small" href="../public/cv/Zakaria_El_Aoufir_CV_FR.pdf"><svg class="i"><use href="icons.svg#download"/></svg>CV</a>
+  <button class="burger" aria-label="Ouvrir le menu" aria-expanded="false"><svg class="i" style="width:26px;height:26px"><use href="icons.svg#menu"/></svg></button>
+</header>
+
+<main>
+  <section class="block intro">
+    <div class="instant">
+      <h1 class="big reveal">Projets</h1>
+      <p class="lead reveal" style="--d:150ms">Chaque projet a sa démo interactive et son explication technique. Les projets de stage sont reconstitués avec des données fictives : leur code reste privé.</p>
+      <div class="legend reveal" style="--d:250ms"><span class="type stage">Stage</span><span class="type perso">Personnel</span><span class="type acad">Académique</span></div>
+    </div>
+
+    <div class="list">
+      <article class="row" id="projet-stagiaires">
+        <a class="shot reveal from-left" href="#" aria-label="Ouvrir la démo de la plateforme de suivi des stagiaires"><span class="art"></span><strong>Plateforme des stagiaires</strong><span class="cue"><svg class="i"><use href="icons.svg#play"/></svg>Voir la démo</span></a>
+        <div class="info reveal from-right">
+          <div class="tags"><span class="type stage">Projet de stage · DXC Technology</span><span class="date"><svg class="i"><use href="icons.svg#calendar"/></svg>Février – juillet 2026</span></div>
+          <h2>Plateforme intelligente de suivi des stagiaires</h2>
+          <p>Conception et développement, selon une méthodologie Agile Scrum (sprints, daily stand-ups), d'une plateforme intelligente de suivi et d'engagement des stagiaires, intégrant intelligence artificielle, gamification et architecture microservices (Spring Boot, Angular, Kafka, PostgreSQL, Docker).</p>
+          <p>Intégration d'un agent conversationnel basé sur l'IA pour automatiser le support, l'orientation et le suivi des stagiaires, réduisant la charge de traitement manuel des demandes.</p>
+          <div class="chips"><span>Java</span><span>Spring Boot</span><span>Angular</span><span>Kafka</span><span>PostgreSQL</span><span>Docker</span><span>Python</span></div>
+          <div class="links"><a class="btn small" href="#"><svg class="i"><use href="icons.svg#play"/></svg>Démo</a><a class="btn small ghost" href="#"><svg class="i"><use href="icons.svg#layers"/></svg>Architecture</a><span class="private"><svg class="i"><use href="icons.svg#lock"/></svg>Dépôt privé</span></div>
+        </div>
+      </article>
+
+      <article class="row" id="projet-incidents">
+        <a class="shot reveal from-left" href="#" aria-label="Ouvrir la démo de la gestion des incidents"><span class="art"></span><strong>Incidents et SLA</strong><span class="cue"><svg class="i"><use href="icons.svg#play"/></svg>Voir la démo</span></a>
+        <div class="info reveal from-right">
+          <div class="tags"><span class="type stage">Projet de stage · DXC Technology</span><span class="date"><svg class="i"><use href="icons.svg#calendar"/></svg>Juillet – août 2025</span></div>
+          <h2>Gestion centralisée des incidents</h2>
+          <p>Développement, au sein d'une équipe Agile Scrum, d'une application web full stack (Java, Spring Boot, Angular, MySQL) pour la gestion centralisée des incidents et le suivi des engagements de niveau de service (SLA).</p>
+          <div class="chips"><span>Java</span><span>Spring Boot</span><span>Angular</span><span>MySQL</span></div>
+          <div class="links"><a class="btn small" href="#"><svg class="i"><use href="icons.svg#play"/></svg>Démo</a><a class="btn small ghost" href="#"><svg class="i"><use href="icons.svg#layers"/></svg>Architecture</a><span class="private"><svg class="i"><use href="icons.svg#lock"/></svg>Dépôt privé</span></div>
+        </div>
+      </article>
+
+      <article class="row" id="home-energy-tracker">
+        <a class="shot reveal from-left" href="#" aria-label="Ouvrir la démo de Home Energy Tracker"><span class="art"></span><strong>Home Energy Tracker</strong><span class="cue"><svg class="i"><use href="icons.svg#play"/></svg>Voir la démo</span></a>
+        <div class="info reveal from-right">
+          <div class="tags"><span class="type perso">Projet personnel</span><span class="date"><svg class="i"><use href="icons.svg#calendar"/></svg>2026</span></div>
+          <h2>Home Energy Tracker</h2>
+          <p>Plateforme de suivi de la consommation énergétique des appareils connectés d'une maison, en microservices Spring Boot. Les relevés arrivent en continu par Kafka, sont stockés dans InfluxDB et agrégés par utilisateur ; un dépassement de seuil déclenche une alerte e-mail.</p>
+          <p>Un service d'IA locale (Ollama) analyse la consommation et propose des conseils d'économie. Gateway sécurisée par Keycloak, supervision Prometheus et Grafana.</p>
+          <div class="chips"><span>Java 21</span><span>Spring Boot</span><span>Kafka</span><span>InfluxDB</span><span>Keycloak</span><span>Ollama</span><span>Grafana</span></div>
+          <div class="links"><a class="btn small" href="#"><svg class="i"><use href="icons.svg#play"/></svg>Démo</a><a class="btn small ghost" href="#"><svg class="i"><use href="icons.svg#layers"/></svg>Architecture</a><a class="btn small ghost" href="https://github.com/ZakariaElAoufir/Microservice-Home-Energy-Tracker"><svg class="i"><use href="icons.svg#code"/></svg>Code</a></div>
+        </div>
+      </article>
+
+      <article class="row" id="agrigpt">
+        <a class="shot reveal from-left" href="#" aria-label="Ouvrir la démo d'AgriGPT"><span class="art"></span><strong>AgriGPT</strong><span class="cue"><svg class="i"><use href="icons.svg#play"/></svg>Voir la démo</span></a>
+        <div class="info reveal from-right">
+          <div class="tags"><span class="type perso">Projet personnel</span><span class="date"><svg class="i"><use href="icons.svg#calendar"/></svg>2026</span></div>
+          <h2>AgriGPT</h2>
+          <p>Assistant conversationnel agricole qui tourne en local. Il répond à partir d'un corpus de documents PDF (FAO, INRA, ONSSA) grâce au RAG, affiche les sources retenues et conserve l'historique des échanges, exportable en PDF.</p>
+          <div class="chips"><span>Python</span><span>FastAPI</span><span>Ollama</span><span>FAISS</span><span>SQLite</span><span>Streamlit</span></div>
+          <div class="links"><a class="btn small" href="#"><svg class="i"><use href="icons.svg#play"/></svg>Démo</a><a class="btn small ghost" href="#"><svg class="i"><use href="icons.svg#layers"/></svg>Architecture</a><a class="btn small ghost" href="https://github.com/ZakariaElAoufir/AgriGPT"><svg class="i"><use href="icons.svg#code"/></svg>Code</a></div>
+        </div>
+      </article>
+
+      <article class="row" id="the-wall">
+        <a class="shot reveal from-left" href="#" aria-label="Ouvrir la démo de The Wall"><span class="art"></span><strong>The Wall</strong><span class="cue"><svg class="i"><use href="icons.svg#play"/></svg>Voir la démo</span></a>
+        <div class="info reveal from-right">
+          <div class="tags"><span class="type acad">Projet académique · binôme</span><span class="date"><svg class="i"><use href="icons.svg#calendar"/></svg>2025 – 2026</span></div>
+          <h2>The Wall</h2>
+          <p>Application mobile de réseau social : fil de publications en temps réel, amis et messagerie privée avec envoi d'images.</p>
+          <p><strong>Ma part :</strong> la messagerie privée (conversations, images, messages lus, modification et suppression) et la gestion des amis (recherche, demandes, acceptation et refus).</p>
+          <div class="chips"><span>Flutter</span><span>Dart</span><span>Supabase</span><span>PostgreSQL</span></div>
+          <div class="links"><a class="btn small" href="#"><svg class="i"><use href="icons.svg#play"/></svg>Démo</a><a class="btn small ghost" href="#"><svg class="i"><use href="icons.svg#layers"/></svg>Architecture</a><a class="btn small ghost" href="https://github.com/ZakariaElAoufir/TheWall_Flutter"><svg class="i"><use href="icons.svg#code"/></svg>Code</a></div>
+        </div>
+      </article>
+
+      <article class="row" id="e-commerce">
+        <a class="shot reveal from-left" href="#" aria-label="Ouvrir la démo de la plateforme e-commerce"><span class="art"></span><strong>E-commerce microservices</strong><span class="cue"><svg class="i"><use href="icons.svg#play"/></svg>Voir la démo</span></a>
+        <div class="info reveal from-right">
+          <div class="tags"><span class="type acad">Projet académique</span><span class="date"><svg class="i"><use href="icons.svg#calendar"/></svg>2025 – 2026</span></div>
+          <h2>Plateforme e-commerce microservices</h2>
+          <p>Conception et développement d'une plateforme de commerce en ligne en architecture microservices, avec gestion des utilisateurs, des rôles, des produits, des paniers et des commandes.</p>
+          <div class="chips"><span>Spring Boot</span><span>Angular</span><span>PostgreSQL</span><span>Docker</span></div>
+          <div class="links"><a class="btn small" href="#"><svg class="i"><use href="icons.svg#play"/></svg>Démo</a><a class="btn small ghost" href="#"><svg class="i"><use href="icons.svg#layers"/></svg>Architecture</a></div>
+        </div>
+      </article>
+
+      <article class="row" id="rendez-vous">
+        <a class="shot reveal from-left" href="#" aria-label="Ouvrir la démo de l'application de rendez-vous"><span class="art"></span><strong>Rendez-vous hospitaliers</strong><span class="cue"><svg class="i"><use href="icons.svg#play"/></svg>Voir la démo</span></a>
+        <div class="info reveal from-right">
+          <div class="tags"><span class="type acad">Projet académique</span><span class="date"><svg class="i"><use href="icons.svg#calendar"/></svg>2024 – 2025</span></div>
+          <h2>Application de rendez-vous hospitaliers</h2>
+          <p>Développement d'une application mobile Android pour la gestion des rendez-vous des patients, avec persistance locale des données via SQLite Room.</p>
+          <div class="chips"><span>Java</span><span>Android Studio</span><span>SQLite Room</span></div>
+          <div class="links"><a class="btn small" href="#"><svg class="i"><use href="icons.svg#play"/></svg>Démo</a><a class="btn small ghost" href="#"><svg class="i"><use href="icons.svg#layers"/></svg>Architecture</a><a class="btn small ghost" href="https://github.com/ZakariaElAoufir/AndroidStudioProject"><svg class="i"><use href="icons.svg#code"/></svg>Code</a></div>
+        </div>
+      </article>
+
+      <article class="row" id="simulateur-bancaire">
+        <a class="shot reveal from-left" href="#" aria-label="Ouvrir la démo du simulateur bancaire"><span class="art"></span><strong>Simulateur bancaire</strong><span class="cue"><svg class="i"><use href="icons.svg#play"/></svg>Voir la démo</span></a>
+        <div class="info reveal from-right">
+          <div class="tags"><span class="type acad">Projet académique</span><span class="date"><svg class="i"><use href="icons.svg#calendar"/></svg>2024 – 2025</span></div>
+          <h2>Simulateur bancaire</h2>
+          <p>Développement d'un simulateur bancaire avec interface graphique Java Swing, incluant la gestion des comptes et des opérations courantes.</p>
+          <div class="chips"><span>Java</span><span>Swing</span></div>
+          <div class="links"><a class="btn small" href="#"><svg class="i"><use href="icons.svg#play"/></svg>Démo</a><a class="btn small ghost" href="#"><svg class="i"><use href="icons.svg#layers"/></svg>Architecture</a></div>
+        </div>
+      </article>
+
+      <article class="row" id="formations">
+        <a class="shot reveal from-left" href="#" aria-label="Ouvrir la démo de la plateforme de formations"><span class="art"></span><strong>Vente de formations</strong><span class="cue"><svg class="i"><use href="icons.svg#play"/></svg>Voir la démo</span></a>
+        <div class="info reveal from-right">
+          <div class="tags"><span class="type acad">Projet académique</span><span class="date"><svg class="i"><use href="icons.svg#calendar"/></svg>2023 – 2024</span></div>
+          <h2>Plateforme de vente de formations</h2>
+          <p>Développement d'une plateforme web Python/Django pour la vente et la réservation de formations en ligne.</p>
+          <div class="chips"><span>Python</span><span>Django</span></div>
+          <div class="links"><a class="btn small" href="#"><svg class="i"><use href="icons.svg#play"/></svg>Démo</a><a class="btn small ghost" href="#"><svg class="i"><use href="icons.svg#layers"/></svg>Architecture</a></div>
+        </div>
+      </article>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <span>Zakaria El Aoufir, 2026</span>
+  <nav><a href="mailto:zakaria.elaoufir@gmail.com">E-mail</a><a href="https://www.linkedin.com/in/zakaria-el-aoufir-329627282">LinkedIn</a><a href="https://github.com/ZakariaElAoufir">GitHub</a><a href="https://github.com/ZakariaElAoufir/ZakariaElAoufir.github.io">Code du site</a></nav>
+  <p class="credit">Photo de fond : <a href="https://commons.wikimedia.org/wiki/File:Rockefeller_Center,_December_1933.jpg">Rockefeller Center, décembre 1933</a>, Samuel H. Gottscho, domaine public.</p>
+</footer>
+
+<script src="noir.js"></script>
+</body>
+</html>
