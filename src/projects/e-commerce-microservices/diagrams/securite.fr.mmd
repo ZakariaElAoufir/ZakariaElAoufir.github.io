@@ -1,0 +1,11 @@
+flowchart LR
+  L["POST /auth/login"] --> A["auth-service<br/>BCrypt puis JWT HS256<br/>sub, userId, role"]
+  A --> R["requête suivante<br/>Authorization: Bearer"]
+  R --> F{"Gateway<br/>JwtAuthenticationFilter"}
+  F -- "jeton invalide" --> E1["401"]
+  F -- "/admin sans rôle ADMIN" --> E2["403"]
+  F -- "pas de jeton" --> S{"SecurityConfig"}
+  S -- "/auth, /products, /uploads" --> OK
+  S -- "autre route" --> E3["401"]
+  F -- "jeton valide" --> H["ajoute X-User-Id,<br/>X-User-Role, X-Username"]
+  H --> OK["service via Eureka"]

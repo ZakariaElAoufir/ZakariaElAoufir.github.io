@@ -112,6 +112,7 @@ const architectures = defineCollection({
       width: z.number(),
       height: z.number(),
       nodeHeight: z.number().default(100),
+      nodeWidth: z.number().default(200),
       nodes: z.array(z.object({ id: z.string(), x: z.number(), y: z.number(), logo: z.string(), title: localized, subtitle: localized,
         /** part of my own work, on a project built with others */
         mine: z.boolean().default(false) })),

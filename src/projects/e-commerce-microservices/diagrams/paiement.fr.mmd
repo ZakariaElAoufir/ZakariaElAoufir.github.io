@@ -1,0 +1,22 @@
+sequenceDiagram
+  actor U as Client
+  participant N as Nginx
+  participant G as API Gateway
+  participant P as payment-service
+  participant C as cart-service
+  participant DB as payment_db
+  U->>N: POST /api/payments/checkout {paymentMethod}
+  N->>G: POST /payments/checkout + Bearer JWT
+  G->>G: vérifie le JWT, ajoute X-User-Id, X-User-Role
+  G->>P: lb://PAYMENT-SERVICE (Eureka)
+  P->>C: OpenFeign GET /carts/me (en-têtes recopiés)
+  C-->>P: panier, total
+  alt panier vide
+    P-->>U: 400 "Le panier est vide"
+  else
+    P->>DB: insert transaction PENDING
+    P->>P: simulatePayment : total > 0
+    P->>C: OpenFeign DELETE /carts/me
+    P->>DB: update status SUCCESS
+    P-->>U: 201 {transactionId, status}
+  end

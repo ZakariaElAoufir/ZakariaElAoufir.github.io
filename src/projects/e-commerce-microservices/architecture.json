@@ -1,0 +1,666 @@
+{
+  "overview": {
+    "width": 1560,
+    "height": 690,
+    "nodeHeight": 96,
+    "nodeWidth": 236,
+    "nodes": [
+      {
+        "id": "browser",
+        "x": 10,
+        "y": 280,
+        "logo": "angular",
+        "title": {
+          "fr": "Navigateur",
+          "en": "Browser"
+        },
+        "subtitle": {
+          "fr": "Angular, :4200",
+          "en": "Angular, :4200"
+        }
+      },
+      {
+        "id": "nginx",
+        "x": 280,
+        "y": 280,
+        "logo": "window",
+        "title": {
+          "fr": "Nginx",
+          "en": "Nginx"
+        },
+        "subtitle": {
+          "fr": "fichiers + /api",
+          "en": "files + /api"
+        }
+      },
+      {
+        "id": "gw",
+        "x": 550,
+        "y": 280,
+        "logo": "gateway",
+        "title": {
+          "fr": "API Gateway",
+          "en": "API Gateway"
+        },
+        "subtitle": {
+          "fr": ":9000, filtre JWT",
+          "en": ":9000, JWT filter"
+        }
+      },
+      {
+        "id": "eureka",
+        "x": 550,
+        "y": 60,
+        "logo": "microservices",
+        "title": {
+          "fr": "Eureka",
+          "en": "Eureka"
+        },
+        "subtitle": {
+          "fr": ":8761, registre",
+          "en": ":8761, registry"
+        }
+      },
+      {
+        "id": "config",
+        "x": 550,
+        "y": 540,
+        "logo": "spring",
+        "title": {
+          "fr": "Config Server",
+          "en": "Config Server"
+        },
+        "subtitle": {
+          "fr": ":8888, config-repo",
+          "en": ":8888, config-repo"
+        }
+      },
+      {
+        "id": "auth",
+        "x": 970,
+        "y": 40,
+        "logo": "springboot",
+        "title": {
+          "fr": "auth-service",
+          "en": "auth-service"
+        },
+        "subtitle": {
+          "fr": ":8084, JWT, rôles",
+          "en": ":8084, JWT, roles"
+        }
+      },
+      {
+        "id": "product",
+        "x": 970,
+        "y": 200,
+        "logo": "springboot",
+        "title": {
+          "fr": "product-service",
+          "en": "product-service"
+        },
+        "subtitle": {
+          "fr": ":8081, images",
+          "en": ":8081, pictures"
+        }
+      },
+      {
+        "id": "cart",
+        "x": 970,
+        "y": 360,
+        "logo": "springboot",
+        "title": {
+          "fr": "cart-service",
+          "en": "cart-service"
+        },
+        "subtitle": {
+          "fr": ":8082, panier",
+          "en": ":8082, cart"
+        }
+      },
+      {
+        "id": "payment",
+        "x": 970,
+        "y": 520,
+        "logo": "springboot",
+        "title": {
+          "fr": "payment-service",
+          "en": "payment-service"
+        },
+        "subtitle": {
+          "fr": ":8083, paiements",
+          "en": ":8083, payments"
+        }
+      },
+      {
+        "id": "authdb",
+        "x": 1310,
+        "y": 40,
+        "logo": "database",
+        "title": {
+          "fr": "auth_db",
+          "en": "auth_db"
+        },
+        "subtitle": {
+          "fr": "users",
+          "en": "users"
+        }
+      },
+      {
+        "id": "productdb",
+        "x": 1310,
+        "y": 200,
+        "logo": "database",
+        "title": {
+          "fr": "product_db",
+          "en": "product_db"
+        },
+        "subtitle": {
+          "fr": "products",
+          "en": "products"
+        }
+      },
+      {
+        "id": "cartdb",
+        "x": 1310,
+        "y": 360,
+        "logo": "database",
+        "title": {
+          "fr": "cart_db",
+          "en": "cart_db"
+        },
+        "subtitle": {
+          "fr": "carts, cart_items",
+          "en": "carts, cart_items"
+        }
+      },
+      {
+        "id": "paymentdb",
+        "x": 1310,
+        "y": 520,
+        "logo": "database",
+        "title": {
+          "fr": "payment_db",
+          "en": "payment_db"
+        },
+        "subtitle": {
+          "fr": "payment_transactions",
+          "en": "payment_transactions"
+        }
+      }
+    ],
+    "wires": [
+      {
+        "from": "browser",
+        "to": "nginx",
+        "path": "M246 328H280",
+        "label": {
+          "fr": "HTTP",
+          "en": "HTTP"
+        },
+        "labelX": 263,
+        "labelY": 264,
+        "once": false
+      },
+      {
+        "from": "nginx",
+        "to": "gw",
+        "path": "M516 328H550",
+        "label": {
+          "fr": "/api",
+          "en": "/api"
+        },
+        "labelX": 533,
+        "labelY": 264,
+        "once": false
+      },
+      {
+        "from": "gw",
+        "to": "eureka",
+        "path": "M668 280V156",
+        "label": {
+          "fr": "lb://…",
+          "en": "lb://…"
+        },
+        "labelX": 668,
+        "labelY": 218,
+        "once": false
+      },
+      {
+        "from": "config",
+        "to": "gw",
+        "path": "M668 540V376",
+        "label": {
+          "fr": "config au\ndémarrage",
+          "en": "config at\nstartup"
+        },
+        "labelX": 668,
+        "labelY": 458,
+        "once": true
+      },
+      {
+        "from": "gw",
+        "to": "auth",
+        "path": "M786 296H840V88H970",
+        "label": {
+          "fr": "/auth, /admin",
+          "en": "/auth, /admin"
+        },
+        "labelX": 905,
+        "labelY": 88,
+        "once": false
+      },
+      {
+        "from": "auth",
+        "to": "authdb",
+        "path": "M1206 88H1310",
+        "label": {
+          "fr": "JPA",
+          "en": "JPA"
+        },
+        "labelX": 1258,
+        "labelY": 88,
+        "once": false
+      },
+      {
+        "from": "gw",
+        "to": "product",
+        "path": "M786 316H840V248H970",
+        "label": {
+          "fr": "/products",
+          "en": "/products"
+        },
+        "labelX": 905,
+        "labelY": 248,
+        "once": false
+      },
+      {
+        "from": "product",
+        "to": "productdb",
+        "path": "M1206 248H1310",
+        "label": {
+          "fr": "JPA",
+          "en": "JPA"
+        },
+        "labelX": 1258,
+        "labelY": 248,
+        "once": false
+      },
+      {
+        "from": "gw",
+        "to": "cart",
+        "path": "M786 340H840V408H970",
+        "label": {
+          "fr": "/carts",
+          "en": "/carts"
+        },
+        "labelX": 905,
+        "labelY": 408,
+        "once": false
+      },
+      {
+        "from": "cart",
+        "to": "cartdb",
+        "path": "M1206 408H1310",
+        "label": {
+          "fr": "JPA",
+          "en": "JPA"
+        },
+        "labelX": 1258,
+        "labelY": 408,
+        "once": false
+      },
+      {
+        "from": "gw",
+        "to": "payment",
+        "path": "M786 360H840V568H970",
+        "label": {
+          "fr": "/payments",
+          "en": "/payments"
+        },
+        "labelX": 905,
+        "labelY": 568,
+        "once": false
+      },
+      {
+        "from": "payment",
+        "to": "paymentdb",
+        "path": "M1206 568H1310",
+        "label": {
+          "fr": "JPA",
+          "en": "JPA"
+        },
+        "labelX": 1258,
+        "labelY": 568,
+        "once": false
+      },
+      {
+        "from": "cart",
+        "to": "product",
+        "path": "M1088 360V296",
+        "label": {
+          "fr": "OpenFeign",
+          "en": "OpenFeign"
+        },
+        "labelX": 1088,
+        "labelY": 328,
+        "once": false
+      },
+      {
+        "from": "payment",
+        "to": "cart",
+        "path": "M1088 520V456",
+        "label": {
+          "fr": "OpenFeign",
+          "en": "OpenFeign"
+        },
+        "labelX": 1088,
+        "labelY": 488,
+        "once": false
+      }
+    ],
+    "group": {
+      "x": 1290,
+      "y": 20,
+      "w": 266,
+      "h": 650,
+      "logo": "postgresql",
+      "label": {
+        "fr": "PostgreSQL",
+        "en": "PostgreSQL"
+      }
+    },
+    "caption": {
+      "fr": "Un seul point d'entrée, la gateway, qui vérifie le JWT puis trouve chaque service par son nom dans Eureka. Chaque service a sa propre base dans le même conteneur PostgreSQL ; les services se parlent par OpenFeign.",
+      "en": "A single entry point, the gateway, which checks the JWT then finds each service by name in Eureka. Each service has its own database in the same PostgreSQL container; services talk to each other with OpenFeign."
+    }
+  },
+  "stack": [
+    {
+      "name": {
+        "fr": "Backend",
+        "en": "Backend"
+      },
+      "items": [
+        {
+          "name": "Java 21",
+          "logo": "java",
+          "note": {
+            "fr": "6 applications",
+            "en": "6 applications"
+          }
+        },
+        {
+          "name": "Spring Boot",
+          "logo": "springboot",
+          "note": {
+            "fr": "REST, Actuator",
+            "en": "REST, Actuator"
+          }
+        },
+        {
+          "name": "Spring Data JPA",
+          "logo": "spring",
+          "note": {
+            "fr": "une base par service",
+            "en": "one database per service"
+          }
+        },
+        {
+          "name": "Spring Security",
+          "logo": "springsecurity",
+          "note": {
+            "fr": "JWT HS256, BCrypt",
+            "en": "JWT HS256, BCrypt"
+          }
+        },
+        {
+          "name": "OpenFeign",
+          "logo": "spring",
+          "note": {
+            "fr": "appels entre services",
+            "en": "calls between services"
+          }
+        }
+      ]
+    },
+    {
+      "name": {
+        "fr": "Spring Cloud",
+        "en": "Spring Cloud"
+      },
+      "items": [
+        {
+          "name": "Spring Cloud Gateway",
+          "logo": "gateway",
+          "note": {
+            "fr": "WebFlux, routes lb://",
+            "en": "WebFlux, routes lb://"
+          }
+        },
+        {
+          "name": "Eureka",
+          "logo": "microservices",
+          "note": {
+            "fr": "découverte des services",
+            "en": "service discovery"
+          }
+        },
+        {
+          "name": "Config Server",
+          "logo": "spring",
+          "note": {
+            "fr": "config-repo, profil native",
+            "en": "config-repo, native profile"
+          }
+        }
+      ]
+    },
+    {
+      "name": {
+        "fr": "Frontend",
+        "en": "Frontend"
+      },
+      "items": [
+        {
+          "name": "Angular",
+          "logo": "angular",
+          "note": {
+            "fr": "composants standalone, intercepteur JWT",
+            "en": "standalone components, JWT interceptor"
+          }
+        },
+        {
+          "name": "Nginx",
+          "logo": "window",
+          "note": {
+            "fr": "sert le build, proxy /api",
+            "en": "serves the build, /api proxy"
+          }
+        }
+      ]
+    },
+    {
+      "name": {
+        "fr": "Données et déploiement",
+        "en": "Data and deployment"
+      },
+      "items": [
+        {
+          "name": "PostgreSQL",
+          "logo": "postgresql",
+          "note": {
+            "fr": "auth_db, product_db, cart_db, payment_db",
+            "en": "auth_db, product_db, cart_db, payment_db"
+          }
+        },
+        {
+          "name": "Docker Compose",
+          "logo": "docker",
+          "note": {
+            "fr": "9 conteneurs, healthchecks",
+            "en": "9 containers, healthchecks"
+          }
+        }
+      ]
+    }
+  ],
+  "diagrams": [
+    {
+      "id": "paiement",
+      "title": {
+        "fr": "Parcours d’un paiement",
+        "en": "Journey of a payment"
+      },
+      "caption": {
+        "fr": "payment-service ne fait pas confiance au montant envoyé par le navigateur : il relit le panier chez cart-service par OpenFeign, en recopiant les en-têtes X-User-* posés par la gateway. Le paiement est simulé : il réussit dès que le total dépasse zéro.",
+        "en": "payment-service does not trust an amount sent by the browser: it reads the cart again from cart-service with OpenFeign, copying the X-User-* headers set by the gateway. Payment is simulated: it succeeds as soon as the total is above zero."
+      }
+    },
+    {
+      "id": "securite",
+      "title": {
+        "fr": "Contrôle d’accès",
+        "en": "Access control"
+      },
+      "caption": {
+        "fr": "Le JWT est signé par auth-service et vérifié par la gateway avec le même secret. La gateway transmet ensuite l'identité aux services sous forme d'en-têtes ; /admin est réservé au rôle ADMIN.",
+        "en": "The JWT is signed by auth-service and checked by the gateway with the same secret. The gateway then passes the identity to the services as headers; /admin is kept for the ADMIN role."
+      }
+    },
+    {
+      "id": "donnees",
+      "title": {
+        "fr": "Modèle de données",
+        "en": "Data model"
+      },
+      "caption": {
+        "fr": "Quatre bases séparées, sans clé étrangère entre elles : le panier garde une copie du nom, de l'image et du prix du produit, et la transaction garde l'identifiant du panier.",
+        "en": "Four separate databases, with no foreign key between them: the cart keeps a copy of the product's name, picture and price, and the transaction keeps the cart's id."
+      }
+    }
+  ],
+  "choices": [
+    {
+      "title": {
+        "fr": "Une base par service",
+        "en": "One database per service"
+      },
+      "why": {
+        "fr": "Chaque service possède ses tables : on peut faire évoluer le schéma du panier sans toucher au catalogue.",
+        "en": "Each service owns its tables: the cart schema can change without touching the catalogue."
+      },
+      "alternative": {
+        "fr": "Une base partagée avec des jointures.",
+        "en": "A shared database with joins."
+      },
+      "tradeoff": {
+        "fr": "Plus de jointures possibles : le panier recopie le nom et le prix du produit, qui peuvent ensuite diverger.",
+        "en": "No more joins: the cart copies the product's name and price, which can then drift."
+      }
+    },
+    {
+      "title": {
+        "fr": "JWT vérifié à la gateway",
+        "en": "JWT checked at the gateway"
+      },
+      "why": {
+        "fr": "Un seul endroit valide le jeton ; les services reçoivent X-User-Id et X-User-Role et restent simples.",
+        "en": "One place validates the token; services receive X-User-Id and X-User-Role and stay simple."
+      },
+      "alternative": {
+        "fr": "Chaque service valide lui-même le jeton (resource server).",
+        "en": "Each service validates the token itself (resource server)."
+      },
+      "tradeoff": {
+        "fr": "Les services font confiance aux en-têtes : ils ne doivent être joignables que par la gateway.",
+        "en": "Services trust the headers: they must only be reachable through the gateway."
+      }
+    },
+    {
+      "title": {
+        "fr": "Eureka et routes lb://",
+        "en": "Eureka and lb:// routes"
+      },
+      "why": {
+        "fr": "La gateway et les clients Feign trouvent les services par leur nom, sans adresse écrite en dur.",
+        "en": "The gateway and Feign clients find services by name, with no hard-coded address."
+      },
+      "alternative": {
+        "fr": "Les noms DNS de Docker Compose.",
+        "en": "Docker Compose DNS names."
+      },
+      "tradeoff": {
+        "fr": "Un serveur de plus à démarrer en premier.",
+        "en": "One more server to start first."
+      }
+    },
+    {
+      "title": {
+        "fr": "Config Server en profil native",
+        "en": "Config Server with the native profile"
+      },
+      "why": {
+        "fr": "En Docker, la configuration vient du dossier config-repo monté en lecture seule : le lancement ne dépend pas d'un dépôt Git distant.",
+        "en": "In Docker, configuration comes from the config-repo folder mounted read-only: start-up does not depend on a remote Git repo."
+      },
+      "alternative": {
+        "fr": "Un fichier application.properties par service.",
+        "en": "One application.properties per service."
+      },
+      "tradeoff": {
+        "fr": "Les services attendent que le Config Server soit prêt (healthchecks).",
+        "en": "Services wait for the Config Server to be ready (healthchecks)."
+      }
+    },
+    {
+      "title": {
+        "fr": "Suppression logique des produits",
+        "en": "Soft delete for products"
+      },
+      "why": {
+        "fr": "Un produit supprimé passe à active = false : les paniers et l'historique qui le citent restent cohérents.",
+        "en": "A deleted product turns active = false: carts and history that mention it stay consistent."
+      },
+      "alternative": {
+        "fr": "Supprimer la ligne.",
+        "en": "Deleting the row."
+      },
+      "tradeoff": {
+        "fr": "Le formulaire admin propose « Inactif », mais le service n'en tient pas compte : seul « Supprimer » désactive.",
+        "en": "The admin form offers \"Inactif\", but the service ignores it: only \"Supprimer\" deactivates."
+      }
+    }
+  ],
+  "limits": {
+    "fr": [
+      "Sur /products, sans jeton, la gateway laisse passer l'en-tête X-User-Role: ADMIN que le frontend envoie lui-même : product-service accepte alors une création ou une suppression.",
+      "Le paiement est simulé (réussit si le total dépasse zéro) ; les champs de carte ne quittent pas le navigateur.",
+      "Secret JWT et mot de passe admin par défaut (admin / admin123) écrits dans la configuration.",
+      "Un utilisateur désactivé peut encore se connecter : la connexion ne vérifie pas le champ enabled.",
+      "Les erreurs métier (identifiant inconnu, nom déjà pris) remontent en 500 au lieu de 400 ou 401.",
+      "Aucune route Angular n'est protégée : /admin s'ouvre en client, seules les requêtes sont refusées par la gateway."
+    ],
+    "en": [
+      "On /products, without a token, the gateway lets through the X-User-Role: ADMIN header that the front end sends itself: product-service then accepts a creation or a deletion.",
+      "Payment is simulated (succeeds when the total is above zero); card fields never leave the browser.",
+      "JWT secret and default admin password (admin / admin123) written in the configuration.",
+      "A disabled user can still sign in: login does not check the enabled field.",
+      "Business errors (unknown username, name already taken) come back as 500 instead of 400 or 401.",
+      "No Angular route is guarded: /admin opens for a customer, only the requests are refused by the gateway."
+    ]
+  },
+  "next": {
+    "fr": [
+      "Retirer à la gateway tout en-tête X-User-* venu du client avant de router.",
+      "Garde de route Angular sur /admin et contrôle de enabled à la connexion.",
+      "Secrets en variables d'environnement, compte admin créé au premier lancement.",
+      "Un vrai prestataire de paiement en mode test, et une table des commandes."
+    ],
+    "en": [
+      "Strip any client-sent X-User-* header at the gateway before routing.",
+      "An Angular route guard on /admin and an enabled check at sign-in.",
+      "Secrets in environment variables, admin account created on first run.",
+      "A real payment provider in test mode, and an orders table."
+    ]
+  }
+}

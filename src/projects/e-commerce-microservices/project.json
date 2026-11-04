@@ -14,12 +14,64 @@
     "fr": "E-commerce microservices",
     "en": "Microservices e-commerce"
   },
-  "repo": null,
+  "repo": "https://github.com/ZakariaElAoufir/MCommerce",
   "stack": [
     "Spring Boot",
+    "Spring Cloud",
     "Angular",
     "PostgreSQL",
-    "Docker"
+    "Docker",
+    "Nginx"
   ],
-  "hasDemo": false
+  "hasDemo": true,
+  "thumbnail": "./media/thumbnail.png",
+  "detail": {
+    "problem": {
+      "fr": "Construire une boutique en ligne complète en microservices : chaque domaine (comptes, catalogue, panier, paiement) doit vivre dans son service, avec sa base, derrière un seul point d'entrée.",
+      "en": "Building a complete online shop as microservices: each domain (accounts, catalogue, cart, payment) lives in its own service, with its own database, behind a single entry point."
+    },
+    "does": {
+      "fr": "Guitara, une boutique de guitares : catalogue avec recherche, tri et pagination, panier, paiement simulé et historique, plus un espace admin pour les produits, les utilisateurs et les paiements. Angular devant, 6 services Spring derrière, le tout lancé par Docker Compose.",
+      "en": "Guitara, a guitar shop: a catalogue with search, sorting and paging, a cart, a simulated payment and its history, plus an admin area for products, users and payments. Angular in front, 6 Spring services behind, all started by Docker Compose."
+    },
+    "role": {
+      "fr": "Conception et développement de toute la plateforme : les services Spring Boot (authentification JWT, produits, panier, paiement), Spring Cloud (Config Server, Eureka, Gateway), le frontend Angular et la mise en conteneurs avec Docker Compose.",
+      "en": "Designed and built the whole platform: the Spring Boot services (JWT authentication, products, cart, payment), Spring Cloud (Config Server, Eureka, Gateway), the Angular front end and the containers with Docker Compose."
+    },
+    "gallery": [
+      {
+        "image": "./media/shot-shop.png",
+        "title": {
+          "fr": "La boutique.",
+          "en": "The shop."
+        },
+        "text": {
+          "fr": "Catalogue avec recherche et tri par prix, servi par product-service.",
+          "en": "Catalogue with search and price sorting, served by product-service."
+        }
+      },
+      {
+        "image": "./media/shot-trace.png",
+        "title": {
+          "fr": "Le trajet d’une requête.",
+          "en": "The journey of a request."
+        },
+        "text": {
+          "fr": "Nginx, la gateway et son contrôle JWT, Eureka, puis le service et sa base.",
+          "en": "Nginx, the gateway and its JWT check, Eureka, then the service and its database."
+        }
+      },
+      {
+        "image": "./media/shot-admin.png",
+        "title": {
+          "fr": "L’espace admin.",
+          "en": "The admin area."
+        },
+        "text": {
+          "fr": "Produits, utilisateurs et paiements, réservé au rôle ADMIN par la gateway.",
+          "en": "Products, users and payments, kept for the ADMIN role by the gateway."
+        }
+      }
+    ]
+  }
 }

@@ -223,13 +223,14 @@ Voir l'arborescence validée : `src/projects/<slug>/` (un dossier autonome par p
 - **Démo n° 1 : AgriGPT** (2026-11-04), voir `SPEC-project-agrigpt.md` : pages `/projets/agrigpt/` (démo React manipulable, plein écran, « sous le capot ») et `/projets/agrigpt/architecture/` (menu latéral, grand diagramme avec logos et flèches nommées, diagrammes Mermaid, stack, choix, limites), en FR et EN. Vignette (capture de la démo) sur la carte de l'accueil et la ligne de `/projets/` ; boutons Démo et Architecture actifs.
 - **Démo n° 2 : Home Energy Tracker** (2026-11-04), voir `SPEC-project-home-energy-tracker.md` : pas d'interface dans le projet réel, la démo reproduit ses outils (API via la gateway façon Swagger, Kafka UI, Mailpit, Grafana) sur un pipeline rejoué aux vraies cadences. La page architecture gagne une section **Origine** (champ `credits` d'`architecture.json`), affichée seulement si elle existe.
 - **Démo n° 3 : The Wall** (2026-11-04), voir `SPEC-project-the-wall.md` : application Flutter + Supabase en binôme ; la démo montre deux téléphones (Nora et Samir) et le panneau Supabase (tables, requêtes). Seule ma partie est mise en avant (amis, messagerie). Le grand diagramme gagne un cadre de groupe et une légende « Ma partie » (champs `group`, `mine`, `mineLabel`, `caption`, `nodeHeight` d'`architecture.json`).
+- **Démo n° 4 : plateforme e-commerce microservices** (2026-11-04), voir `SPEC-project-e-commerce-microservices.md` : la boutique Angular « Guitara » dans un navigateur, à côté le trajet de chaque requête (Nginx, gateway, Eureka, services, OpenFeign, SQL) et les 4 bases PostgreSQL. Dépôt public MCommerce (le portfolio le donnait comme privé). Nouveau champ `overview.nodeWidth`.
 - Pages génériques pour tout projet avec démo : `src/pages/[...lang]/projets/[slug]/index.astro` et `architecture.astro`, composants `src/components/project/` (ProjectHeader, ArchOverview). Un projet active sa démo avec `hasDemo: true` + `detail` dans `project.json`, un `architecture.json`, `demo/Demo.astro`, `diagrams/*.{fr,en}.svg`.
 
 **Déroulé par projet** (changé par Zakaria le 2026-11-04) : lire le dépôt (frontend puis architecture) → implémentation directe dans Astro (démo et page architecture, plus de maquette HTML) → Zakaria relit et les corrections se font directement dans Astro → projet suivant. Jamais deux projets à la fois. Les dépôts privés sont clonés par Zakaria dans le dossier du projet pour que le frontend puisse être lu.
 
 **Étapes suivantes** (dans l'ordre)
 1. Zakaria relit les démos AgriGPT, Home Energy Tracker et The Wall.
-2. Démos des autres projets, un par un : d'abord la plateforme e-commerce microservices (dépôt public), puis les dépôts privés que Zakaria clonera ici.
+2. Démos des autres projets, un par un : les dépôts privés que Zakaria clonera ici.
 3. Fusion dans `main` (= mise en ligne) quand Zakaria le décide.
 
 **Outils** : les skills `frontend-design` et `taste-skill` sont installés au niveau utilisateur (`~/.claude/skills/`), **pas dans ce dépôt**. Le dossier `.taste-skill/` (ignoré par Git) ne contient que des fichiers de travail du skill.

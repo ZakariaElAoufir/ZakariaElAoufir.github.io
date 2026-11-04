@@ -1,0 +1,38 @@
+erDiagram
+  USERS {
+    bigint id PK
+    varchar username UK
+    varchar password "BCrypt"
+    varchar role "USER, ADMIN"
+    bool enabled
+  }
+  PRODUCTS {
+    bigint id PK
+    varchar name
+    varchar description
+    numeric price
+    varchar image_url "/uploads/..."
+    bool active "suppression logique"
+  }
+  CARTS ||--o{ CART_ITEMS : contient
+  CARTS {
+    bigint id PK
+    bigint user_id "id de auth_db"
+    numeric total_amount
+  }
+  CART_ITEMS {
+    bigint id PK
+    bigint cart_id FK
+    bigint product_id "id de product_db"
+    varchar product_name "copie"
+    numeric price "copie"
+    int quantity
+  }
+  PAYMENT_TRANSACTIONS {
+    bigint id PK
+    bigint user_id "id de auth_db"
+    bigint cart_id "id de cart_db"
+    numeric amount
+    varchar status "PENDING, SUCCESS, FAILED"
+    varchar payment_method "CARD, PAYPAL, CASH"
+  }
