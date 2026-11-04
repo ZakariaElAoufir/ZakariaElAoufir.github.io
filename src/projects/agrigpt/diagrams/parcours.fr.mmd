@@ -1,0 +1,27 @@
+sequenceDiagram
+  actor U as Utilisateur
+  participant S as Streamlit
+  participant A as FastAPI
+  participant R as rag.py
+  participant O as Ollama
+  participant D as SQLite
+  U->>S: Question + Envoyer
+  S->>A: POST /ask {question, conversation_id}
+  A->>D: créer ou reprendre la conversation
+  A->>R: ask_question(question)
+  alt aucun mot-clé agricole
+    R-->>A: refus « hors domaine », sans source
+  else question agricole
+    R->>O: embedding de la question
+    R->>R: FAISS : 5 extraits les plus proches
+    alt meilleure distance > 190
+      R-->>A: « pas d'information pertinente »
+    else extraits pertinents
+      R->>O: prompt + extraits vers llama3.2:3b
+      O-->>R: réponse
+      R-->>A: réponse + noms des PDF
+    end
+  end
+  A->>D: enregistrer question, réponse, sources
+  A-->>S: {answer, sources, conversation_id}
+  S-->>U: réponse + « Sources : … »

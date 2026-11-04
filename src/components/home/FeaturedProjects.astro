@@ -1,4 +1,5 @@
 ---
+import { Image } from 'astro:assets';
 import Icon from '../Icon.astro';
 import { publishedProjects } from '../../lib/projects';
 import { localePath, pick, useTranslations, type Lang } from '../../i18n/utils';
@@ -14,16 +15,21 @@ const projectsPage = localePath(lang, '/projets/');
   <div class="towers">
     {featured.map(({ id, data }, i) => {
       const name = pick(data.shortTitle, lang);
+      const demo = data.hasDemo ? localePath(lang, `/projets/${id}/`) : null;
       return (
         <article class="proj px-frame reveal" style={`--d:${i * 120}ms`}>
-          <a class="facade" href={`${projectsPage}#${id}`} aria-label={t('home.openProject', { name })}><strong>{name}</strong></a>
+          <a class:list={['facade', { shot: data.thumbnail }]} href={demo ?? `${projectsPage}#${id}`} aria-label={t('home.openProject', { name })}>
+            {data.thumbnail && <Image src={data.thumbnail} alt="" widths={[400, 800]} sizes="(max-width: 960px) 90vw, 400px" />}
+            <strong>{name}</strong>
+            {demo && <em><Icon name="play" />{t('projects.seeDemo')}</em>}
+          </a>
           <div class="body">
             <p class="years">{pick(data.period, lang)}</p>
             <h3>{pick(data.card!.title, lang)}</h3>
             <p>{pick(data.card!.summary, lang)}</p>
             <div class="chips">{data.card!.stack.map(s => <span>{s}</span>)}</div>
             <div class="links">
-              {data.hasDemo && <a href={localePath(lang, `/projets/${id}/`)}><Icon name="play" />{t('projects.demo')}</a>}
+              {demo && <a href={demo}><Icon name="play" />{t('projects.demo')}</a>}
               {data.hasDemo && <a href={localePath(lang, `/projets/${id}/architecture/`)}><Icon name="layers" />{t('projects.architecture')}</a>}
               {data.repo
                 ? <a href={data.repo}><Icon name="code" />{t('projects.code')}</a>
@@ -49,6 +55,14 @@ const projectsPage = localePath(lang, '/projets/');
     repeating-linear-gradient(90deg, rgba(80, 80, 220, .14) 0 10%, transparent 10% 14%),
     repeating-linear-gradient(0deg, var(--night) 0 6%, transparent 6% 14%); }
   .proj:hover .facade::before { opacity: .4; }
+  /* a project with a demo shows a screenshot of it, zoomed in a little on hover */
+  .facade.shot::before { display: none; }
+  .facade img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: left top; transition: transform .8s var(--ease), filter .4s; }
+  .facade.shot::after { content: ""; position: absolute; inset: 0; background: linear-gradient(transparent 40%, rgba(18, 18, 47, .92)); }
+  .proj:hover .facade img { transform: scale(1.06); filter: brightness(.75); }
+  .facade strong { z-index: 1; }
+  .facade em { position: absolute; z-index: 2; top: 14px; right: 14px; display: inline-flex; align-items: center; gap: 8px; padding: 8px 12px; background: var(--accent); clip-path: var(--pix); font: 700 14px/1 var(--display); font-style: normal; text-transform: uppercase; opacity: 0; transform: translateY(-8px); transition: opacity .3s, transform .35s var(--ease); }
+  .proj:hover .facade em, .facade:focus-visible em { opacity: 1; transform: none; }
   .facade strong { position: absolute; left: 18px; bottom: 16px; right: 18px; font: 700 24px/1 var(--display); text-transform: uppercase; }
   .body { padding: 26px 28px 30px; display: flex; flex-direction: column; flex: 1; }
   .years { font: 600 16px/1 var(--display); letter-spacing: .06em; text-transform: uppercase; color: var(--accent-text); }

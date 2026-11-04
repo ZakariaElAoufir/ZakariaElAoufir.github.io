@@ -1,0 +1,99 @@
+/* AgriGPT demo: a browser frame in the site's pixel style around the real Streamlit look. */
+@import "@fontsource/source-sans-3/400.css";
+@import "@fontsource/source-sans-3/600.css";
+@import "@fontsource/source-sans-3/700.css";
+.agd { --frame-line: var(--line); }
+.agd .wide { --w: min(1680px, calc(100vw - 2 * var(--margin))); width: var(--w); margin-left: calc((100% - var(--w)) / 2); }
+.agd .window { background: var(--deep); box-shadow: 0 -4px 0 var(--line), 0 4px 0 var(--line), -4px 0 0 var(--line), 4px 0 0 var(--line); }
+.agd .window.max { position: fixed; inset: 0; z-index: 100; display: flex; flex-direction: column; box-shadow: none; }
+.agd .window.max .st { flex: 1; height: auto; }
+body.demo-locked { overflow: hidden; }
+
+.agd .chrome { display: flex; align-items: center; gap: 14px; padding: 10px 14px; background: var(--deep); }
+.agd .chrome .dots { display: flex; gap: 6px; }
+.agd .chrome .dots i { width: 10px; height: 10px; background: var(--line); }
+.agd .chrome .url { flex: 1; padding: 6px 12px; background: var(--night); color: var(--ash); font: 500 14px/1 var(--display); }
+
+/* suggestions: portfolio-side help, kept inside the window so they follow it full screen */
+.agd .suggest { display: flex; align-items: center; gap: 14px; padding: 12px 14px 14px; background: var(--deep); border-top: 4px solid var(--night); }
+.agd .suggest p { flex: none; font: 600 14px/1.2 var(--display); text-transform: uppercase; letter-spacing: .04em; color: var(--accent-text); }
+.agd .suggest .list { display: flex; flex-wrap: wrap; gap: 8px; }
+.agd .suggest button { font: 400 14px/1.3 var(--text); color: var(--ivory); text-align: left; padding: 8px 12px; background: var(--night); border: 0; cursor: pointer; clip-path: var(--pix); transition: background .2s; }
+.agd .suggest button:hover { background: var(--accent); }
+.agd .suggest button.off { box-shadow: inset 0 0 0 4px var(--line); }
+
+/* the Streamlit look: light theme, Source Sans, red accents */
+.agd .st { --st-text: #31333f; --st-soft: rgba(49, 51, 63, .6); --st-line: rgba(49, 51, 63, .2); --st-red: #ff4b4b; --st-side: #f0f2f6;
+  position: relative; display: grid; grid-template-columns: 300px 1fr; height: clamp(620px, 80vh, 920px); background: #fff; color: var(--st-text);
+  font: 400 16px/1.6 "Source Sans 3", "Segoe UI", sans-serif; overflow: hidden; }
+.agd .st button { font: inherit; }
+.agd .st p { margin: 0; }
+.agd .st-side { background: var(--st-side); padding: 22px 18px; overflow-y: auto; }
+.agd .st-side img { width: 150px; height: auto; margin: 0 auto 10px; }
+.agd .st-side h3 { display: flex; align-items: center; gap: 8px; font-size: 18px; font-weight: 600; margin: 8px 0 12px; }
+.agd .st-btn { display: inline-flex; align-items: center; gap: 6px; padding: 5px 12px; background: #fff; border: 1px solid var(--st-line); border-radius: 8px; color: var(--st-text); cursor: pointer; transition: border-color .2s, color .2s; text-align: left; line-height: 1.4; }
+.agd .st-btn:hover { border-color: var(--st-red); color: var(--st-red); }
+.agd .st-btn:active { background: var(--st-red); color: #fff; }
+.agd .st-btn:disabled { opacity: .5; cursor: wait; }
+.agd .st-btn:focus-visible { outline: 2px solid var(--st-red); outline-offset: 2px; }
+.agd .conv { display: grid; gap: 8px; }
+.agd .conv .st-btn { width: 100%; font-size: 14px; }
+.agd .conv .st-btn.on { border-color: var(--st-red); color: var(--st-red); }
+.agd .st-hr { border: 0; border-top: 1px solid var(--st-line); margin: 18px 0; }
+
+.agd .st-main { position: relative; overflow-y: auto; padding: 46px clamp(32px, 5vw, 96px) 32px; scroll-behavior: smooth; }
+.agd .st-top { position: absolute; top: 0; right: 0; left: 0; height: 38px; display: flex; align-items: center; justify-content: flex-end; padding: 0 16px; font-size: 14px; color: var(--st-soft); pointer-events: none; }
+.agd .run { display: inline-flex; align-items: center; gap: 8px; }
+.agd .run i { width: 14px; height: 14px; border: 2px solid var(--st-line); border-top-color: var(--st-red); border-radius: 50%; animation: agd-spin .8s linear infinite; }
+@keyframes agd-spin { to { transform: rotate(360deg); } }
+.agd .st-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 20px; }
+.agd .st-head h1 { display: flex; align-items: center; gap: 10px; font-size: 32px; font-weight: 700; line-height: 1.2; }
+.agd .st-head h1 svg { width: 30px; height: 30px; color: #2e7d32; flex: none; }
+.agd .st-caption { font-size: 14px; color: var(--st-soft); margin-top: 4px; }
+.agd .st-warn { margin-top: 12px; padding: 12px 16px; background: rgba(255, 189, 69, .2); color: #926c05; border-radius: 8px; font-size: 15px; }
+.agd .st-pdf { display: grid; justify-items: end; gap: 10px; flex: none; }
+
+.agd .msg { display: flex; gap: 14px; padding: 14px; border-radius: 8px; }
+.agd .msg.user { background: rgba(240, 242, 246, .5); }
+.agd .msg .av { width: 32px; height: 32px; flex: none; border-radius: 8px; display: grid; place-items: center; color: #fff; }
+.agd .msg.user .av { background: var(--st-red); }
+.agd .msg.bot .av { background: #ffbd45; }
+.agd .msg .av svg { width: 18px; height: 18px; }
+.agd .msg .lab { font-weight: 700; }
+.agd .msg p + p { margin-top: 6px; }
+.agd .msg .src { font-size: 14px; color: var(--st-soft); margin-top: 8px; }
+
+.agd .st-input label { display: block; font-size: 14px; margin: 8px 0 6px; }
+.agd .st-input input { width: 100%; height: 42px; padding: 0 14px; border: 1px solid transparent; border-radius: 8px; background: var(--st-side); font: inherit; color: var(--st-text); outline: none; }
+.agd .st-input input:focus { border-color: var(--st-red); }
+.agd .st-input .st-btn { margin-top: 12px; }
+.agd .notice { margin-top: 12px !important; padding: 10px 14px; background: var(--deep); color: var(--ivory); font: 400 14px/1.45 var(--text); clip-path: var(--pix); }
+
+/* PDF preview, opened by "Télécharger le PDF" */
+.agd .pdf { position: absolute; inset: 0; z-index: 5; display: grid; place-items: center; background: rgba(18, 18, 47, .7); padding: 24px; }
+.agd .pdf .page { width: min(460px, 100%); max-height: 70vh; overflow-y: auto; background: #fff; color: #111; padding: 30px 32px; font: 400 12px/1.45 Helvetica, Arial, sans-serif;
+  box-shadow: 0 -4px 0 var(--accent-text), 0 4px 0 var(--accent-text), -4px 0 0 var(--accent-text), 4px 0 0 var(--accent-text); }
+.agd .pdf .page img { width: 60px; height: auto; }
+.agd .pdf .page h4 { font-size: 16px; font-weight: 700; margin: 10px 0 16px; }
+.agd .pdf .page b { display: block; margin-top: 10px; }
+.agd .pdf .page .s { font-style: italic; font-size: 10px; color: #444; margin-top: 4px; }
+.agd .pdf .close { margin-top: 14px; }
+
+/* under the hood: what the real backend would have done */
+.agd .hood { margin-top: 40px; }
+.agd .hood h2 { font: 700 26px/1.1 var(--display); text-transform: uppercase; text-shadow: 3px 3px 0 var(--accent-dark); }
+.agd .hood > p { color: var(--ash); margin: 8px 0 22px; max-width: 75ch; }
+.agd .steps { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 20px; }
+.agd .step { position: relative; background: var(--deep); padding: 18px 16px 20px; box-shadow: 0 -4px 0 var(--line), 0 4px 0 var(--line), -4px 0 0 var(--line), 4px 0 0 var(--line); transition: background .25s; }
+.agd .step:not(:last-child)::after { content: ""; position: absolute; right: -20px; top: 34px; width: 16px; height: 4px; background: var(--line); }
+.agd .step.done { background: var(--raise); box-shadow: 0 -4px 0 var(--accent-text), 0 4px 0 var(--accent-text), -4px 0 0 var(--accent-text), 4px 0 0 var(--accent-text); }
+.agd .step.stop { box-shadow: 0 -4px 0 #e0a35e, 0 4px 0 #e0a35e, -4px 0 0 #e0a35e, 4px 0 0 #e0a35e; }
+.agd .step .n { font: 700 14px/1 var(--display); color: var(--accent-text); }
+.agd .step h3 { font: 600 16px/1.2 var(--display); text-transform: uppercase; margin: 8px 0; }
+.agd .step p { font-size: 14px; line-height: 1.45; color: var(--ash); }
+.agd .step code { font: 500 13px/1.4 var(--display); color: var(--ivory); }
+.agd .chunks { display: grid; gap: 10px; margin-top: 20px; }
+.agd .chunk { display: grid; grid-template-columns: 190px 1fr 90px; gap: 16px; align-items: start; padding: 12px 16px; background: var(--night); font-size: 14px; }
+.agd .chunk .f { font: 500 13px/1.3 var(--display); color: var(--accent-text); overflow-wrap: anywhere; }
+.agd .chunk .t { color: var(--ash); }
+.agd .chunk .d { font: 600 14px/1 var(--display); text-align: right; }

@@ -1,0 +1,449 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AgriGPT · Démo · Zakaria El Aoufir</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400;500;600;700&family=Archivo:wght@400;500;600;800&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="noir.css">
+<script>document.documentElement.classList.add('js')</script>
+<style>
+/* ---------- project page shell (portfolio style) ---------- */
+.intro { padding-top: 140px; }
+.crumbs { display: flex; gap: 10px; font: 500 15px/1 var(--display); color: var(--ash); }
+.crumbs a:hover { color: var(--accent-text); }
+.intro h1.big { margin: 18px 0 18px; }
+.tags { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px; }
+.type { display: inline-flex; padding: 6px 12px; font: 600 15px/1 var(--display); letter-spacing: .04em; text-transform: uppercase; clip-path: var(--pix); background: var(--ivory); color: var(--night); }
+.date { display: inline-flex; align-items: center; gap: 7px; font-size: 15px; color: var(--ash); }
+.tabs { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-top: 32px; }
+.tab { display: inline-flex; align-items: center; gap: 8px; padding: 12px 20px 14px; font: 700 16px/1 var(--display); text-transform: uppercase; background: var(--deep); clip-path: var(--pix); color: var(--ash); }
+.tab[aria-current] { background: var(--accent); color: var(--ivory); box-shadow: inset 0 -4px 0 var(--accent-dark); }
+.tab:hover:not([aria-current]) { color: var(--ivory); background: var(--raise); }
+.tabs .code { margin-left: auto; }
+
+.about { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 28px; margin-top: 56px; }
+.about article { background: var(--deep); padding: 26px 26px 28px; box-shadow: 0 -4px 0 var(--line), 0 4px 0 var(--line), -4px 0 0 var(--line), 4px 0 0 var(--line); }
+.about h2 { font: 600 18px/1.2 var(--display); text-transform: uppercase; letter-spacing: .04em; color: var(--accent-text); margin-bottom: 10px; }
+.about p { color: var(--ash); }
+.about strong { color: var(--ivory); font-weight: 500; }
+
+.sim { display: flex; align-items: center; gap: 12px; margin: 72px 0 22px; padding: 12px 18px; background: var(--raise); font-size: 15px; box-shadow: 0 -4px 0 var(--line), 0 4px 0 var(--line), -4px 0 0 var(--line), 4px 0 0 var(--line); }
+.sim i { width: 10px; height: 10px; flex: none; background: var(--accent-text); animation: blink 1.6s steps(2) infinite; }
+@keyframes blink { 50% { opacity: .25; } }
+.sim b { font-family: var(--display); font-weight: 600; text-transform: uppercase; letter-spacing: .04em; }
+
+/* suggestions: portfolio-side help to drive the demo, kept inside the window so they follow it full screen */
+.suggest { display: flex; align-items: center; gap: 14px; padding: 12px 14px 14px; background: var(--deep); border-top: 4px solid var(--night); }
+.suggest p { flex: none; font: 600 14px/1.2 var(--display); text-transform: uppercase; letter-spacing: .04em; color: var(--accent-text); }
+.suggest .list { display: flex; flex-wrap: wrap; gap: 8px; }
+.suggest button { font: 400 14px/1.3 var(--text); color: var(--ivory); text-align: left; padding: 8px 12px; background: var(--night); border: 0; cursor: pointer; clip-path: var(--pix); transition: background .2s; }
+.suggest button:hover { background: var(--accent); }
+.suggest button.off { box-shadow: inset 0 0 0 4px var(--line); }
+
+/* ---------- the demo window: a browser frame around the real Streamlit look ---------- */
+/* wider than the text column: it takes most of the screen */
+.demo-wide { --w: min(1680px, calc(100vw - 2 * var(--margin))); width: var(--w); margin-left: calc((100% - var(--w)) / 2); }
+.window { box-shadow: 0 -4px 0 var(--line), 0 4px 0 var(--line), -4px 0 0 var(--line), 4px 0 0 var(--line); background: var(--deep); }
+.chrome { display: flex; align-items: center; gap: 14px; padding: 10px 14px; background: var(--deep); }
+.chrome .dots { display: flex; gap: 6px; }
+.chrome .dots i { width: 10px; height: 10px; background: var(--line); }
+.chrome .full-btn { flex: none; }
+.chrome .url { flex: 1; padding: 6px 12px; background: var(--night); color: var(--ash); font: 500 14px/1 var(--display); }
+
+.st { --st-text: #31333f; --st-soft: rgba(49, 51, 63, .6); --st-line: rgba(49, 51, 63, .2); --st-red: #ff4b4b; --st-side: #f0f2f6;
+  position: relative; display: grid; grid-template-columns: 300px 1fr; height: clamp(620px, 80vh, 920px); background: #fff; color: var(--st-text); font: 400 16px/1.6 "Source Sans 3", sans-serif; overflow: hidden; }
+.st button { font: inherit; }
+.st-side { background: var(--st-side); padding: 22px 18px; overflow-y: auto; }
+.st-side img { width: 150px; margin: 0 auto 10px; }
+.st-side h3 { display: flex; align-items: center; gap: 8px; font-size: 18px; font-weight: 600; margin: 8px 0 12px; }
+.st-btn { display: inline-flex; align-items: center; gap: 6px; padding: 5px 12px; background: #fff; border: 1px solid var(--st-line); border-radius: 8px; color: var(--st-text); cursor: pointer; transition: border-color .2s, color .2s; text-align: left; line-height: 1.4; }
+.st-btn:hover { border-color: var(--st-red); color: var(--st-red); }
+.st-btn:active { background: var(--st-red); color: #fff; }
+.st-side .conv { display: grid; gap: 8px; }
+.st-side .conv .st-btn { width: 100%; font-size: 14px; }
+.st-side .conv .st-btn.on { border-color: var(--st-red); color: var(--st-red); }
+.st-hr { border: 0; border-top: 1px solid var(--st-line); margin: 18px 0; }
+
+.st-main { position: relative; overflow-y: auto; padding: 46px clamp(32px, 5vw, 96px) 32px; scroll-behavior: smooth; }
+.st-top { position: absolute; top: 0; right: 0; left: 0; height: 38px; display: flex; align-items: center; justify-content: flex-end; gap: 14px; padding: 0 16px; font-size: 14px; color: var(--st-soft); pointer-events: none; }
+.st-top .run { display: none; align-items: center; gap: 8px; }
+.st-top .run.on { display: inline-flex; }
+.st-top .run i { width: 14px; height: 14px; border: 2px solid var(--st-line); border-top-color: var(--st-red); border-radius: 50%; animation: spin .8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.st-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 20px; }
+.st-head h1 { display: flex; align-items: center; gap: 10px; font-size: 32px; font-weight: 700; line-height: 1.2; }
+.st-head h1 svg { width: 30px; height: 30px; color: #2e7d32; flex: none; }
+.st-caption { font-size: 14px; color: var(--st-soft); margin-top: 4px; }
+.st-warn { margin-top: 12px; padding: 12px 16px; background: rgba(255, 189, 69, .2); color: #926c05; border-radius: 8px; font-size: 15px; }
+.st-pdf { display: grid; justify-items: end; gap: 10px; flex: none; }
+
+.st-chat { display: grid; }
+.msg { display: flex; gap: 14px; padding: 14px; border-radius: 8px; }
+.msg.user { background: rgba(240, 242, 246, .5); }
+.msg .av { width: 32px; height: 32px; flex: none; border-radius: 8px; display: grid; place-items: center; color: #fff; }
+.msg.user .av { background: var(--st-red); }
+.msg.bot .av { background: #ffbd45; }
+.msg .av svg { width: 18px; height: 18px; }
+.msg .lab { font-weight: 700; }
+.msg p + p { margin-top: 6px; }
+.msg .src { font-size: 14px; color: var(--st-soft); margin-top: 8px; }
+.st-empty { color: var(--st-soft); font-size: 15px; padding: 18px 0 6px; }
+
+.st-input label { display: block; font-size: 14px; margin: 8px 0 6px; }
+.st-input input { width: 100%; height: 42px; padding: 0 14px; border: 1px solid transparent; border-radius: 8px; background: var(--st-side); font: inherit; color: var(--st-text); outline: none; }
+.st-input input:focus { border-color: var(--st-red); }
+.st-input .st-btn { margin-top: 12px; }
+.notice { margin-top: 12px; padding: 10px 14px; background: var(--deep); color: var(--ivory); font: 400 14px/1.45 var(--text); clip-path: var(--pix); }
+
+/* PDF preview, opened by "Télécharger le PDF" */
+.pdf { position: absolute; inset: 0; z-index: 5; display: none; place-items: center; background: rgba(18, 18, 47, .7); padding: 24px; }
+.pdf.on { display: grid; }
+.pdf .page { width: min(460px, 100%); max-height: 100%; overflow-y: auto; background: #fff; color: #111; padding: 30px 32px; font: 400 12px/1.45 Helvetica, Arial, sans-serif; box-shadow: 0 -4px 0 var(--accent-text), 0 4px 0 var(--accent-text), -4px 0 0 var(--accent-text), 4px 0 0 var(--accent-text); }
+.pdf .page img { width: 60px; }
+.pdf .page h4 { font-size: 16px; margin: 10px 0 16px; }
+.pdf .page b { display: block; margin-top: 10px; }
+.pdf .page .s { font-style: italic; font-size: 10px; color: #444; margin-top: 4px; }
+.pdf .close { margin-top: 14px; }
+
+/* ---------- under the hood: what the real backend would have done ---------- */
+.hood { margin-top: 36px; }
+.hood h2 { font: 700 26px/1.1 var(--display); text-transform: uppercase; text-shadow: 3px 3px 0 var(--accent-dark); }
+.hood > p { color: var(--ash); margin: 8px 0 22px; max-width: 70ch; }
+.steps { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 20px; }
+.step { position: relative; background: var(--deep); padding: 18px 16px 20px; box-shadow: 0 -4px 0 var(--line), 0 4px 0 var(--line), -4px 0 0 var(--line), 4px 0 0 var(--line); transition: background .25s; }
+.step:not(:last-child)::after { content: ""; position: absolute; right: -20px; top: 34px; width: 16px; height: 4px; background: var(--line); }
+.step.done { background: var(--raise); box-shadow: 0 -4px 0 var(--accent-text), 0 4px 0 var(--accent-text), -4px 0 0 var(--accent-text), 4px 0 0 var(--accent-text); }
+.step.stop { box-shadow: 0 -4px 0 #e0a35e, 0 4px 0 #e0a35e, -4px 0 0 #e0a35e, 4px 0 0 #e0a35e; }
+.step .n { font: 700 14px/1 var(--display); color: var(--accent-text); }
+.step h3 { font: 600 16px/1.2 var(--display); text-transform: uppercase; margin: 8px 0 8px; }
+.step p { font-size: 14px; line-height: 1.45; color: var(--ash); }
+.step code { font: 500 13px/1.4 var(--display); color: var(--ivory); }
+.chunks { display: grid; gap: 10px; margin-top: 20px; }
+.chunk { display: grid; grid-template-columns: 170px 1fr 90px; gap: 16px; align-items: start; padding: 12px 16px; background: var(--night); font-size: 14px; }
+.chunk .f { font: 500 13px/1.3 var(--display); color: var(--accent-text); overflow-wrap: anywhere; }
+.chunk .t { color: var(--ash); }
+.chunk .d { font: 600 14px/1 var(--display); text-align: right; }
+
+/* full screen: the demo alone, in front of everything */
+.window.max { position: fixed; inset: 0; z-index: 100; display: flex; flex-direction: column; box-shadow: none; }
+.window.max .st { flex: 1; height: auto; }
+body.locked { overflow: hidden; }
+
+/* ---------- phone: no demo code, an annotated gallery instead ---------- */
+.mobile-only { display: none; }
+.gallery { display: grid; gap: 22px; margin-top: 20px; }
+.shot { background: var(--deep); padding: 14px; box-shadow: 0 -4px 0 var(--line), 0 4px 0 var(--line), -4px 0 0 var(--line), 4px 0 0 var(--line); }
+.shot .screen { background: #fff; color: #31333f; font: 400 12px/1.45 "Source Sans 3", sans-serif; padding: 14px; }
+.shot .screen b { font-weight: 700; }
+.shot .screen .c { color: rgba(49,51,63,.6); font-size: 11px; }
+.shot figcaption { margin-top: 12px; font-size: 15px; color: var(--ash); }
+.shot figcaption strong { color: var(--ivory); font-weight: 500; }
+.desk-note { margin-top: 22px; padding: 18px; background: var(--raise); }
+.desk-note p { margin-bottom: 12px; }
+
+@media (max-width: 1023px) {
+  .desktop-only { display: none; }
+  .mobile-only { display: block; }
+}
+@media (max-width: 960px) {
+  .about { grid-template-columns: 1fr; }
+  .tabs .code { margin-left: 0; }
+}
+</style>
+</head>
+<body>
+<div class="city" aria-hidden="true"><img src="media/ville-nuit.jpg" alt=""><canvas></canvas></div>
+
+<header class="top" id="top">
+  <a class="wordmark" href="accueil.html">Zakaria <b>El Aoufir</b></a>
+  <nav aria-label="Navigation principale">
+    <a href="accueil.html">Accueil</a>
+    <a href="projets.html" aria-current="page">Projets</a>
+    <a href="certifications.html">Certifications</a>
+  </nav>
+  <a class="lang" href="#"><b>FR</b> / EN</a>
+  <a class="btn small" href="../public/cv/Zakaria_El_Aoufir_CV_FR.pdf"><svg class="i"><use href="icons.svg#download"/></svg>CV</a>
+  <button class="burger" aria-label="Ouvrir le menu" aria-expanded="false"><svg class="i" style="width:26px;height:26px"><use href="icons.svg#menu"/></svg></button>
+</header>
+
+<main>
+  <section class="block intro">
+    <div class="instant">
+      <p class="crumbs reveal"><a href="projets.html">Projets</a><span>/</span><span>AgriGPT</span></p>
+      <h1 class="big reveal" style="--d:100ms">AgriGPT</h1>
+      <div class="tags reveal" style="--d:180ms"><span class="type">Projet personnel</span><span class="date"><svg class="i"><use href="icons.svg#calendar"/></svg>2026</span></div>
+      <div class="tabs reveal" style="--d:240ms">
+        <a class="tab" href="projet-agrigpt.html" aria-current="page"><svg class="i"><use href="icons.svg#play"/></svg>Démo</a>
+        <a class="tab" href="projet-agrigpt-architecture.html"><svg class="i"><use href="icons.svg#layers"/></svg>Architecture</a>
+        <a class="btn small ghost code" href="https://github.com/ZakariaElAoufir/AgriGPT"><svg class="i"><use href="icons.svg#code"/></svg>Code</a>
+      </div>
+    </div>
+
+    <div class="about">
+      <article class="reveal">
+        <h2>Le problème</h2>
+        <p>Les fiches techniques agricoles (FAO, INRA, ONSSA) sont longues et dispersées : trouver la bonne dose d'irrigation ou le bon stade d'intervention demande de lire des dizaines de pages.</p>
+      </article>
+      <article class="reveal" style="--d:100ms">
+        <h2>Ce que fait l'application</h2>
+        <p>On pose une question agricole en français. AgriGPT cherche les passages pertinents dans les PDF, fait rédiger la réponse par un modèle <strong>local</strong> (Ollama), cite les documents utilisés et garde l'historique, exportable en PDF.</p>
+      </article>
+      <article class="reveal" style="--d:200ms">
+        <h2>Mon rôle</h2>
+        <p>Projet réalisé <strong>seul</strong> : ingestion des PDF, index FAISS, API FastAPI, filtre du domaine agricole, base SQLite et interface Streamlit.</p>
+      </article>
+    </div>
+
+    <!-- ===== desktop: the interactive demo ===== -->
+    <div class="desktop-only">
+      <p class="sim"><i></i><span><b>Simulation : données fictives.</b> Les réponses sont préenregistrées à partir des vrais documents du projet ; aucun modèle d'IA n'est appelé.</span></p>
+
+      <div class="demo-wide">
+      <div class="window" id="window">
+        <div class="chrome"><span class="dots"><i></i><i></i><i></i></span><span class="url">localhost:8501</span>
+          <button class="btn small ghost full-btn" id="full" aria-pressed="false"><svg class="i"><use href="icons.svg#layers"/></svg><span>Plein écran</span></button></div>
+        <div class="suggest">
+          <p>Questions préenregistrées</p>
+          <div class="list" id="suggest"></div>
+        </div>
+        <div class="st" id="app">
+          <aside class="st-side">
+            <img src="media/agrigpt-logo.png" alt="Logo AgriGPT">
+            <h3><svg class="i"><use href="icons.svg#layers"/></svg>Historique des conversations</h3>
+            <div class="conv" id="convs"></div>
+            <hr class="st-hr">
+            <button class="st-btn" id="new"><b>+</b> Nouvelle conversation</button>
+          </aside>
+          <section class="st-main" id="main">
+            <div class="st-top"><span class="run" id="run"><i></i>Running...</span></div>
+            <div class="st-head">
+              <div>
+                <h1><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 22V11"/><path d="M12 11c0-4 3-7 8-7 0 5-3 8-8 7z"/><path d="M12 14c0-3-2.5-5.5-7-5.5 0 4 2.5 6.5 7 5.5z"/></svg>AgriGPT – Assistant Agricole Intelligent</h1>
+                <p class="st-caption">Système de question-réponse basé sur des documents agricoles officiels</p>
+              </div>
+              <div class="st-pdf">
+                <button class="st-btn" id="export"><svg class="i"><use href="icons.svg#download"/></svg>Exporter en PDF</button>
+                <span id="pdf-slot"></span>
+              </div>
+            </div>
+            <div id="warn"></div>
+            <hr class="st-hr">
+            <div class="st-chat" id="chat"></div>
+            <div class="st-input">
+              <label for="q">Question agricole</label>
+              <input id="q" autocomplete="off" placeholder="Exemple : Comment gérer l’irrigation du blé en zone semi-aride ?">
+              <button class="st-btn" id="send">Envoyer</button>
+              <div id="notice"></div>
+            </div>
+          </section>
+          <div class="pdf" id="pdf">
+            <div>
+              <div class="page" id="pdf-page"></div>
+              <button class="btn small close" id="pdf-close">Fermer l'aperçu</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      </div>
+
+      <section class="hood">
+        <h2>Sous le capot</h2>
+        <p id="hood-lead">Envoyez une question : chaque étape que le vrai backend exécute s'affiche ici, avec les extraits retrouvés dans les PDF.</p>
+        <div class="steps" id="steps">
+          <div class="step" data-k="filter"><span class="n">1</span><h3>Filtre agricole</h3><p>Mots-clés du domaine dans la question ?</p></div>
+          <div class="step" data-k="embed"><span class="n">2</span><h3>Embedding</h3><p>La question devient un vecteur avec <code>mxbai-embed-large</code>.</p></div>
+          <div class="step" data-k="faiss"><span class="n">3</span><h3>Recherche FAISS</h3><p>Les 5 extraits les plus proches parmi 275 ; seuil de distance 190.</p></div>
+          <div class="step" data-k="llm"><span class="n">4</span><h3>Génération</h3><p><code>llama3.2:3b</code> répond à partir des seuls extraits.</p></div>
+          <div class="step" data-k="db"><span class="n">5</span><h3>SQLite</h3><p>Question, réponse et sources enregistrées.</p></div>
+        </div>
+        <div class="chunks" id="chunks"></div>
+      </section>
+    </div>
+
+    <!-- ===== phone: annotated gallery, the demo code is never loaded ===== -->
+    <div class="mobile-only">
+      <div class="gallery">
+        <figure class="shot">
+          <div class="screen"><b>AgriGPT – Assistant Agricole Intelligent</b><p class="c">Système de question-réponse basé sur des documents agricoles officiels</p><hr><p><b>Question</b><br>Quelles sont les périodes les plus sensibles au stress hydrique du blé ?</p><p><b>Réponse</b><br>Selon la fiche technique INRA, quatre périodes sont les plus sensibles au manque d'eau : la germination, le tallage, la montaison et l'épiaison-floraison…</p><p class="c">Sources : INRA_fiche_technique_ble.pdf</p></div>
+          <figcaption><strong>Réponse sourcée.</strong> Le modèle ne répond qu'à partir des extraits retrouvés, et l'interface affiche les PDF utilisés.</figcaption>
+        </figure>
+        <figure class="shot">
+          <div class="screen"><p><b>Question</b><br>Quelle est la capitale du Maroc ?</p><p><b>Réponse</b><br>Je ne peux répondre qu’aux questions agricoles basées sur les documents fournis. Votre question semble hors du domaine agricole.</p></div>
+          <figcaption><strong>Hors sujet filtré.</strong> Un filtre de mots-clés refuse les questions non agricoles avant tout appel au modèle.</figcaption>
+        </figure>
+        <figure class="shot">
+          <div class="screen"><b>AgriGPT – Historique de conversation</b><p><b>Question 1 :</b> À quel stade faut-il arrêter l’irrigation du blé ?</p><p><b>Réponse :</b> L'irrigation doit être arrêtée dès le stade grain pâteux…</p><p class="c"><i>Sources : INRA_fiche_technique_ble.pdf</i></p></div>
+          <figcaption><strong>Export PDF.</strong> L'historique de la conversation se télécharge en PDF, avec le logo et les sources.</figcaption>
+        </figure>
+      </div>
+      <div class="desk-note">
+        <p>La démo interactive est disponible sur ordinateur.</p>
+        <button class="btn small" id="copy"><svg class="i"><use href="icons.svg#check"/></svg>Copier le lien</button>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <span>Zakaria El Aoufir, 2026</span>
+  <nav><a href="mailto:zakaria.elaoufir@gmail.com">E-mail</a><a href="https://www.linkedin.com/in/zakaria-el-aoufir-329627282">LinkedIn</a><a href="https://github.com/ZakariaElAoufir">GitHub</a><a href="https://github.com/ZakariaElAoufir/ZakariaElAoufir.github.io">Code du site</a></nav>
+</footer>
+
+<script src="noir.js"></script>
+<script>
+// ---------- pre-recorded answers, written from the project's real PDF excerpts ----------
+const QA = [
+  { q: "Quelles sont les périodes les plus sensibles au stress hydrique du blé ?",
+    a: ["Selon la fiche technique INRA, quatre périodes sont les plus sensibles au manque d'eau : la germination (pour assurer une bonne levée), le tallage (pour augmenter le nombre de talles), la montaison (pour une biomasse élevée) et l'épiaison-floraison (pour augmenter le poids de mille grains).",
+        "Des apports de 60 à 120 mm d'eau pendant ces stades permettent d'augmenter significativement les rendements les années sèches."],
+    src: ["INRA_fiche_technique_ble.pdf"],
+    chunks: [["INRA_fiche_technique_ble.pdf", "GESTION DE L’IRRIGATION D’APPOINT - Quatre périodes sont les plus sensibles au manque d’eau : la germination…, le stade tallage…", 142.6],
+             ["INRA_fiche_technique_ble.pdf", "…la montaison (assurer un entre-nœud pour une biomasse élevée) et stades épiaison-floraison… Des apports de 60 à 120 mm d’eau…", 151.3],
+             ["INRA_fiche_technique_ble.pdf", "…une irrigation d’appoint est nécessaire lorsque le niveau d’épuisement du sol est supérieur à 70 %…", 168.9]] },
+  { q: "À quel stade faut-il arrêter l’irrigation du blé ?",
+    a: ["D'après la fiche INRA, l'irrigation doit être arrêtée absolument dès le stade grain pâteux.",
+        "Le document précise aussi que la réserve en eau du sol a plus d'incidence sur le rendement que l'irrigation saisonnière, et qu'une irrigation d'appoint devient nécessaire lorsque l'épuisement du sol dépasse 70 %."],
+    src: ["INRA_fiche_technique_ble.pdf"],
+    chunks: [["INRA_fiche_technique_ble.pdf", "…L’irrigation doit être arrêtée absolument dès le stade grain pâteux. Indépendamment du stade de culture, la réserve en eau du sol…", 128.4],
+             ["INRA_fiche_technique_ble.pdf", "…une irrigation d’appoint est nécessaire lorsque le niveau d’épuisement du sol est supérieur à 70 %…", 157.0],
+             ["FAO_bonnes_pratiques_agricoles.pdf", "…les pratiques agronomiques les plus adéquates en matière de gestion des sols, des cultures, des ravageurs, des nutriments et de l’eau…", 183.7]] },
+  { q: "Qu’est-ce que les bonnes pratiques agricoles selon la FAO ?",
+    a: ["Pour la FAO, les bonnes pratiques agricoles (BPA) définissent les pratiques agronomiques les plus adéquates pour la gestion des sols, des cultures, des ravageurs, des nutriments et de l'eau, les coûts de production associés, et la façon dont les services fournis par les écosystèmes sont protégés.",
+        "Appliquées à la ferme, elles augmentent la productivité et la compétitivité tout en conservant, voire en améliorant, les ressources naturelles."],
+    src: ["FAO_bonnes_pratiques_agricoles.pdf"],
+    chunks: [["FAO_bonnes_pratiques_agricoles.pdf", "…bonnes pratiques agricoles (BPA)… elles définissent : (a) les pratiques agronomiques les plus adéquates en matière de gestion des sols, des cultures…", 131.8],
+             ["FAO_bonnes_pratiques_agricoles.pdf", "…(b) les coûts de production… (c) dans quelle mesure les services fournis par les écosystèmes sont protégés et améliorés…", 139.2],
+             ["FAO_bonnes_pratiques_agricoles.pdf", "Bonnes pratiques agricoles : Opportunités pour les pays d’Afrique australe… Division de production et protection végétale…", 176.5]] },
+  { q: "Qu’est-ce que le catalogue des usages agricoles au Maroc ?",
+    a: ["Le référentiel de l'ONSSA est la liste des organismes nuisibles agricoles présents au Maroc ; il constitue le catalogue des usages agricoles du pays.",
+        "Il est réparti en huit chapitres par groupes de cultures, fixe une nomenclature harmonisée pour chaque usage, et reste évolutif : il est mis à jour à l'apparition de nouveaux organismes nuisibles ou de nouvelles cultures."],
+    src: ["ONSSA_catalogue_usages_agricoles.pdf"],
+    chunks: [["ONSSA_catalogue_usages_agricoles.pdf", "I- INTRODUCTION : Le présent référentiel est une liste des organismes nuisibles agricoles existants au Maroc et constitue le catalogue des usages agricoles…", 119.5],
+             ["ONSSA_catalogue_usages_agricoles.pdf", "II- OBJECTIF DU REFERENTIEL : Le présent référentiel dresse la liste des cultures et des organismes nuisibles… nomenclature harmonisée…", 134.1],
+             ["ONSSA_catalogue_usages_agricoles.pdf", "Sommaire : I- Introduction… IV- Catalogue des usages agricoles… Cultures fruitières, Agrumes…", 171.8]] },
+  { q: "Quelle est la capitale du Maroc ?", offTopic: true }
+];
+
+// the real filter from backend/rag.py, unchanged
+const KEYWORDS = ["agriculture","agricole","blé","orge","maïs","culture","cultures","irrigation","eau","sol","fertilisation","engrais","semis","récolte","rendement","maladie","ravageur","pesticide","herbicide","désherbage","phytosanitaire","rotation","semence","variété","élevage","bétail","fourrage","serre"];
+const OFF_TOPIC = "Je ne peux répondre qu’aux questions agricoles basées sur les documents fournis. Votre question semble hors du domaine agricole.";
+
+const $ = id => document.getElementById(id);
+const norm = s => s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[’']/g, ' ').replace(/[^a-z0-9 ]/g, ' ').replace(/\s+/g, ' ').trim();
+const esc = s => s.replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const icon = name => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${name === 'user'
+  ? '<circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/>'
+  : '<rect x="4" y="8" width="16" height="12" rx="2"/><path d="M12 4v4M9 13h.01M15 13h.01"/>'}</svg>`;
+
+// conversations: two already in the database, like the real sidebar
+let convs = [
+  { id: 'c2', messages: [QA[3]] },
+  { id: 'c1', messages: [QA[0], QA[1]] }
+];
+let current = null;          // null = "Nouvelle conversation"
+let busy = false;
+
+const label = c => { const q = c.messages[0]?.q ?? 'Conversation vide'; return q.length > 35 ? q.slice(0, 35) + '...' : q; };
+
+function renderSidebar() {
+  $('convs').innerHTML = convs.map(c => `<button class="st-btn ${c.id === current ? 'on' : ''}" data-id="${c.id}">${esc(label(c))}</button>`).join('');
+}
+function renderChat() {
+  const conv = convs.find(c => c.id === current);
+  const msgs = conv ? conv.messages : [];
+  $('chat').innerHTML = msgs.length ? msgs.map(m => `
+    <div class="msg user"><span class="av">${icon('user')}</span><div><p class="lab">Question</p><p>${esc(m.q)}</p></div></div>
+    <div class="msg bot"><span class="av">${icon('bot')}</span><div><p class="lab">Réponse</p>${(m.offTopic ? [OFF_TOPIC] : m.a).map(p => `<p>${esc(p)}</p>`).join('')}
+      ${m.src && m.src.length ? `<p class="src">Sources : ${m.src.join(', ')}</p>` : ''}</div></div>
+    <hr class="st-hr">`).join('') : '';
+  $('warn').innerHTML = ''; $('pdf-slot').innerHTML = '';
+  renderSidebar();
+}
+function renderSuggest() {
+  $('suggest').innerHTML = QA.map((m, i) => `<button data-i="${i}" class="${m.offTopic ? 'off' : ''}">${esc(m.q)}</button>`).join('');
+}
+
+function showHood(m, keyword) {
+  const steps = [...document.querySelectorAll('.step')];
+  steps.forEach(s => s.classList.remove('done', 'stop'));
+  const set = (k, html, cls = 'done') => { const s = steps.find(x => x.dataset.k === k); s.classList.add(cls); s.querySelector('p').innerHTML = html; };
+  if (m.offTopic) {
+    set('filter', 'Aucun mot-clé agricole : la question est refusée, <b>sans appel au modèle</b>.', 'stop');
+    ['embed', 'faiss', 'llm'].forEach(k => steps.find(x => x.dataset.k === k).querySelector('p').textContent = 'Étape sautée.');
+    set('db', 'Question et refus enregistrés, sans source.');
+    $('chunks').innerHTML = '';
+    $('hood-lead').textContent = 'Question hors domaine : le filtre du backend répond seul.';
+    return;
+  }
+  set('filter', `Mot-clé trouvé : <code>${keyword}</code>.`);
+  set('embed', 'Question vectorisée par <code>mxbai-embed-large</code> (Ollama).');
+  set('faiss', `Meilleure distance <code>${m.chunks[0][2]}</code>, sous le seuil 190 : on continue.`);
+  set('llm', `Prompt : « Réponds uniquement à partir des informations ci-dessous » + ${m.chunks.length} extraits.`);
+  set('db', `Sources retenues : <code>${m.src.join(', ')}</code>.`);
+  $('hood-lead').textContent = 'Extraits retrouvés par FAISS pour cette question (distance L2, plus petit = plus proche) :';
+  $('chunks').innerHTML = m.chunks.map(([f, t, d]) => `<div class="chunk"><span class="f">${f}</span><span class="t">${esc(t)}</span><span class="d">${d}</span></div>`).join('');
+}
+
+function ask(text) {
+  if (busy || !text.trim()) return;
+  $('notice').innerHTML = '';
+  const n = norm(text);
+  const match = QA.find(m => norm(m.q) === n) || QA.find(m => {
+    const words = norm(m.q).split(' ').filter(w => w.length > 3);
+    return words.filter(w => n.includes(w)).length / words.length >= .6;
+  });
+  const keyword = KEYWORDS.find(k => text.toLowerCase().includes(k));
+  let m = match;
+  if (!keyword) m = { q: text, offTopic: true };            // same rule as the backend
+  else if (!match || match.offTopic) {
+    $('notice').innerHTML = '<p class="notice">Démo statique : cette question passe bien le filtre agricole, mais seules les questions préenregistrées ont une réponse. Choisissez-en une au-dessus de la fenêtre.</p>';
+    return;
+  }
+  busy = true; $('run').classList.add('on'); $('send').disabled = true;
+  setTimeout(() => {
+    if (!current) { current = 'c' + Date.now(); convs.unshift({ id: current, messages: [] }); }
+    convs.find(c => c.id === current).messages.push({ ...m, q: text });
+    $('q').value = ''; busy = false; $('run').classList.remove('on'); $('send').disabled = false;
+    renderChat(); showHood(m, keyword);
+    $('main').scrollTop = $('main').scrollHeight;
+  }, 1300);
+}
+
+function pdfPreview() {
+  const conv = convs.find(c => c.id === current);
+  $('pdf-page').innerHTML = `<img src="media/agrigpt-logo.png" alt=""><h4>AgriGPT – Historique de conversation</h4>` +
+    conv.messages.map((m, i) => `<b>Question ${i + 1} :</b><p>${esc(m.q)}</p><b>Réponse :</b><p>${esc((m.offTopic ? [OFF_TOPIC] : m.a).join(' '))}</p>${m.src?.length ? `<p class="s">Sources : ${m.src.join(', ')}</p>` : ''}`).join('');
+  $('pdf').classList.add('on');
+}
+
+$('suggest').addEventListener('click', e => { const b = e.target.closest('button'); if (b) { $('q').value = QA[b.dataset.i].q; $('q').focus(); } });
+$('send').addEventListener('click', () => ask($('q').value));
+$('q').addEventListener('keydown', e => { if (e.key === 'Enter') ask($('q').value); });
+$('convs').addEventListener('click', e => { const b = e.target.closest('button'); if (b) { current = b.dataset.id; renderChat(); } });
+$('new').addEventListener('click', () => { current = null; renderChat(); });
+$('export').addEventListener('click', () => {
+  const conv = convs.find(c => c.id === current);
+  if (!conv || !conv.messages.length) { $('warn').innerHTML = '<p class="st-warn">Aucune conversation à exporter.</p>'; return; }
+  $('warn').innerHTML = '';
+  $('pdf-slot').innerHTML = '<button class="st-btn" id="dl"><svg class="i"><use href="icons.svg#download"/></svg>Télécharger le PDF</button>';
+  $('dl').addEventListener('click', pdfPreview);
+});
+$('pdf-close').addEventListener('click', () => $('pdf').classList.remove('on'));
+$('copy')?.addEventListener('click', e => { navigator.clipboard?.writeText(location.href); e.currentTarget.lastChild.textContent = 'Lien copié'; });
+
+// full screen: the demo comes to the front, Esc or the same button brings it back
+const win = $('window'), fullBtn = $('full');
+const setFull = on => {
+  win.classList.toggle('max', on); document.body.classList.toggle('locked', on);
+  fullBtn.setAttribute('aria-pressed', on); fullBtn.querySelector('span').textContent = on ? 'Quitter le plein écran' : 'Plein écran';
+};
+fullBtn.addEventListener('click', () => setFull(!win.classList.contains('max')));
+addEventListener('keydown', e => { if (e.key === 'Escape' && win.classList.contains('max') && !$('pdf').classList.contains('on')) setFull(false); });
+
+renderSuggest(); renderChat();
+</script>
+</body>
+</html>

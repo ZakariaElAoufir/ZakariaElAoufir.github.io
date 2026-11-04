@@ -1,5 +1,6 @@
 ---
 import { render } from 'astro:content';
+import { Image } from 'astro:assets';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Icon from '../../components/Icon.astro';
 import { projectText, publishedProjects } from '../../lib/projects';
@@ -36,7 +37,7 @@ const rows = await Promise.all((await publishedProjects()).map(async project => 
         return (
           <article class="row px-frame" id={id}>
             <Shot class="shot reveal from-left" href={demo ?? undefined} aria-label={demo ? `${t('projects.seeDemo')} : ${pick(data.title, lang)}` : undefined}>
-              <span class="art"></span>
+              {data.thumbnail ? <Image class="pic" src={data.thumbnail} alt="" widths={[560, 1120]} sizes="(max-width: 960px) 92vw, 40vw" /> : <span class="art"></span>}
               <strong>{pick(data.shortTitle, lang)}</strong>
               {demo && <span class="cue"><Icon name="play" />{t('projects.seeDemo')}</span>}
             </Shot>
@@ -82,7 +83,10 @@ const rows = await Promise.all((await publishedProjects()).map(async project => 
       linear-gradient(90deg, transparent 0 47%, var(--deep) 47% 53%, transparent 53%),
       repeating-linear-gradient(90deg, rgba(80, 80, 220, .16) 0 8%, transparent 8% 12%),
       repeating-linear-gradient(0deg, var(--night) 0 5%, transparent 5% 12%); }
-  .shot strong { position: absolute; left: 28px; right: 28px; bottom: 26px; font: 700 clamp(26px, 2.6vw, 38px)/1 var(--display); text-transform: uppercase; transition: transform .6s var(--ease); }
+  .pic { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: left top; transition: transform 1.1s var(--ease), filter .6s; }
+  .shot:has(.pic)::after { content: ""; position: absolute; inset: 0; background: linear-gradient(transparent 45%, rgba(18, 18, 47, .9)); }
+  .row:hover .pic { transform: scale(1.06); filter: brightness(.6); }
+  .shot strong { z-index: 1; position: absolute; left: 28px; right: 28px; bottom: 26px; font: 700 clamp(26px, 2.6vw, 38px)/1 var(--display); text-transform: uppercase; transition: transform .6s var(--ease); }
   .shot::before { content: ""; position: absolute; inset: 0; z-index: 1; background: linear-gradient(105deg, transparent 35%, rgba(232, 232, 250, .16) 50%, transparent 65%); transform: translateX(-110%); transition: transform 1s var(--ease); }
   .cue { position: absolute; z-index: 2; top: 50%; left: 50%; display: inline-flex; align-items: center; gap: 10px; padding: 12px 18px; background: var(--accent); clip-path: var(--pix); font: 700 16px/1 var(--display); letter-spacing: .04em; text-transform: uppercase; opacity: 0; transform: translate(-50%, -30%); transition: opacity .4s, transform .5s var(--ease); }
   .row:hover .art { transform: scale(1.08); filter: brightness(.6); }

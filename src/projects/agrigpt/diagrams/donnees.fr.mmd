@@ -1,0 +1,15 @@
+erDiagram
+  CONVERSATIONS ||--o{ MESSAGES : contient
+  CONVERSATIONS {
+    int id PK
+    text conversation_id UK
+    datetime created_at
+  }
+  MESSAGES {
+    int id PK
+    text conversation_id FK
+    text question
+    text answer
+    text sources "JSON"
+    datetime created_at
+  }

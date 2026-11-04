@@ -1,0 +1,7 @@
+flowchart TB
+  P[3 PDFs<br/>FAO, INRA, ONSSA] --> T[pypdf<br/>raw text]
+  T --> C[Split into<br/>500 characters]
+  C --> V[Embeddings<br/>mxbai-embed-large]
+  V --> I[(IndexFlatL2)]
+  I --> S1[(rag_index.faiss)]
+  C --> S2[(rag_chunks.json)]

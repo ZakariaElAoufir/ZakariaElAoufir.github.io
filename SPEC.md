@@ -112,7 +112,7 @@ Toutes les données sont validées par schéma : un champ manquant ou une traduc
 
 ## Tech Stack (validé)
 
-Astro 5, React 19 (îlots de démo), TypeScript strict, Tailwind CSS v4, Mermaid → SVG au build,
+Astro 5, React 19 (îlots de démo, `@astrojs/react` 4), TypeScript strict, Tailwind CSS v4, Mermaid → SVG (pré-rendu depuis les `.mmd` par `scripts/render-diagrams.mjs`, SVG commités et insérés dans la page au build, aucun JS Mermaid côté visiteur),
 routage i18n natif d'Astro (FR par défaut à la racine, EN sous `/en/`), GitHub Pages via GitHub Actions
 (dépôt `ZakariaElAoufir.github.io`, servi à la racine).
 
@@ -227,13 +227,18 @@ Aperçu : `python -m http.server 4400` à la racine du dépôt (config « maquet
 - Images optimisées au build (`src/assets/profile.png`, `src/assets/ville-nuit.jpg` → WebP). Polices auto-hébergées via `@fontsource`. Logos dans `public/logos/`, sprite d'icônes `public/icons.svg`, CV dans `public/cv/`.
 - Boutons **Démo** et **Architecture** masqués tant que `hasDemo` vaut `false` (tous les projets pour l'instant) ; l'image d'un projet sans démo n'est pas un lien.
 - Tests Vitest (parité des clés FR/EN, sélecteur de langue), `astro check` sans erreur, build OK (7 pages). Workflow `.github/workflows/deploy.yml` prêt : déploie sur Pages à chaque push sur `main` (activer « GitHub Actions » comme source dans Settings → Pages).
-- Dépendances : astro 5, @astrojs/check, typescript, tailwindcss 4 + @tailwindcss/vite, @fontsource/pixelify-sans, @fontsource/archivo ; vitest en dev. `overrides.vite` fixé en 6.x pour n'avoir qu'une version de Vite (sinon `astro check` échoue). **React et Mermaid pas encore installés** : ils arrivent avec la première démo.
+- Dépendances : astro 5, @astrojs/check, typescript, tailwindcss 4 + @tailwindcss/vite, @fontsource/pixelify-sans, @fontsource/archivo ; vitest en dev. `overrides.vite` fixé en 6.x pour n'avoir qu'une version de Vite (sinon `astro check` échoue). React installé avec la démo AgriGPT ; police `@fontsource/source-sans-3` pour reproduire Streamlit. Mermaid n'est pas une dépendance (rendu hors build).
 - Aperçu : config « site » de `.claude/launch.json` (`npm run dev`, port 4321).
 
+- **Démo n° 1 : AgriGPT** (2026-11-04), voir `SPEC-project-agrigpt.md` : pages `/projets/agrigpt/` (démo React manipulable, plein écran, « sous le capot ») et `/projets/agrigpt/architecture/` (menu latéral, grand diagramme avec logos et flèches nommées, diagrammes Mermaid, stack, choix, limites), en FR et EN. Vignette (capture de la démo) sur la carte de l'accueil et la ligne de `/projets/` ; boutons Démo et Architecture actifs.
+- Pages génériques pour tout projet avec démo : `src/pages/[...lang]/projets/[slug]/index.astro` et `architecture.astro`, composants `src/components/project/` (ProjectHeader, ArchOverview). Un projet active sa démo avec `hasDemo: true` + `detail` dans `project.json`, un `architecture.json`, `demo/Demo.astro`, `diagrams/*.{fr,en}.svg`.
+
+**Déroulé par projet** (validé par Zakaria) : lire le dépôt (frontend puis architecture) → maquette HTML de la démo et de l'architecture dans `maquettes/` → Zakaria confirme → implémentation dans Astro → projet suivant. Jamais deux projets à la fois.
+
 **Étapes suivantes** (dans l'ordre)
-1. Zakaria relit le site (FR et EN, PC et mobile) ; corriger les écarts avec les maquettes.
-2. Supprimer `maquettes/` une fois le site validé.
-3. Démos, **projet par projet**, chacun validé avant le suivant : `SPEC-project-<slug>.md`, installation de React (îlots `client:media`) et Mermaid au premier projet, pages `/projets/<slug>/` (démo) et `/projets/<slug>/architecture/`, puis `hasDemo: true`.
+1. Zakaria relit la démo AgriGPT sur le site (type confirmé : académique, PFA, réalisé seul).
+2. Projet suivant, selon le déroulé ci-dessus.
+3. Supprimer `maquettes/` quand toutes les démos sont faites.
 4. Fusion dans `main` (= mise en ligne) quand Zakaria le décide.
 
 **Outils** : les skills `frontend-design` et `taste-skill` sont installés au niveau utilisateur (`~/.claude/skills/`), **pas dans ce dépôt**. Le dossier `.taste-skill/` (ignoré par Git) ne contient que des fichiers de travail du skill.

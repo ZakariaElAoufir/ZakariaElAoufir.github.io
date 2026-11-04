@@ -2,7 +2,7 @@
   "order": 4,
   "published": true,
   "featured": true,
-  "type": "personnel",
+  "type": "academique",
   "period": {
     "fr": "2026",
     "en": "2026"
@@ -40,5 +40,55 @@
     "SQLite",
     "Streamlit"
   ],
-  "hasDemo": false
+  "hasDemo": true,
+  "thumbnail": "./media/thumbnail.png",
+  "detail": {
+    "problem": {
+      "fr": "Les fiches techniques agricoles (FAO, INRA, ONSSA) sont longues et dispersées : trouver la bonne dose d'irrigation ou le bon stade d'intervention demande de lire des dizaines de pages.",
+      "en": "Farming technical sheets (FAO, INRA, ONSSA) are long and scattered: finding the right irrigation amount or the right growth stage to act means reading dozens of pages."
+    },
+    "does": {
+      "fr": "On pose une question agricole en français. AgriGPT cherche les passages pertinents dans les PDF, fait rédiger la réponse par un modèle local (Ollama), cite les documents utilisés et garde l'historique, exportable en PDF.",
+      "en": "You ask a farming question in French. AgriGPT finds the relevant passages in the PDFs, has a local model (Ollama) write the answer, cites the documents it used and keeps the history, exportable to PDF."
+    },
+    "role": {
+      "fr": "Projet de fin d'année (PFA) réalisé seul : ingestion des PDF, index FAISS, API FastAPI, filtre du domaine agricole, base SQLite et interface Streamlit.",
+      "en": "End-of-year project (PFA), built on my own: PDF ingestion, FAISS index, FastAPI API, farming domain filter, SQLite database and Streamlit interface."
+    },
+    "gallery": [
+      {
+        "image": "./media/shot-answer.png",
+        "title": {
+          "fr": "Réponse sourcée.",
+          "en": "Answer with its sources."
+        },
+        "text": {
+          "fr": "Le modèle ne répond qu'à partir des extraits retrouvés, et l'interface affiche les PDF utilisés.",
+          "en": "The model answers only from the excerpts it found, and the interface shows the PDFs it used."
+        }
+      },
+      {
+        "image": "./media/shot-refusal.png",
+        "title": {
+          "fr": "Hors sujet filtré.",
+          "en": "Off-topic filtered out."
+        },
+        "text": {
+          "fr": "Un filtre de mots-clés refuse les questions non agricoles avant tout appel au modèle.",
+          "en": "A keyword filter refuses non-farming questions before any model call."
+        }
+      },
+      {
+        "image": "./media/shot-pdf.png",
+        "title": {
+          "fr": "Export PDF.",
+          "en": "PDF export."
+        },
+        "text": {
+          "fr": "L'historique de la conversation se télécharge en PDF, avec le logo et les sources.",
+          "en": "The conversation history downloads as a PDF, with the logo and the sources."
+        }
+      }
+    ]
+  }
 }

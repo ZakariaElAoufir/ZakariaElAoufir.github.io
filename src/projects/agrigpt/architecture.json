@@ -1,0 +1,599 @@
+{
+  "overview": {
+    "width": 1390,
+    "height": 620,
+    "nodes": [
+      {
+        "id": "user",
+        "x": 20,
+        "y": 40,
+        "logo": "user",
+        "title": {
+          "fr": "Utilisateur",
+          "en": "User"
+        },
+        "subtitle": {
+          "fr": "navigateur",
+          "en": "browser"
+        }
+      },
+      {
+        "id": "st",
+        "x": 20,
+        "y": 270,
+        "logo": "streamlit",
+        "title": {
+          "fr": "Streamlit",
+          "en": "Streamlit"
+        },
+        "subtitle": {
+          "fr": "frontend/app.py",
+          "en": "frontend/app.py"
+        }
+      },
+      {
+        "id": "rl",
+        "x": 20,
+        "y": 500,
+        "logo": "document",
+        "title": {
+          "fr": "ReportLab",
+          "en": "ReportLab"
+        },
+        "subtitle": {
+          "fr": "export PDF",
+          "en": "PDF export"
+        }
+      },
+      {
+        "id": "api",
+        "x": 360,
+        "y": 270,
+        "logo": "fastapi",
+        "title": {
+          "fr": "FastAPI",
+          "en": "FastAPI"
+        },
+        "subtitle": {
+          "fr": "Pydantic, Uvicorn",
+          "en": "Pydantic, Uvicorn"
+        }
+      },
+      {
+        "id": "db",
+        "x": 360,
+        "y": 500,
+        "logo": "sqlite",
+        "title": {
+          "fr": "SQLite",
+          "en": "SQLite"
+        },
+        "subtitle": {
+          "fr": "agriGPT.db",
+          "en": "agriGPT.db"
+        }
+      },
+      {
+        "id": "emb",
+        "x": 700,
+        "y": 40,
+        "logo": "ollama",
+        "title": {
+          "fr": "Ollama",
+          "en": "Ollama"
+        },
+        "subtitle": {
+          "fr": "mxbai-embed-large",
+          "en": "mxbai-embed-large"
+        }
+      },
+      {
+        "id": "rag",
+        "x": 700,
+        "y": 270,
+        "logo": "python",
+        "title": {
+          "fr": "rag.py",
+          "en": "rag.py"
+        },
+        "subtitle": {
+          "fr": "filtre 28 mots-clés",
+          "en": "28-keyword filter"
+        }
+      },
+      {
+        "id": "pdf",
+        "x": 700,
+        "y": 500,
+        "logo": "document",
+        "title": {
+          "fr": "3 PDF",
+          "en": "3 PDF"
+        },
+        "subtitle": {
+          "fr": "FAO, INRA, ONSSA",
+          "en": "FAO, INRA, ONSSA"
+        }
+      },
+      {
+        "id": "faiss",
+        "x": 1040,
+        "y": 40,
+        "logo": "vectors",
+        "title": {
+          "fr": "FAISS",
+          "en": "FAISS"
+        },
+        "subtitle": {
+          "fr": "IndexFlatL2, 275",
+          "en": "IndexFlatL2, 275"
+        }
+      },
+      {
+        "id": "llm",
+        "x": 1040,
+        "y": 270,
+        "logo": "ollama",
+        "title": {
+          "fr": "Ollama",
+          "en": "Ollama"
+        },
+        "subtitle": {
+          "fr": "llama3.2:3b",
+          "en": "llama3.2:3b"
+        }
+      },
+      {
+        "id": "pypdf",
+        "x": 1040,
+        "y": 500,
+        "logo": "rag",
+        "title": {
+          "fr": "pypdf",
+          "en": "pypdf"
+        },
+        "subtitle": {
+          "fr": "morceaux de 500 car.",
+          "en": "500-character chunks"
+        }
+      }
+    ],
+    "wires": [
+      {
+        "from": "user",
+        "to": "st",
+        "path": "M120.0 140V270",
+        "label": {
+          "fr": "pose une question",
+          "en": "asks a question"
+        },
+        "labelX": 120.0,
+        "labelY": 205.0,
+        "once": false
+      },
+      {
+        "from": "st",
+        "to": "api",
+        "path": "M220 302.0H360",
+        "label": {
+          "fr": "POST /ask",
+          "en": "POST /ask"
+        },
+        "labelX": 290.0,
+        "labelY": 282.0,
+        "once": false
+      },
+      {
+        "from": "api",
+        "to": "st",
+        "path": "M360 338.0H220",
+        "label": {
+          "fr": "réponse +\nsources",
+          "en": "answer +\nsources"
+        },
+        "labelX": 290.0,
+        "labelY": 366.0,
+        "once": false
+      },
+      {
+        "from": "st",
+        "to": "api",
+        "path": "M180 270V224H460.0V270",
+        "label": {
+          "fr": "GET /conversations",
+          "en": "GET /conversations"
+        },
+        "labelX": 350.0,
+        "labelY": 224,
+        "once": false
+      },
+      {
+        "from": "st",
+        "to": "rl",
+        "path": "M120.0 370V500",
+        "label": {
+          "fr": "exporte l'historique",
+          "en": "exports the history"
+        },
+        "labelX": 120.0,
+        "labelY": 435.0,
+        "once": false
+      },
+      {
+        "from": "api",
+        "to": "db",
+        "path": "M460.0 370V500",
+        "label": {
+          "fr": "enregistre Q, R, sources",
+          "en": "saves Q, A, sources"
+        },
+        "labelX": 460.0,
+        "labelY": 435.0,
+        "once": false
+      },
+      {
+        "from": "api",
+        "to": "rag",
+        "path": "M560 302.0H700",
+        "label": {
+          "fr": "ask_question()",
+          "en": "ask_question()"
+        },
+        "labelX": 630.0,
+        "labelY": 282.0,
+        "once": false
+      },
+      {
+        "from": "rag",
+        "to": "api",
+        "path": "M700 338.0H560",
+        "label": {
+          "fr": "réponse +\nsources",
+          "en": "answer +\nsources"
+        },
+        "labelX": 630.0,
+        "labelY": 366.0,
+        "once": false
+      },
+      {
+        "from": "rag",
+        "to": "emb",
+        "path": "M800.0 270V140",
+        "label": {
+          "fr": "vectorise la question",
+          "en": "embeds the question"
+        },
+        "labelX": 800.0,
+        "labelY": 205.0,
+        "once": false
+      },
+      {
+        "from": "emb",
+        "to": "faiss",
+        "path": "M900 90.0H1040",
+        "label": {
+          "fr": "5 plus\nproches",
+          "en": "5 closest"
+        },
+        "labelX": 970.0,
+        "labelY": 60.0,
+        "once": false
+      },
+      {
+        "from": "faiss",
+        "to": "llm",
+        "path": "M1140.0 140V270",
+        "label": {
+          "fr": "extraits si distance < 190",
+          "en": "excerpts if distance < 190"
+        },
+        "labelX": 1140.0,
+        "labelY": 205.0,
+        "once": false
+      },
+      {
+        "from": "llm",
+        "to": "rag",
+        "path": "M1040 320.0H900",
+        "label": {
+          "fr": "réponse\nrédigée",
+          "en": "written\nanswer"
+        },
+        "labelX": 970.0,
+        "labelY": 290.0,
+        "once": false
+      },
+      {
+        "from": "pdf",
+        "to": "pypdf",
+        "path": "M900 550.0H1040",
+        "label": {
+          "fr": "texte\nextrait",
+          "en": "extracted\ntext"
+        },
+        "labelX": 970.0,
+        "labelY": 520.0,
+        "once": true
+      },
+      {
+        "from": "pypdf",
+        "to": "faiss",
+        "path": "M1240 550.0H1290V90.0H1240",
+        "label": {
+          "fr": "indexés\nune fois",
+          "en": "indexed\nonce"
+        },
+        "labelX": 1290,
+        "labelY": 435.0,
+        "once": true
+      }
+    ]
+  },
+  "stack": [
+    {
+      "name": {
+        "fr": "Interface",
+        "en": "Interface"
+      },
+      "items": [
+        {
+          "name": "Streamlit",
+          "logo": "streamlit",
+          "note": {
+            "fr": "chat, historique",
+            "en": "chat, history"
+          }
+        },
+        {
+          "name": "ReportLab",
+          "logo": "document",
+          "note": {
+            "fr": "export PDF",
+            "en": "PDF export"
+          }
+        }
+      ]
+    },
+    {
+      "name": {
+        "fr": "API",
+        "en": "API"
+      },
+      "items": [
+        {
+          "name": "FastAPI",
+          "logo": "fastapi",
+          "note": {
+            "fr": "/ask, /conversations",
+            "en": "/ask, /conversations"
+          }
+        },
+        {
+          "name": "Pydantic",
+          "logo": "pydantic",
+          "note": {
+            "fr": "validation des requêtes",
+            "en": "request validation"
+          }
+        },
+        {
+          "name": "Uvicorn",
+          "logo": "python",
+          "note": {
+            "fr": "serveur ASGI",
+            "en": "ASGI server"
+          }
+        }
+      ]
+    },
+    {
+      "name": {
+        "fr": "IA et recherche",
+        "en": "AI and search"
+      },
+      "items": [
+        {
+          "name": "Ollama",
+          "logo": "ollama",
+          "note": {
+            "fr": "llama3.2:3b",
+            "en": "llama3.2:3b"
+          }
+        },
+        {
+          "name": "mxbai-embed-large",
+          "logo": "ollama",
+          "note": {
+            "fr": "embeddings",
+            "en": "embeddings"
+          }
+        },
+        {
+          "name": "FAISS",
+          "logo": "vectors",
+          "note": {
+            "fr": "IndexFlatL2",
+            "en": "IndexFlatL2"
+          }
+        },
+        {
+          "name": "pypdf",
+          "logo": "rag",
+          "note": {
+            "fr": "lecture des PDF",
+            "en": "PDF reading"
+          }
+        }
+      ]
+    },
+    {
+      "name": {
+        "fr": "Données",
+        "en": "Data"
+      },
+      "items": [
+        {
+          "name": "SQLite",
+          "logo": "sqlite",
+          "note": {
+            "fr": "conversations",
+            "en": "conversations"
+          }
+        },
+        {
+          "name": "rag_index.faiss",
+          "logo": "database",
+          "note": {
+            "fr": "vecteurs",
+            "en": "vectors"
+          }
+        },
+        {
+          "name": "rag_chunks.json",
+          "logo": "database",
+          "note": {
+            "fr": "275 extraits",
+            "en": "275 excerpts"
+          }
+        }
+      ]
+    }
+  ],
+  "diagrams": [
+    {
+      "id": "parcours",
+      "title": {
+        "fr": "Parcours d'une question",
+        "en": "Journey of a question"
+      },
+      "caption": {
+        "fr": "Deux garde-fous évitent les réponses inventées : le filtre de mots-clés refuse les questions hors agriculture avant tout appel au modèle, et le seuil de distance FAISS refuse de répondre quand aucun extrait n'est assez proche.",
+        "en": "Two safeguards prevent made-up answers: the keyword filter refuses non-farming questions before any model call, and the FAISS distance threshold refuses to answer when no excerpt is close enough."
+      }
+    },
+    {
+      "id": "indexation",
+      "title": {
+        "fr": "Indexation des PDF",
+        "en": "PDF indexing"
+      },
+      "caption": {
+        "fr": "Faite une seule fois : au démarrage suivant, l'index et les extraits sont rechargés depuis le disque.",
+        "en": "Done only once: on the next start, the index and the excerpts are loaded back from disk."
+      }
+    },
+    {
+      "id": "donnees",
+      "title": {
+        "fr": "Modèle de données",
+        "en": "Data model"
+      },
+      "caption": {
+        "fr": "Une conversation regroupe ses messages ; la barre latérale affiche chaque conversation par sa première question.",
+        "en": "A conversation groups its messages; the sidebar shows each conversation by its first question."
+      }
+    }
+  ],
+  "choices": [
+    {
+      "title": {
+        "fr": "Ollama, en local",
+        "en": "Ollama, running locally"
+      },
+      "why": {
+        "fr": "Aucune donnée ne sort de la machine, aucun coût par requête, et le modèle se change d'une ligne.",
+        "en": "No data leaves the machine, no cost per request, and the model changes in one line."
+      },
+      "alternative": {
+        "fr": "Une API hébergée (OpenAI, Mistral) : réponses meilleures, mais payantes et dépendantes du réseau.",
+        "en": "A hosted API (OpenAI, Mistral): better answers, but paid and network-dependent."
+      },
+      "tradeoff": {
+        "fr": "llama3.2:3b est léger : réponses plus courtes et parfois moins précises qu'un grand modèle.",
+        "en": "llama3.2:3b is small: shorter and sometimes less precise answers than a large model."
+      }
+    },
+    {
+      "title": {
+        "fr": "FAISS IndexFlatL2",
+        "en": "FAISS IndexFlatL2"
+      },
+      "why": {
+        "fr": "Recherche exacte, sans réglage ; avec 275 extraits, elle reste instantanée.",
+        "en": "Exact search with no tuning; with 275 excerpts it stays instant."
+      },
+      "alternative": {
+        "fr": "Une base vectorielle (Chroma, pgvector) ou un index approché (IVF, HNSW).",
+        "en": "A vector database (Chroma, pgvector) or an approximate index (IVF, HNSW)."
+      },
+      "tradeoff": {
+        "fr": "Index figé : ajouter un PDF oblige à le reconstruire.",
+        "en": "Frozen index: adding a PDF means rebuilding it."
+      }
+    },
+    {
+      "title": {
+        "fr": "Deux garde-fous",
+        "en": "Two safeguards"
+      },
+      "why": {
+        "fr": "Un filtre de mots-clés et un seuil de distance (190) empêchent le modèle de répondre hors de ses documents.",
+        "en": "A keyword filter and a distance threshold (190) stop the model from answering outside its documents."
+      },
+      "alternative": {
+        "fr": "Un classifieur de domaine ou un reranker.",
+        "en": "A domain classifier or a reranker."
+      },
+      "tradeoff": {
+        "fr": "Les deux valeurs sont écrites en dur et le filtre peut refuser une question agricole formulée sans mot-clé de la liste.",
+        "en": "Both values are hard-coded, and the filter can refuse a farming question worded without a listed keyword."
+      }
+    },
+    {
+      "title": {
+        "fr": "FastAPI + Streamlit + SQLite",
+        "en": "FastAPI + Streamlit + SQLite"
+      },
+      "why": {
+        "fr": "L'API sépare la logique RAG de l'interface ; Streamlit donne un chat en quelques lignes ; SQLite garde l'historique sans serveur.",
+        "en": "The API keeps the RAG logic apart from the interface; Streamlit gives a chat in a few lines; SQLite keeps the history without a server."
+      },
+      "alternative": {
+        "fr": "Un front web dédié et PostgreSQL.",
+        "en": "A dedicated web front end and PostgreSQL."
+      },
+      "tradeoff": {
+        "fr": "Mono-utilisateur, sans authentification.",
+        "en": "Single-user, without authentication."
+      }
+    }
+  ],
+  "limits": {
+    "fr": [
+      "Pas d'authentification ni de gestion des utilisateurs.",
+      "Ollama doit tourner pour toute nouvelle question.",
+      "Corpus figé : un nouveau PDF impose de régénérer l'index.",
+      "Erreurs réseau et délais d'Ollama peu gérés par l'API."
+    ],
+    "en": [
+      "No authentication or user management.",
+      "Ollama must be running for any new question.",
+      "Frozen corpus: a new PDF means regenerating the index.",
+      "Network errors and Ollama delays are barely handled by the API."
+    ]
+  },
+  "next": {
+    "fr": [
+      "Commande d'ingestion pour reconstruire l'index.",
+      "Tests automatisés et gestion d'erreurs claire.",
+      "Citation des extraits exacts, pas seulement des fichiers.",
+      "Authentification et déploiement en conteneurs."
+    ],
+    "en": [
+      "An ingestion command to rebuild the index.",
+      "Automated tests and clear error handling.",
+      "Quoting the exact excerpts, not only the files.",
+      "Authentication and container deployment."
+    ]
+  }
+}

@@ -1,0 +1,70 @@
+---
+// The big overview of a project: every technology with its logo, linked by named arrows (data from architecture.json).
+import { pick, type Lang } from '../../i18n/utils';
+
+type Overview = {
+  width: number; height: number;
+  nodes: { id: string; x: number; y: number; logo: string; title: { fr: string; en: string }; subtitle: { fr: string; en: string } }[];
+  wires: { from: string; to: string; path: string; label: { fr: string; en: string }; labelX: number; labelY: number; once: boolean }[];
+};
+interface Props { lang: Lang; overview: Overview; title: string }
+const { lang, overview, title } = Astro.props;
+const NODE_W = 200, NODE_H = 100;
+const CHAR_W = 8.2, LINE_H = 20;
+const labels = overview.wires.map(w => {
+  const lines = pick(w.label, lang).split('\n');
+  const width = CHAR_W * Math.max(...lines.map(l => l.length)) + 16;
+  const height = LINE_H * lines.length + 6;
+  return { lines, x: w.labelX, top: w.labelY - height / 2, width, height };
+});
+---
+<svg class="overview" viewBox={`0 0 ${overview.width} ${overview.height}`} role="img" aria-label={title}>
+  <defs>
+    <marker id="ov-head" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L8 4L0 8z" fill="context-stroke" /></marker>
+    <filter id="ov-tint"><feFlood flood-color="#9fa3f5" /><feComposite in2="SourceAlpha" operator="in" /></filter>
+  </defs>
+  {overview.wires.map(w => <path class:list={['wire', { once: w.once }]} data-a={w.from} data-b={w.to} d={w.path} marker-end="url(#ov-head)" />)}
+  {labels.map(l => (
+    <g class="lbl">
+      <rect x={l.x - l.width / 2} y={l.top} width={l.width} height={l.height} />
+      <text>{l.lines.map((line, i) => <tspan x={l.x} y={l.top + 18 + i * LINE_H}>{line}</tspan>)}</text>
+    </g>
+  ))}
+  {overview.nodes.map(n => (
+    <g class="node" data-id={n.id} tabindex="0">
+      <rect x={n.x} y={n.y} width={NODE_W} height={NODE_H} />
+      <image href={`/logos/${n.logo}.svg`} x={n.x + 16} y={n.y + 31} width="38" height="38" filter="url(#ov-tint)" />
+      <text class="t" x={n.x + 66} y={n.y + 46}>{pick(n.title, lang)}</text>
+      <text class="s" x={n.x + 66} y={n.y + 70}>{pick(n.subtitle, lang)}</text>
+    </g>
+  ))}
+</svg>
+
+<script>
+  // pointing (or tabbing to) a block lights up its links
+  document.querySelectorAll<SVGSVGElement>('svg.overview').forEach(svg => {
+    svg.querySelectorAll<SVGGElement>('.node').forEach(node => {
+      const light = (on: boolean) => svg.querySelectorAll(`.wire[data-a="${node.dataset.id}"], .wire[data-b="${node.dataset.id}"]`)
+        .forEach(w => w.classList.toggle('hot', on));
+      node.addEventListener('mouseenter', () => light(true));
+      node.addEventListener('mouseleave', () => light(false));
+      node.addEventListener('focus', () => light(true));
+      node.addEventListener('blur', () => light(false));
+    });
+  });
+</script>
+
+<style>
+  .overview { display: block; width: 100%; height: auto; font-family: var(--text); }
+  .wire { fill: none; stroke: var(--line); stroke-width: 3; transition: stroke .2s; }
+  .wire.once { stroke-dasharray: 8 6; }
+  .wire:global(.hot) { stroke: var(--accent-text); stroke-width: 4; }
+  .lbl rect { fill: var(--night); }
+  .lbl text { fill: var(--ash); font-size: 15px; }
+  .lbl tspan { text-anchor: middle; }
+  .node { outline: none; }
+  .node rect { fill: var(--deep); stroke: var(--line); stroke-width: 4; transition: fill .2s, stroke .2s; }
+  .node:hover rect, .node:focus rect { fill: var(--raise); stroke: var(--accent-text); }
+  .node .t { fill: var(--ivory); font: 600 21px var(--display); }
+  .node .s { fill: var(--ash); font-size: 14px; }
+</style>

@@ -1,0 +1,9 @@
+---
+// Loads the demo's code on wide screens only: below 1024px the page shows the screenshot gallery instead.
+import AgriGptDemo from './AgriGptDemo';
+import type { Lang } from '../../../i18n/utils';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+---
+<AgriGptDemo client:media="(min-width: 1024px)" lang={lang} />

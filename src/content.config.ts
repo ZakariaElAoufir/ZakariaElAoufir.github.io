@@ -74,7 +74,7 @@ const certifications = defineCollection({
 // One folder per project: project.json for the facts, fr.md / en.md for the description.
 const projects = defineCollection({
   loader: glob({ pattern: '*/project.json', base: './src/projects', generateId: ({ entry }) => entry.split('/')[0] }),
-  schema: z.object({
+  schema: ({ image }) => z.object({
     order: z.number(),
     published: z.boolean(),
     featured: z.boolean().default(false),
@@ -87,7 +87,39 @@ const projects = defineCollection({
     card: z.object({ title: localized, summary: localized, stack: z.array(z.string()) }).optional(),
     repo: z.string().url().nullable(),
     stack: z.array(z.string()).min(1),
-    hasDemo: z.boolean().default(false)
+    hasDemo: z.boolean().default(false),
+    /** A picture of the demo, shown on the cards and the projects list. */
+    thumbnail: image().optional(),
+    /** The demo page: what the project is about, and the annotated screenshots shown on phones instead of the demo. */
+    detail: z.object({
+      problem: localized,
+      does: localized,
+      role: localized,
+      gallery: z.array(z.object({ image: image(), title: localized, text: localized })).min(1)
+    }).optional()
+  }).refine(p => !p.hasDemo || p.detail, { message: 'A project with a demo needs its "detail" block' })
+});
+
+const localizedList = z.object({ fr: z.array(z.string()), en: z.array(z.string()) });
+
+// The architecture page of a project with a demo: architecture.json next to project.json.
+const architectures = defineCollection({
+  loader: glob({ pattern: '*/architecture.json', base: './src/projects', generateId: ({ entry }) => entry.split('/')[0] }),
+  schema: z.object({
+    overview: z.object({
+      width: z.number(),
+      height: z.number(),
+      nodes: z.array(z.object({ id: z.string(), x: z.number(), y: z.number(), logo: z.string(), title: localized, subtitle: localized })),
+      wires: z.array(z.object({
+        from: z.string(), to: z.string(), path: z.string(),
+        label: localized, labelX: z.number(), labelY: z.number(), once: z.boolean().default(false)
+      }))
+    }),
+    stack: z.array(z.object({ name: localized, items: z.array(z.object({ name: z.string(), logo: z.string(), note: localized.optional() })) })),
+    diagrams: z.array(z.object({ id: z.string(), title: localized, caption: localized })),
+    choices: z.array(z.object({ title: localized, why: localized, alternative: localized, tradeoff: localized })),
+    limits: localizedList,
+    next: localizedList
   })
 });
 
@@ -96,4 +128,4 @@ const projectTexts = defineCollection({
   schema: z.object({})
 });
 
-export const collections = { profile, education, experiences, skills, certifications, projects, projectTexts };
+export const collections = { profile, education, experiences, skills, certifications, projects, projectTexts, architectures };

@@ -1,0 +1,92 @@
+---
+import { Image } from 'astro:assets';
+import BaseLayout from '../../../../layouts/BaseLayout.astro';
+import ProjectHeader from '../../../../components/project/ProjectHeader.astro';
+import Icon from '../../../../components/Icon.astro';
+import { demoOf, demoProjects, type Project } from '../../../../lib/projects';
+import { languages, pick, useTranslations, type Lang } from '../../../../i18n/utils';
+
+export async function getStaticPaths() {
+  const projects = await demoProjects();
+  return languages.flatMap(lang => projects.map(project => ({
+    params: { lang: lang === 'fr' ? undefined : lang, slug: project.id },
+    props: { lang, project }
+  })));
+}
+
+interface Props { lang: Lang; project: Project }
+const { lang, project } = Astro.props;
+const t = useTranslations(lang);
+const detail = project.data.detail!;
+const Demo = demoOf(project.id) as any;
+const name = pick(project.data.shortTitle, lang);
+---
+<BaseLayout lang={lang} title={t('meta.demoTitle', { name })} description={pick(detail.does, lang)}>
+  <section class="block intro">
+    <ProjectHeader lang={lang} project={project} current="demo" />
+
+    <div class="about">
+      <article class="px-frame reveal"><h2>{t('project.problem')}</h2><p>{pick(detail.problem, lang)}</p></article>
+      <article class="px-frame reveal" style="--d:100ms"><h2>{t('project.does')}</h2><p>{pick(detail.does, lang)}</p></article>
+      <article class="px-frame reveal" style="--d:200ms"><h2>{t('project.role')}</h2><p>{pick(detail.role, lang)}</p></article>
+    </div>
+
+    <!-- desktop: the interactive demo (its code is only downloaded on wide screens) -->
+    <div class="desktop">
+      <p class="sim px-frame"><i></i><span><b>{t('project.simulationTitle')}</b> {t('project.simulationText')}</span></p>
+      <Demo lang={lang} />
+    </div>
+
+    <!-- phone and tablet: annotated screenshots instead of the demo -->
+    <div class="phone">
+      <div class="gallery">
+        {detail.gallery.map(shot => (
+          <figure class="shot px-frame">
+            <Image src={shot.image} alt="" widths={[360, 720]} sizes="(max-width: 1023px) 92vw, 360px" />
+            <figcaption><strong>{pick(shot.title, lang)}</strong> {pick(shot.text, lang)}</figcaption>
+          </figure>
+        ))}
+      </div>
+      <div class="desk-note">
+        <p>{t('project.desktopOnly')}</p>
+        <button class="btn small" id="copy-link" data-done={t('project.linkCopied')}><Icon name="check" /><span>{t('project.copyLink')}</span></button>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<script>
+  const copy = document.getElementById('copy-link');
+  copy?.addEventListener('click', async () => {
+    try { await navigator.clipboard.writeText(location.href); } catch { return; }
+    copy.querySelector('span')!.textContent = copy.dataset.done!;
+  });
+</script>
+
+<style>
+  .intro { padding-top: 140px; }
+  .about { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 28px; margin-top: 56px; }
+  .about article { background: var(--deep); padding: 26px 26px 28px; }
+  .about h2 { font: 600 18px/1.2 var(--display); text-transform: uppercase; letter-spacing: .04em; color: var(--accent-text); margin-bottom: 10px; }
+  .about p { color: var(--ash); }
+
+  .sim { display: flex; align-items: center; gap: 12px; margin: 72px 0 26px; padding: 12px 18px; background: var(--raise); font-size: 15px; }
+  .sim i { width: 10px; height: 10px; flex: none; background: var(--accent-text); animation: blink 1.6s steps(2) infinite; }
+  @keyframes blink { 50% { opacity: .25; } }
+  .sim b { font-family: var(--display); font-weight: 600; text-transform: uppercase; letter-spacing: .04em; }
+
+  .phone { display: none; margin-top: 56px; }
+  .gallery { display: grid; gap: 26px; }
+  .shot { margin: 0; background: var(--deep); padding: 14px; }
+  .shot img { width: 100%; height: auto; }
+  figcaption { margin-top: 12px; font-size: 15px; color: var(--ash); }
+  figcaption strong { color: var(--ivory); font-weight: 500; }
+  .desk-note { margin-top: 26px; padding: 18px; background: var(--raise); }
+  .desk-note p { margin-bottom: 12px; }
+
+  @media (max-width: 1023px) {
+    .desktop { display: none; }
+    .phone { display: block; }
+  }
+  @media (max-width: 960px) { .about { grid-template-columns: 1fr; } }
+</style>
