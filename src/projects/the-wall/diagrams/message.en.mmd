@@ -1,0 +1,19 @@
+sequenceDiagram
+  actor N as Nora
+  participant A as Nora's app
+  participant St as Storage
+  participant DB as PostgREST + PostgreSQL
+  participant B as Samir's app
+  actor S as Samir
+  N->>A: picks a picture, writes, sends
+  A->>St: upload msg_timestamp.jpg (chat-pictures)
+  St-->>A: getPublicUrl
+  A->>DB: insert messages {sender, receiver, content, image_url}
+  DB-->>A: row created, added to the conversation
+  S->>B: opens Messages
+  B->>DB: select friends, then last message and unread count per friend
+  DB-->>B: nora, 1 unread
+  S->>B: opens the conversation
+  B->>DB: update messages set seen = true (received from nora)
+  B->>DB: select the conversation's messages
+  Note over A,DB: Nora sees blue ticks the next time the conversation loads

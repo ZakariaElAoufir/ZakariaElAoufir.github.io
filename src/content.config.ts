@@ -109,7 +109,16 @@ const architectures = defineCollection({
     overview: z.object({
       width: z.number(),
       height: z.number(),
-      nodes: z.array(z.object({ id: z.string(), x: z.number(), y: z.number(), logo: z.string(), title: localized, subtitle: localized })),
+      nodeHeight: z.number().default(100),
+      nodes: z.array(z.object({ id: z.string(), x: z.number(), y: z.number(), logo: z.string(), title: localized, subtitle: localized,
+        /** part of my own work, on a project built with others */
+        mine: z.boolean().default(false) })),
+      /** a dashed frame around nodes that live in the same place (the tables of one database) */
+      group: z.object({ x: z.number(), y: z.number(), w: z.number(), h: z.number(), logo: z.string(), label: localized }).optional(),
+      /** legend for the highlighted nodes */
+      mineLabel: localized.optional(),
+      /** replaces the generic caption under the overview */
+      caption: localized.optional(),
       wires: z.array(z.object({
         from: z.string(), to: z.string(), path: z.string(),
         label: localized, labelX: z.number(), labelY: z.number(), once: z.boolean().default(false)

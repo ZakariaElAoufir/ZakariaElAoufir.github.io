@@ -1,0 +1,205 @@
+/* The Wall demo: two Android phones running the real Flutter screens, and Supabase Studio beside them, in the site's pixel frame. */
+.tw .wide { --w: min(1680px, calc(100vw - 2 * var(--margin))); width: var(--w); margin-left: calc((100% - var(--w)) / 2); }
+.tw .window { background: var(--deep); box-shadow: 0 -4px 0 var(--line), 0 4px 0 var(--line), -4px 0 0 var(--line), 4px 0 0 var(--line); }
+.tw .window.waiting { height: 856px; }
+.tw .window.max { position: fixed; inset: 0; z-index: 100; display: flex; flex-direction: column; box-shadow: none; overflow: auto; }
+.tw .window.max .stage { flex: 1; }
+body.demo-locked { overflow: hidden; }
+.tw button { font: inherit; color: inherit; }
+
+.tw .chrome { display: flex; align-items: center; gap: 14px; padding: 10px 14px; background: var(--deep); }
+.tw .chrome .dots { display: flex; gap: 6px; }
+.tw .chrome .dots i { width: 10px; height: 10px; background: var(--line); }
+.tw .chrome .title { flex: 1; display: flex; align-items: center; gap: 10px; font: 500 15px/1 var(--display); color: var(--ash); }
+.tw .chrome .title i, .tw .sb-top i { width: 18px; height: 18px; flex: none; background: currentColor; -webkit-mask: var(--logo) center / contain no-repeat; mask: var(--logo) center / contain no-repeat; }
+.tw .ctrl { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 22px; padding: 12px 14px 14px; background: var(--deep); border-top: 4px solid var(--night); color: var(--ivory); font-size: 14px; }
+.tw .ctrl .lab { font: 600 14px/1.2 var(--display); text-transform: uppercase; letter-spacing: .04em; color: var(--accent-text); }
+.tw .ctrl .hint { flex: 1; min-width: 300px; color: var(--ash); }
+.tw .ctrl .hint b { color: var(--ivory); font-weight: 500; }
+
+.tw .stage { display: grid; grid-template-columns: auto auto minmax(0, 1fr); gap: 28px; padding: 26px 26px 28px; background: var(--night); align-items: start; }
+.tw .device { display: grid; gap: 10px; justify-items: center; }
+.tw .device > p { font: 600 14px/1 var(--display); text-transform: uppercase; letter-spacing: .04em; color: var(--ash); }
+.tw .device > p b { color: var(--ivory); text-transform: none; }
+
+/* ===== the phone: the Flutter app (Material, black app bars, white body) ===== */
+.tw .phone { position: relative; width: 340px; height: 700px; padding: 12px; border-radius: 40px; background: #0b0b10; box-shadow: 0 0 0 2px #2a2a38, 0 18px 40px rgba(0,0,0,.45); }
+.tw .scr { position: relative; height: 100%; border-radius: 30px; overflow: hidden; background: #fff; color: #000; font: 400 14px/1.35 Roboto, "Segoe UI", system-ui, sans-serif; display: flex; flex-direction: column; text-align: left; }
+.tw .scr button { cursor: pointer; }
+.tw .sbar { display: flex; justify-content: space-between; align-items: center; height: 26px; padding: 0 22px; background: #000; color: #fff; font-size: 12px; font-weight: 500; flex: none; }
+.tw .sbar i { display: inline-block; width: 18px; height: 9px; border: 1.5px solid #fff; border-radius: 2px; position: relative; }
+.tw .sbar i::after { content: ""; position: absolute; inset: 1px 4px 1px 1px; background: #fff; }
+.tw .abar { display: flex; align-items: center; gap: 6px; height: 56px; padding: 0 6px; background: #000; color: #fff; flex: none; }
+.tw .abar h3 { flex: 1; font: 700 19px/1 Roboto, "Segoe UI", sans-serif; text-align: center; text-transform: none; }
+.tw .abar h3 .light { font-weight: 400; }
+.tw .abar h3.left { text-align: left; font-weight: 400; display: flex; align-items: center; gap: 10px; }
+.tw .abar .sp { width: 40px; flex: none; }
+.tw .ib { display: grid; place-items: center; width: 40px; height: 40px; flex: none; padding: 0; border: 0; border-radius: 50%; background: none; }
+.tw .ib:hover { background: rgba(127,127,127,.15); }
+.tw .scr svg { width: 24px; height: 24px; fill: currentColor; }
+.tw .body { flex: 1; overflow-y: auto; overflow-x: hidden; position: relative; scrollbar-width: thin; }
+.tw .bnav { display: grid; grid-template-columns: repeat(4, 1fr); height: 58px; background: #000; flex: none; }
+.tw .bnav button { display: grid; place-items: center; align-content: center; gap: 2px; padding: 0; border: 0; background: none; color: rgba(255,255,255,.54); font: 400 12px/1 Roboto, "Segoe UI", sans-serif; }
+.tw .bnav button.on { color: #fff; font-size: 13px; }
+.tw .spin { display: grid; place-items: center; height: 100%; }
+.tw .spin i { width: 34px; height: 34px; border: 4px solid #000; border-right-color: transparent; border-radius: 50%; animation: tw-rot .8s linear infinite; }
+@keyframes tw-rot { to { transform: rotate(360deg); } }
+.tw .empty { display: grid; place-items: center; height: 100%; }
+.tw .card { margin: 0 0 12px; background: #fff; border-radius: 4px; box-shadow: 0 2px 1px -1px rgba(0,0,0,.2), 0 1px 1px 0 rgba(0,0,0,.14), 0 1px 3px 0 rgba(0,0,0,.12), 0 3px 5px rgba(0,0,0,.08); }
+.tw .card.r12 { border-radius: 12px; }
+.tw .av { display: grid; place-items: center; flex: none; border-radius: 50%; color: #fff; font-weight: 700; overflow: hidden; }
+.tw .av svg { width: 60%; height: 60%; fill: #fff; }
+.tw .dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: #f44336; flex: none; }
+.tw .dot.on { background: #4caf50; }
+.tw .dot.big { width: 12px; height: 12px; }
+/* feed */
+.tw .feed { padding: 12px; }
+.tw .post { padding: 15px; }
+.tw .hd { display: flex; align-items: center; gap: 10px; }
+.tw .hd b { font-weight: 700; }
+.tw .hd time { margin-left: auto; font-size: 11px; color: rgba(0,0,0,.54); }
+.tw .post p, .tw .card.mine p { margin-top: 10px; }
+.tw .ft { display: flex; align-items: center; gap: 8px; margin-top: 4px; }
+/* list tiles */
+.tw .tiles { padding: 10px; }
+.tw .tile { display: flex; align-items: center; gap: 16px; width: calc(100% - 20px); padding: 10px 16px; margin: 6px 10px; border: 0; text-align: left; }
+.tw .tile .tx { flex: 1; min-width: 0; display: block; }
+.tw .tile .tx b { display: block; font-size: 16px; font-weight: 700; }
+.tw .tile .tx > span { display: flex; align-items: center; gap: 4px; color: rgba(0,0,0,.6); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.tw .tile .tx > span svg { width: 15px; height: 15px; flex: none; }
+.tw .badge { min-width: 30px; height: 30px; display: grid; place-items: center; border-radius: 50%; background: #2196f3; color: #fff; font-weight: 700; }
+.tw .users .tile { padding: 10px; gap: 15px; }
+.tw .users .sq { width: 50px; height: 50px; border-radius: 8px; display: grid; place-items: center; color: #fff; font: 700 20px/1 Roboto, sans-serif; }
+.tw .users b { font-size: 16px; }
+.tw .ebtn { margin-left: auto; padding: 9px 16px; border: 0; border-radius: 20px; background: #f3edf7; color: #6750a4 !important; font: 500 14px/1 Roboto, "Segoe UI", sans-serif !important; box-shadow: 0 1px 2px rgba(0,0,0,.25); }
+.tw .ebtn[disabled] { background: rgba(0,0,0,.08); color: rgba(0,0,0,.38) !important; box-shadow: none; cursor: default; }
+.tw .reqs .tile { align-items: flex-start; }
+.tw .reqs .tx b { font-weight: 400; font-size: 15px; }
+.tw .reqs .tx > span { display: block; white-space: pre-line; font-size: 13px; }
+.tw .ib.ok { color: #4caf50; } .tw .ib.no { color: #f44336; }
+/* profile */
+.tw .prof { padding: 20px; }
+.tw .prof .top { display: flex; justify-content: center; align-items: center; gap: 32px; padding-left: 22px; }
+.tw .prof .cnt { text-align: center; font-weight: 700; }
+.tw .prof .cnt b { display: block; font-size: 20px; }
+.tw .prof .name { display: flex; justify-content: center; align-items: center; gap: 10px; margin-top: 15px; font-size: 24px; font-weight: 700; }
+.tw .prof .info { margin-top: 20px; font-size: 16px; line-height: 1.5; word-break: break-word; }
+.tw .prof h4 { margin: 26px 0 8px; text-align: center; font: 700 20px Roboto, "Segoe UI", sans-serif; text-transform: none; }
+.tw .prof .center { text-align: center; }
+.tw .card.mine { padding: 15px; margin: 8px 0; }
+.tw .card.mine b { font-size: 16px; }
+.tw .card.mine time { font-size: 12px; color: #000; }
+.tw .card.mine .ft { margin-top: 10px; }
+/* chat */
+.tw .msgs { padding: 10px; }
+.tw .msg { display: flex; gap: 6px; margin: 4px 0; align-items: flex-start; }
+.tw .msg.me { justify-content: flex-end; cursor: context-menu; user-select: none; -webkit-user-select: none; }
+.tw .msg .col { display: flex; flex-direction: column; align-items: flex-start; max-width: 72%; }
+.tw .msg.me .col { align-items: flex-end; }
+.tw .msg .who { font-size: 12px; font-weight: 700; }
+.tw .bub { margin: 4px 0 3px; padding: 12px; border-radius: 12px; background: #e0e0e0; color: #000; word-break: break-word; }
+.tw .msg.me .bub { background: #000; color: #fff; }
+.tw .msg img { display: block; width: 190px; border-radius: 12px; }
+.tw .msg .meta { display: flex; align-items: center; gap: 6px; font-size: 10px; color: #9e9e9e; }
+.tw .msg .meta svg { width: 16px; height: 16px; fill: #9e9e9e; }
+.tw .msg .meta svg.seen { fill: #2196f3; }
+.tw .msg.flash .bub, .tw .msg.flash img { animation: tw-pop .6s ease-out; }
+@keyframes tw-pop { from { transform: scale(.92); opacity: .4; } }
+.tw .pick { display: flex; align-items: center; gap: 4px; padding: 10px; background: #eee; flex: none; }
+.tw .pick img { width: 90px; height: 90px; object-fit: cover; border-radius: 12px; }
+.tw .pick .ib { color: #f44336; }
+.tw .compose { display: flex; align-items: center; gap: 2px; padding: 8px; flex: none; }
+.tw .compose input { flex: 1; min-width: 0; height: 46px; padding: 0 12px; border: 1px solid #757575; border-radius: 4px; background: #fff; color: #000; font: 400 15px Roboto, "Segoe UI", sans-serif; outline: none; }
+.tw .compose input:focus { border: 2px solid #6750a4; padding: 0 11px; }
+.tw .compose .img { color: #4caf50; } .tw .compose .snd { color: #2196f3; }
+/* login and register */
+.tw .login { display: grid; justify-items: center; align-content: center; gap: 10px; min-height: 100%; padding: 20px; }
+.tw .login img { width: 200px; height: 120px; object-fit: contain; margin-bottom: 8px; }
+.tw .login input { width: 260px; height: 50px; padding: 0 14px; border: 0; border-radius: 20px; background: #eee; color: #000; font: 400 15px Roboto, sans-serif; }
+.tw .login .go { display: flex; align-items: center; justify-content: center; gap: 8px; width: 180px; height: 48px; margin-top: 6px; border: 0; border-radius: 8px; background: rgba(255,255,255,.5); box-shadow: inset 0 0 0 1px #e5e5e5; font: 700 16px Roboto, sans-serif; }
+.tw .login .go svg { width: 22px; height: 22px; }
+.tw .login .tb { border: 0; background: none; font: 500 14px Roboto, sans-serif; padding: 8px; }
+.tw .login .reg { margin-top: 14px; color: rgba(0,0,0,.6); }
+.tw .login .reg button { margin-left: 6px; padding: 0; border: 0; background: none; color: #4ba3ff; font-weight: 700; }
+.tw .login .reg.dark { color: #000; }
+.tw .login .reg.dark button { color: #2196f3; }
+.tw .register { background: #e0e0e0; }
+.tw .register .lock { width: 80px; height: 80px; }
+.tw .register input { border-radius: 4px; height: 44px; }
+/* overlays inside the phone */
+.tw .ov { position: absolute; inset: 0; z-index: 5; background: rgba(0,0,0,.54); display: grid; }
+.tw .dlg { place-self: center; width: 82%; padding: 22px 22px 14px; border-radius: 28px; background: #f7f2fa; box-shadow: 0 8px 24px rgba(0,0,0,.3); }
+.tw .dlg h5 { font: 400 22px/1.3 Roboto, sans-serif; margin-bottom: 8px; text-transform: none; }
+.tw .dlg label { display: grid; gap: 4px; margin-top: 8px; font-size: 12px; color: #6750a4; }
+.tw .dlg input { width: 100%; padding: 8px 0; border: 0; border-bottom: 2px solid #6750a4; background: none; color: #000; font: 400 16px Roboto, sans-serif; outline: none; }
+.tw .dlg .acts { display: flex; justify-content: flex-end; gap: 8px; margin-top: 18px; }
+.tw .dlg .acts button { padding: 10px 14px; border: 0; border-radius: 20px; background: none; color: #6750a4; font: 500 14px Roboto, sans-serif; }
+.tw .dlg .acts button.fill { background: #f3edf7; box-shadow: 0 1px 2px rgba(0,0,0,.25); }
+.tw .sheet { align-self: end; padding: 6px 0 10px; border-radius: 28px 28px 0 0; background: #f7f2fa; }
+.tw .sheet > button { display: flex; align-items: center; gap: 30px; width: 100%; padding: 16px 24px; border: 0; background: none; font: 400 16px Roboto, sans-serif; text-align: left; }
+.tw .sheet > button:hover { background: rgba(0,0,0,.05); }
+.tw .sheet > button svg { fill: #49454f; }
+.tw .sheet > button.del svg { fill: #f44336; }
+.tw .sheet h5 { padding: 10px 24px 8px; font: 500 16px Roboto, sans-serif; text-transform: none; }
+.tw .gal { display: grid; grid-template-columns: repeat(3, 1fr); gap: 3px; padding: 0 3px 6px; }
+.tw .gal button { padding: 0; border: 0; aspect-ratio: 1; display: block; background: none; }
+.tw .gal img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+/* ===== Supabase Studio, dark ===== */
+.tw .sb { display: flex; flex-direction: column; height: 724px; min-width: 0; background: #1c1c1c; color: #ededed; font: 400 13px/1.4 Inter, "Segoe UI", sans-serif; border: 1px solid #2e2e2e; }
+.tw .sb-top { display: flex; align-items: center; gap: 10px; padding: 10px 14px; border-bottom: 1px solid #2e2e2e; }
+.tw .sb-top i { color: #3ecf8e; }
+.tw .sb-top b { font-weight: 500; }
+.tw .sb-top span { color: #8f8f8f; }
+.tw .sb-top label { margin-left: auto; display: inline-flex; align-items: center; gap: 6px; color: #b4b4b4; cursor: pointer; }
+.tw .sb-top input { accent-color: #3ecf8e; }
+.tw .sb-tables { display: flex; flex-wrap: wrap; gap: 6px; padding: 10px 14px; border-bottom: 1px solid #2e2e2e; }
+.tw .sb-tables button { display: inline-flex; align-items: center; gap: 6px; padding: 5px 10px; border: 1px solid #2e2e2e; border-radius: 6px; background: #232323; color: #b4b4b4; font-size: 12.5px; cursor: pointer; }
+.tw .sb-tables button.on { border-color: #3ecf8e; color: #ededed; background: #2a2a2a; }
+.tw .sb-tables button small { color: #8f8f8f; }
+.tw .sb-tables button.hit { animation: tw-hit 1s ease-out; }
+@keyframes tw-hit { from { background: #1f4d36; } }
+.tw .sb-grid { flex: 1 1 55%; min-height: 0; overflow: auto; }
+.tw .sb-grid table { width: 100%; border-collapse: collapse; font-size: 12px; }
+.tw .sb-grid th { position: sticky; top: 0; z-index: 1; text-align: left; padding: 7px 10px; background: #232323; color: #8f8f8f; font-weight: 500; border-bottom: 1px solid #2e2e2e; border-right: 1px solid #2e2e2e; white-space: nowrap; }
+.tw .sb-grid th small { display: block; color: #6b6b6b; font: 400 10.5px "Source Code Pro", ui-monospace, Consolas, monospace; }
+.tw .sb-grid td { padding: 6px 10px; border-bottom: 1px solid #262626; border-right: 1px solid #262626; white-space: nowrap; max-width: 220px; overflow: hidden; text-overflow: ellipsis; font-family: "Source Code Pro", ui-monospace, Consolas, monospace; }
+.tw .sb-grid td .u { display: inline-flex; align-items: center; gap: 5px; }
+.tw .sb-grid td .u i { width: 8px; height: 8px; border-radius: 50%; }
+.tw .sb-grid td.null { color: #6b6b6b; }
+.tw .sb-grid td.t { color: #3ecf8e; } .tw .sb-grid td.f { color: #b4b4b4; }
+.tw .sb-grid tr.new td { animation: tw-new 1.6s ease-out; }
+@keyframes tw-new { from { background: #1f4d36; } }
+.tw .sb-grid tr.gone td { background: #4d1f1f; text-decoration: line-through; color: #b4b4b4; }
+.tw .sb-log { flex: 1 1 45%; min-height: 0; display: flex; flex-direction: column; border-top: 1px solid #2e2e2e; }
+.tw .sb-log h4 { display: flex; justify-content: space-between; padding: 8px 14px; font: 500 12.5px Inter, "Segoe UI", sans-serif; color: #b4b4b4; border-bottom: 1px solid #2e2e2e; text-transform: none; }
+.tw .sb-log h4 span { color: #6b6b6b; font-weight: 400; }
+.tw .sb-log ol { list-style: none; margin: 0; padding: 0; overflow: auto; flex: 1; }
+.tw .sb-log li { display: grid; grid-template-columns: 58px 62px 1fr; gap: 8px; padding: 6px 14px; border-bottom: 1px solid #262626; font: 400 11.5px/1.45 "Source Code Pro", ui-monospace, Consolas, monospace; }
+.tw .sb-log li time { color: #6b6b6b; }
+.tw .sb-log li .by { font-weight: 600; }
+.tw .sb-log li code { color: #ededed; word-break: break-word; font: inherit; }
+.tw .sb-log li code em { font-style: normal; color: #3ecf8e; }
+.tw .sb-log li code s { text-decoration: none; color: #8f8f8f; }
+.tw .sb-log li.rt code { color: #b4b4b4; }
+.tw .sb-log li.new { animation: tw-new 1.4s ease-out; }
+
+/* ---------- what to try (ticks as you go) ---------- */
+.tw .try { margin-top: 40px; }
+.tw .try h2 { font: 700 26px/1.1 var(--display); text-transform: uppercase; text-shadow: 3px 3px 0 var(--accent-dark); }
+.tw .try > p { color: var(--ash); margin: 8px 0 22px; max-width: 86ch; }
+.tw .steps { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 18px; list-style: none; padding: 0; }
+.tw .steps li { background: var(--deep); padding: 14px 14px 16px; box-shadow: 0 -4px 0 var(--line), 0 4px 0 var(--line), -4px 0 0 var(--line), 4px 0 0 var(--line); transition: background .25s; }
+.tw .steps li.done { background: var(--raise); box-shadow: 0 -4px 0 var(--accent-text), 0 4px 0 var(--accent-text), -4px 0 0 var(--accent-text), 4px 0 0 var(--accent-text); }
+.tw .steps h3 { display: flex; align-items: center; gap: 8px; font: 600 14px/1.2 var(--display); text-transform: uppercase; color: var(--accent-text); }
+.tw .steps h3 i { width: 14px; height: 14px; flex: none; box-shadow: inset 0 0 0 3px var(--line); }
+.tw .steps li.done h3 i { background: var(--accent-text); box-shadow: none; }
+.tw .steps p { margin-top: 8px; font-size: 13.5px; line-height: 1.45; color: var(--ash); }
+.tw .note { margin-top: 18px; padding: 12px 16px; background: var(--night); font-size: 14px; color: var(--ash); }
+.tw .note b { color: var(--ivory); font-weight: 500; }
+
+@media (max-width: 1250px) {
+  .tw .stage { grid-template-columns: auto auto; justify-content: center; }
+  .tw .sb { grid-column: 1 / -1; height: 560px; }
+  .tw .steps { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}

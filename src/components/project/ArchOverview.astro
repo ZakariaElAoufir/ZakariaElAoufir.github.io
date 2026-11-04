@@ -2,14 +2,17 @@
 // The big overview of a project: every technology with its logo, linked by named arrows (data from architecture.json).
 import { pick, type Lang } from '../../i18n/utils';
 
+type Text = { fr: string; en: string };
 type Overview = {
-  width: number; height: number;
-  nodes: { id: string; x: number; y: number; logo: string; title: { fr: string; en: string }; subtitle: { fr: string; en: string } }[];
+  width: number; height: number; nodeHeight: number;
+  nodes: { id: string; x: number; y: number; logo: string; title: Text; subtitle: Text; mine: boolean }[];
+  group?: { x: number; y: number; w: number; h: number; logo: string; label: Text };
   wires: { from: string; to: string; path: string; label: { fr: string; en: string }; labelX: number; labelY: number; once: boolean }[];
 };
 interface Props { lang: Lang; overview: Overview; title: string }
 const { lang, overview, title } = Astro.props;
-const NODE_W = 200, NODE_H = 100;
+const NODE_W = 200, NODE_H = overview.nodeHeight;
+const group = overview.group;
 const CHAR_W = 8.2, LINE_H = 20;
 const labels = overview.wires.map(w => {
   const lines = pick(w.label, lang).split('\n');
@@ -23,6 +26,13 @@ const labels = overview.wires.map(w => {
     <marker id="ov-head" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L8 4L0 8z" fill="context-stroke" /></marker>
     <filter id="ov-tint"><feFlood flood-color="#9fa3f5" /><feComposite in2="SourceAlpha" operator="in" /></filter>
   </defs>
+  {group && (
+    <g class="group">
+      <rect x={group.x} y={group.y} width={group.w} height={group.h} />
+      <image href={`/logos/${group.logo}.svg`} x={group.x + 16} y={group.y + group.h - 34} width="22" height="22" filter="url(#ov-tint)" />
+      <text x={group.x + 46} y={group.y + group.h - 16}>{pick(group.label, lang)}</text>
+    </g>
+  )}
   {overview.wires.map(w => <path class:list={['wire', { once: w.once }]} data-a={w.from} data-b={w.to} d={w.path} marker-end="url(#ov-head)" />)}
   {labels.map(l => (
     <g class="lbl">
@@ -31,11 +41,11 @@ const labels = overview.wires.map(w => {
     </g>
   ))}
   {overview.nodes.map(n => (
-    <g class="node" data-id={n.id} tabindex="0">
+    <g class:list={['node', { mine: n.mine }]} data-id={n.id} tabindex="0">
       <rect x={n.x} y={n.y} width={NODE_W} height={NODE_H} />
-      <image href={`/logos/${n.logo}.svg`} x={n.x + 16} y={n.y + 31} width="38" height="38" filter="url(#ov-tint)" />
-      <text class="t" x={n.x + 66} y={n.y + 46}>{pick(n.title, lang)}</text>
-      <text class="s" x={n.x + 66} y={n.y + 70}>{pick(n.subtitle, lang)}</text>
+      <image href={`/logos/${n.logo}.svg`} x={n.x + 14} y={n.y + (NODE_H - 36) / 2} width="36" height="36" filter="url(#ov-tint)" />
+      <text class="t" x={n.x + 58} y={n.y + NODE_H / 2 - 4}>{pick(n.title, lang)}</text>
+      <text class="s" x={n.x + 58} y={n.y + NODE_H / 2 + 20}>{pick(n.subtitle, lang)}</text>
     </g>
   ))}
 </svg>
@@ -67,4 +77,8 @@ const labels = overview.wires.map(w => {
   .node:hover rect, .node:focus rect { fill: var(--raise); stroke: var(--accent-text); }
   .node .t { fill: var(--ivory); font: 600 21px var(--display); }
   .node .s { fill: var(--ash); font-size: 14px; }
+  .node.mine rect { stroke: var(--accent-text); fill: var(--raise); }
+  .node.mine .s { fill: var(--accent-text); }
+  .group rect { fill: none; stroke: var(--line); stroke-width: 3; stroke-dasharray: 10 8; }
+  .group text { fill: var(--ash); font: 600 18px var(--display); text-transform: uppercase; letter-spacing: .04em; }
 </style>

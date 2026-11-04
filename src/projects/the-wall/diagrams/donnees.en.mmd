@@ -1,0 +1,52 @@
+erDiagram
+  PROFILES ||--o{ PUBLICATIONS : posts
+  PROFILES ||--o{ PUBLICATION_LIKES : likes
+  PUBLICATIONS ||--o{ PUBLICATION_LIKES : receives
+  PROFILES ||--o{ FRIENDS : "is friends with"
+  PROFILES ||--o{ FOLLOW_REQUESTS : "sends, receives"
+  PROFILES ||--o{ MESSAGES : "sends, receives"
+  PROFILES {
+    uuid id PK "= auth.users.id"
+    text username
+    text nom
+    text prenom
+    text email
+    bool online
+    text avatar_url
+    timestamptz created
+  }
+  PUBLICATIONS {
+    uuid id PK
+    uuid profile_id FK
+    text content
+    text image
+    int likes
+    timestamptz created_at
+  }
+  PUBLICATION_LIKES {
+    uuid id PK
+    uuid publication_id FK
+    uuid profile_id FK
+  }
+  FRIENDS {
+    uuid id PK
+    uuid user_id FK
+    uuid friend_id FK
+    timestamptz created_at
+  }
+  FOLLOW_REQUESTS {
+    uuid id PK
+    uuid sender_id FK
+    uuid receiver_id FK
+    text status "pending"
+    timestamptz created_at
+  }
+  MESSAGES {
+    uuid id PK
+    uuid sender_id FK
+    uuid receiver_id FK
+    text content
+    text image_url
+    bool seen
+    timestamptz created_at
+  }

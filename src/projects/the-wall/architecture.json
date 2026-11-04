@@ -1,0 +1,638 @@
+{
+  "overview": {
+    "width": 1520,
+    "height": 820,
+    "nodeHeight": 96,
+    "nodes": [
+      {
+        "id": "app",
+        "x": 20,
+        "y": 325,
+        "logo": "flutter",
+        "title": {
+          "fr": "Application",
+          "en": "Flutter app"
+        },
+        "subtitle": {
+          "fr": "Flutter, 8 écrans",
+          "en": "Flutter, 8 screens"
+        },
+        "mine": false
+      },
+      {
+        "id": "picker",
+        "x": 20,
+        "y": 610,
+        "logo": "android",
+        "title": {
+          "fr": "image_picker",
+          "en": "image_picker"
+        },
+        "subtitle": {
+          "fr": "galerie du téléphone",
+          "en": "phone gallery"
+        },
+        "mine": true
+      },
+      {
+        "id": "client",
+        "x": 340,
+        "y": 325,
+        "logo": "dart",
+        "title": {
+          "fr": "Supabase",
+          "en": "Supabase"
+        },
+        "subtitle": {
+          "fr": "supabase_flutter",
+          "en": "supabase_flutter"
+        },
+        "mine": false
+      },
+      {
+        "id": "auth",
+        "x": 660,
+        "y": 40,
+        "logo": "supabase",
+        "title": {
+          "fr": "Auth",
+          "en": "Auth"
+        },
+        "subtitle": {
+          "fr": "e-mail, mot de passe",
+          "en": "e-mail, password"
+        },
+        "mine": false
+      },
+      {
+        "id": "rest",
+        "x": 660,
+        "y": 230,
+        "logo": "supabase",
+        "title": {
+          "fr": "PostgREST",
+          "en": "PostgREST"
+        },
+        "subtitle": {
+          "fr": "API REST générée",
+          "en": "generated REST API"
+        },
+        "mine": false
+      },
+      {
+        "id": "realtime",
+        "x": 660,
+        "y": 420,
+        "logo": "supabase",
+        "title": {
+          "fr": "Realtime",
+          "en": "Realtime"
+        },
+        "subtitle": {
+          "fr": "flux .stream()",
+          "en": ".stream() feeds"
+        },
+        "mine": false
+      },
+      {
+        "id": "storage",
+        "x": 660,
+        "y": 610,
+        "logo": "supabase",
+        "title": {
+          "fr": "Storage",
+          "en": "Storage"
+        },
+        "subtitle": {
+          "fr": "fichiers publics",
+          "en": "public files"
+        },
+        "mine": true
+      },
+      {
+        "id": "profiles",
+        "x": 980,
+        "y": 40,
+        "logo": "user",
+        "title": {
+          "fr": "profiles",
+          "en": "profiles"
+        },
+        "subtitle": {
+          "fr": "en ligne, avatar",
+          "en": "online, avatar"
+        },
+        "mine": false
+      },
+      {
+        "id": "publications",
+        "x": 980,
+        "y": 230,
+        "logo": "document",
+        "title": {
+          "fr": "publications",
+          "en": "publications"
+        },
+        "subtitle": {
+          "fr": "+ publication_likes",
+          "en": "+ publication_likes"
+        },
+        "mine": false
+      },
+      {
+        "id": "friends",
+        "x": 980,
+        "y": 420,
+        "logo": "user",
+        "title": {
+          "fr": "friends",
+          "en": "friends"
+        },
+        "subtitle": {
+          "fr": "+ follow_requests",
+          "en": "+ follow_requests"
+        },
+        "mine": true
+      },
+      {
+        "id": "messages",
+        "x": 980,
+        "y": 610,
+        "logo": "mail",
+        "title": {
+          "fr": "messages",
+          "en": "messages"
+        },
+        "subtitle": {
+          "fr": "texte, image, vu",
+          "en": "text, image, seen"
+        },
+        "mine": true
+      },
+      {
+        "id": "rpc",
+        "x": 1300,
+        "y": 230,
+        "logo": "database",
+        "title": {
+          "fr": "Fonction",
+          "en": "Function"
+        },
+        "subtitle": {
+          "fr": "SQL, likes",
+          "en": "SQL, likes"
+        },
+        "mine": false
+      },
+      {
+        "id": "buckets",
+        "x": 1300,
+        "y": 610,
+        "logo": "database",
+        "title": {
+          "fr": "Buckets",
+          "en": "Buckets"
+        },
+        "subtitle": {
+          "fr": "images, avatars",
+          "en": "images, avatars"
+        },
+        "mine": true
+      }
+    ],
+    "wires": [
+      {
+        "from": "picker",
+        "to": "app",
+        "path": "M120 610V421",
+        "label": {
+          "fr": "image choisie",
+          "en": "picked image"
+        },
+        "labelX": 120,
+        "labelY": 516,
+        "once": false
+      },
+      {
+        "from": "app",
+        "to": "client",
+        "path": "M220 373H340",
+        "label": {
+          "fr": "appels Dart",
+          "en": "Dart calls"
+        },
+        "labelX": 280,
+        "labelY": 340,
+        "once": false
+      },
+      {
+        "from": "client",
+        "to": "auth",
+        "path": "M440 325V88H660",
+        "label": {
+          "fr": "signIn, signUp",
+          "en": "signIn, signUp"
+        },
+        "labelX": 540,
+        "labelY": 88,
+        "once": false
+      },
+      {
+        "from": "client",
+        "to": "rest",
+        "path": "M540 355H600V278H660",
+        "label": {
+          "fr": "select, insert\nupdate, delete",
+          "en": "select, insert\nupdate, delete"
+        },
+        "labelX": 600,
+        "labelY": 310,
+        "once": false
+      },
+      {
+        "from": "realtime",
+        "to": "client",
+        "path": "M660 468H600V391H540",
+        "label": {
+          "fr": "fil, profils",
+          "en": "feed, profiles"
+        },
+        "labelX": 600,
+        "labelY": 430,
+        "once": false
+      },
+      {
+        "from": "client",
+        "to": "storage",
+        "path": "M440 421V658H660",
+        "label": {
+          "fr": "upload\ngetPublicUrl",
+          "en": "upload\ngetPublicUrl"
+        },
+        "labelX": 550,
+        "labelY": 658,
+        "once": false
+      },
+      {
+        "from": "rest",
+        "to": "publications",
+        "path": "M860 278H980",
+        "label": {
+          "fr": "SQL",
+          "en": "SQL"
+        },
+        "labelX": 920,
+        "labelY": 248,
+        "once": false
+      },
+      {
+        "from": "publications",
+        "to": "realtime",
+        "path": "M980 300H930V468H860",
+        "label": {
+          "fr": "changements",
+          "en": "changes"
+        },
+        "labelX": 905,
+        "labelY": 384,
+        "once": false
+      },
+      {
+        "from": "rest",
+        "to": "rpc",
+        "path": "M760 230V190H1400V230",
+        "label": {
+          "fr": "rpc(update_publication_likes)",
+          "en": "rpc(update_publication_likes)"
+        },
+        "labelX": 1080,
+        "labelY": 190,
+        "once": false
+      },
+      {
+        "from": "rpc",
+        "to": "publications",
+        "path": "M1300 278H1180",
+        "label": {
+          "fr": "met à jour\nlikes",
+          "en": "updates\nlikes"
+        },
+        "labelX": 1240,
+        "labelY": 278,
+        "once": false
+      },
+      {
+        "from": "auth",
+        "to": "profiles",
+        "path": "M860 88H980",
+        "label": {
+          "fr": "même id",
+          "en": "same id"
+        },
+        "labelX": 920,
+        "labelY": 58,
+        "once": true
+      },
+      {
+        "from": "storage",
+        "to": "buckets",
+        "path": "M760 706V780H1400V706",
+        "label": {
+          "fr": "fichiers",
+          "en": "files"
+        },
+        "labelX": 1080,
+        "labelY": 780,
+        "once": false
+      },
+      {
+        "from": "messages",
+        "to": "buckets",
+        "path": "M1180 658H1300",
+        "label": {
+          "fr": "image_url",
+          "en": "image_url"
+        },
+        "labelX": 1240,
+        "labelY": 628,
+        "once": true
+      }
+    ],
+    "group": {
+      "x": 950,
+      "y": 10,
+      "w": 260,
+      "h": 740,
+      "logo": "postgresql",
+      "label": {
+        "fr": "PostgreSQL",
+        "en": "PostgreSQL"
+      }
+    },
+    "mineLabel": {
+      "fr": "Ma partie : amis et messagerie",
+      "en": "My part: friends and messaging"
+    },
+    "caption": {
+      "fr": "Pas de serveur à nous : l'application parle directement à Supabase, qui fournit l'authentification, une API REST sur PostgreSQL, le temps réel et le stockage des fichiers. Pointillés : lien par identifiant ou par URL. Survolez un bloc pour voir ses liens.",
+      "en": "No server of our own: the app talks straight to Supabase, which provides authentication, a REST API over PostgreSQL, real time and file storage. Dashed: a link by id or by URL. Point at a block to see its links."
+    }
+  },
+  "stack": [
+    {
+      "name": {
+        "fr": "Application mobile",
+        "en": "Mobile app"
+      },
+      "items": [
+        {
+          "name": "Flutter",
+          "logo": "flutter",
+          "note": {
+            "fr": "Material, 8 écrans",
+            "en": "Material, 8 screens"
+          }
+        },
+        {
+          "name": "Dart 3.9",
+          "logo": "dart",
+          "note": {
+            "fr": "async, Future, Stream",
+            "en": "async, Future, Stream"
+          }
+        },
+        {
+          "name": "image_picker",
+          "logo": "android",
+          "note": {
+            "fr": "image depuis la galerie",
+            "en": "picture from the gallery"
+          }
+        },
+        {
+          "name": "intl",
+          "logo": "document",
+          "note": {
+            "fr": "format des dates",
+            "en": "date formatting"
+          }
+        }
+      ]
+    },
+    {
+      "name": {
+        "fr": "Supabase",
+        "en": "Supabase"
+      },
+      "items": [
+        {
+          "name": "supabase_flutter 2",
+          "logo": "supabase",
+          "note": {
+            "fr": "client Dart",
+            "en": "Dart client"
+          }
+        },
+        {
+          "name": "Auth",
+          "logo": "supabase",
+          "note": {
+            "fr": "e-mail et mot de passe, session gardée",
+            "en": "e-mail and password, session kept"
+          }
+        },
+        {
+          "name": "PostgreSQL",
+          "logo": "postgresql",
+          "note": {
+            "fr": "6 tables, une fonction SQL",
+            "en": "6 tables, one SQL function"
+          }
+        },
+        {
+          "name": "Realtime",
+          "logo": "supabase",
+          "note": {
+            "fr": "fil et profils en direct",
+            "en": "live feed and profiles"
+          }
+        },
+        {
+          "name": "Storage",
+          "logo": "supabase",
+          "note": {
+            "fr": "chat-pictures, profile-pictures",
+            "en": "chat-pictures, profile-pictures"
+          }
+        }
+      ]
+    },
+    {
+      "name": {
+        "fr": "Outils",
+        "en": "Tools"
+      },
+      "items": [
+        {
+          "name": "Android",
+          "logo": "android",
+          "note": {
+            "fr": "émulateur et téléphone",
+            "en": "emulator and phone"
+          }
+        },
+        {
+          "name": "Git et GitHub",
+          "logo": "github",
+          "note": {
+            "fr": "travail en binôme",
+            "en": "pair work"
+          }
+        }
+      ]
+    }
+  ],
+  "diagrams": [
+    {
+      "id": "message",
+      "title": {
+        "fr": "Envoyer un message",
+        "en": "Sending a message"
+      },
+      "caption": {
+        "fr": "Ma partie. L'image part d'abord dans le bucket chat-pictures ; la table ne garde que son URL publique. La conversation est chargée à l'ouverture et après chaque envoi, sans flux temps réel.",
+        "en": "My part. The picture goes to the chat-pictures bucket first; the table only keeps its public URL. The conversation loads when opened and after each message sent, without a live stream."
+      }
+    },
+    {
+      "id": "amis",
+      "title": {
+        "fr": "Devenir amis",
+        "en": "Becoming friends"
+      },
+      "caption": {
+        "fr": "Ma partie. L'amitié est écrite dans les deux sens : « mes amis » devient un simple filtre sur user_id, et la messagerie retrouve les amis des deux côtés.",
+        "en": "My part. The friendship is written both ways: \"my friends\" becomes a plain filter on user_id, and messaging finds friends from both sides."
+      }
+    },
+    {
+      "id": "donnees",
+      "title": {
+        "fr": "Modèle de données",
+        "en": "Data model"
+      },
+      "caption": {
+        "fr": "Tables déduites des requêtes de l'application : le schéma SQL et les règles d'accès (RLS) sont dans le projet Supabase, pas dans le dépôt. friends, follow_requests et messages sont ma partie.",
+        "en": "Tables inferred from the app's queries: the SQL schema and the access rules (RLS) live in the Supabase project, not in the repository. friends, follow_requests and messages are my part."
+      }
+    }
+  ],
+  "choices": [
+    {
+      "title": {
+        "fr": "Supabase plutôt qu'une API maison",
+        "en": "Supabase rather than our own API"
+      },
+      "why": {
+        "fr": "Authentification, base, temps réel et fichiers sont fournis : le projet se concentre sur Flutter.",
+        "en": "Authentication, database, real time and files come ready: the project focuses on Flutter."
+      },
+      "alternative": {
+        "fr": "Une API Spring Boot devant PostgreSQL.",
+        "en": "A Spring Boot API in front of PostgreSQL."
+      },
+      "tradeoff": {
+        "fr": "Les règles métier (pas de doublon, amitié dans les deux sens) vivent dans l'application, et la sécurité repose sur les règles RLS.",
+        "en": "Business rules (no duplicate, friendship both ways) live in the app, and security relies on the RLS rules."
+      }
+    },
+    {
+      "title": {
+        "fr": "Amitié écrite dans les deux sens",
+        "en": "Friendship written both ways"
+      },
+      "why": {
+        "fr": "Lister ses amis, les compter ou les exclure de « Add Friends » se fait avec un seul filtre sur user_id.",
+        "en": "Listing, counting or hiding friends from \"Add Friends\" takes a single filter on user_id."
+      },
+      "alternative": {
+        "fr": "Une seule ligne par amitié et un OR sur les deux colonnes.",
+        "en": "One row per friendship and an OR on both columns."
+      },
+      "tradeoff": {
+        "fr": "Deux lignes à garder cohérentes, sans transaction côté application.",
+        "en": "Two rows to keep consistent, with no transaction on the app side."
+      }
+    },
+    {
+      "title": {
+        "fr": "Images dans Storage, URL en base",
+        "en": "Pictures in Storage, URL in the table"
+      },
+      "why": {
+        "fr": "La table messages reste légère ; l'image est servie directement par Supabase depuis son URL publique.",
+        "en": "The messages table stays light; Supabase serves the picture straight from its public URL."
+      },
+      "alternative": {
+        "fr": "Stocker l'image en base, encodée.",
+        "en": "Storing the picture in the table, encoded."
+      },
+      "tradeoff": {
+        "fr": "Deux écritures par envoi, et le fichier reste dans le bucket si le message est supprimé.",
+        "en": "Two writes per message, and the file stays in the bucket when the message is deleted."
+      }
+    },
+    {
+      "title": {
+        "fr": "Temps réel pour le fil, chargement pour la messagerie",
+        "en": "Live feed, loaded messaging"
+      },
+      "why": {
+        "fr": "Le fil et les profils suivent la base avec .stream() ; la messagerie charge à l'ouverture, plus simple à écrire et à tester.",
+        "en": "The feed and profiles follow the database with .stream(); messaging loads when opened, simpler to write and test."
+      },
+      "alternative": {
+        "fr": "Un flux sur messages filtré par conversation.",
+        "en": "A stream on messages filtered by conversation."
+      },
+      "tradeoff": {
+        "fr": "Un message reçu n'apparaît qu'en rouvrant la conversation.",
+        "en": "A received message only shows up when the conversation is opened again."
+      }
+    }
+  ],
+  "limits": {
+    "fr": [
+      "La messagerie n'est pas en temps réel : il faut rouvrir la conversation pour voir un nouveau message.",
+      "La liste des conversations fait deux requêtes par ami (dernier message, non lus).",
+      "Supprimer un message laisse son image dans le bucket.",
+      "Le statut « en ligne » ne repasse à « hors ligne » qu'à la déconnexion ou à la fermeture complète de l'application.",
+      "Pas encore d'écran pour publier ni pour choisir sa photo de profil ; « Forgot Password? » n'est pas branché.",
+      "Schéma et règles RLS non versionnés ; dépendances Firebase restées dans le projet sans être utilisées."
+    ],
+    "en": [
+      "Messaging is not live: the conversation must be opened again to see a new message.",
+      "The conversation list makes two requests per friend (last message, unread count).",
+      "Deleting a message leaves its picture in the bucket.",
+      "The \"online\" status only goes back to offline on sign-out or when the app is fully closed.",
+      "No screen yet to publish or to choose a profile picture; \"Forgot Password?\" is not wired.",
+      "Schema and RLS rules not versioned; Firebase dependencies left in the project, unused."
+    ]
+  },
+  "next": {
+    "fr": [
+      "Écouter messages avec .stream() filtré sur la conversation.",
+      "Une vue SQL qui donne dernier message et non lus en une requête.",
+      "Accepter une demande dans une fonction SQL, en une transaction.",
+      "Versionner le schéma et les règles RLS avec les migrations Supabase.",
+      "Publier depuis l'application, avec photo de profil."
+    ],
+    "en": [
+      "Listen to messages with .stream() filtered on the conversation.",
+      "A SQL view giving last message and unread count in one request.",
+      "Accept a request in a SQL function, in one transaction.",
+      "Version the schema and RLS rules with Supabase migrations.",
+      "Publish from the app, with a profile picture."
+    ]
+  }
+}

@@ -1,0 +1,23 @@
+sequenceDiagram
+  actor S as Samir
+  participant B as Samir's app
+  participant DB as PostgREST + PostgreSQL
+  participant A as Nora's app
+  actor N as Nora
+  S->>B: opens Add Friends
+  B->>DB: select friends (mine), select profiles (the others)
+  DB-->>B: users who are not friends yet
+  S->>B: Follow on nora
+  B->>DB: select follow_requests (already sent?)
+  alt no request yet
+    B->>DB: insert follow_requests {status: pending}
+    B-->>S: the button turns to "En attente" (pending)
+  end
+  N->>A: opens requests (bell)
+  A->>DB: select follow_requests sent or received
+  alt accept
+    A->>DB: delete follow_requests
+    A->>DB: insert friends (nora → samir) and (samir → nora)
+  else reject
+    A->>DB: delete follow_requests
+  end

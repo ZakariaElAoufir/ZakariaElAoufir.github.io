@@ -1,0 +1,19 @@
+sequenceDiagram
+  actor N as Nora
+  participant A as App de Nora
+  participant St as Storage
+  participant DB as PostgREST + PostgreSQL
+  participant B as App de Samir
+  actor S as Samir
+  N->>A: choisit une image, écrit, envoie
+  A->>St: upload msg_horodatage.jpg (chat-pictures)
+  St-->>A: getPublicUrl
+  A->>DB: insert messages {sender, receiver, content, image_url}
+  DB-->>A: ligne créée, ajoutée à la conversation
+  S->>B: ouvre Messages
+  B->>DB: select friends, puis dernier message et non lus par ami
+  DB-->>B: nora, 1 non lu
+  S->>B: ouvre la conversation
+  B->>DB: update messages set seen = true (reçus de nora)
+  B->>DB: select messages de la conversation
+  Note over A,DB: Nora voit les coches bleues au prochain chargement de la conversation
