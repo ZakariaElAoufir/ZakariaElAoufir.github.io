@@ -1,0 +1,70 @@
+// Portfolio-side texts around the demo. The app's own screens keep the words written in the Android code (French, with a few English ones).
+export const strings = {
+  fr: {
+    title: 'Un émulateur Android et le Database Inspector d’Android Studio',
+    fullscreen: 'Plein écran',
+    exitFullscreen: 'Quitter le plein écran',
+    scenario: 'Scénario',
+    hint: 'Les données restent sur le téléphone (Room) : patient, médecin et admin se connectent à tour de rôle sur le même appareil.',
+    accounts: 'Se connecter en',
+    patient: 'Patient',
+    doctor: 'Médecin',
+    admin: 'Admin',
+    reset: 'Recommencer',
+    device: 'Pixel 7, API 35',
+    inspector: 'Database Inspector',
+    live: 'Mises à jour en direct',
+    follow: 'Suivre les écritures',
+    queries: 'Requêtes Room (DAO)',
+    noQuery: 'Aucune requête pour l’instant.',
+    rows: 'lignes',
+    tryTitle: 'À essayer',
+    tryLead: 'Chaque case se coche quand vous l’avez faite. Changez de compte avec les boutons au-dessus du téléphone.',
+    steps: {
+      book: ['Réserver', 'En patiente : Rendez-vous, puis Réserver. Le créneau passe à disponible = 0 dans la même transaction.'],
+      status: ['Changer le statut', 'En médecin : Rendez-vous, choisir un statut, puis Mettre à jour.'],
+      remind: ['Envoyer un rappel', 'En médecin : Envoyer rappel. Une ligne dans notifications et une notification Android.'],
+      read: ['Lire le rappel', 'En patiente : le badge compte les non lus ; toucher la notification la marque lue.'],
+      slot: ['Gérer ses créneaux', 'En médecin : Mes Créneaux, le bouton +, ou modifier et supprimer.'],
+      admin: ['Gérer les comptes', 'En admin : ajouter un médecin ou changer un rôle.']
+    },
+    note: ['Comme dans l’application, ', 'la session vit en mémoire', ' (UserSession) et ', 'chaque écran relit la base', ' quand il s’ouvre.'],
+    home: 'Accueil',
+    back: 'Retour',
+    recents: 'Récents'
+  },
+  en: {
+    title: 'An Android emulator and Android Studio’s Database Inspector',
+    fullscreen: 'Full screen',
+    exitFullscreen: 'Exit full screen',
+    scenario: 'Scenario',
+    hint: 'Data stays on the phone (Room): patient, doctor and admin take turns signing in on the same device.',
+    accounts: 'Sign in as',
+    patient: 'Patient',
+    doctor: 'Doctor',
+    admin: 'Admin',
+    reset: 'Start over',
+    device: 'Pixel 7, API 35',
+    inspector: 'Database Inspector',
+    live: 'Live updates',
+    follow: 'Follow the writes',
+    queries: 'Room queries (DAO)',
+    noQuery: 'No query yet.',
+    rows: 'rows',
+    tryTitle: 'Things to try',
+    tryLead: 'Each box ticks itself once you have done it. Switch accounts with the buttons above the phone.',
+    steps: {
+      book: ['Book', 'As the patient: Rendez-vous, then Réserver. The slot turns disponible = 0 in the same transaction.'],
+      status: ['Change the status', 'As the doctor: Rendez-vous, pick a status, then Mettre à jour.'],
+      remind: ['Send a reminder', 'As the doctor: Envoyer rappel. A row in notifications and an Android notification.'],
+      read: ['Read the reminder', 'As the patient: the badge counts unread ones; tapping one marks it read.'],
+      slot: ['Manage slots', 'As the doctor: Mes Créneaux, the + button, or edit and delete.'],
+      admin: ['Manage accounts', 'As the admin: add a doctor or change a role.']
+    },
+    note: ['As in the app, ', 'the session lives in memory', ' (UserSession) and ', 'each screen reads the database again', ' when it opens.'],
+    home: 'Home',
+    back: 'Back',
+    recents: 'Recents'
+  }
+};
+export type DemoStrings = typeof strings.fr;

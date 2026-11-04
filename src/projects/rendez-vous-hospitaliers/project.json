@@ -17,8 +17,59 @@
   "repo": "https://github.com/ZakariaElAoufir/AndroidStudioProject",
   "stack": [
     "Java",
-    "Android Studio",
-    "SQLite Room"
+    "Android SDK",
+    "Room (SQLite)",
+    "Material Components"
   ],
-  "hasDemo": false
+  "hasDemo": true,
+  "thumbnail": "./media/thumbnail.png",
+  "detail": {
+    "problem": {
+      "fr": "Remplacer les prises de rendez-vous par téléphone d'un hôpital par une application : le médecin publie ses créneaux, le patient réserve seul, l'administrateur gère les comptes.",
+      "en": "Replacing a hospital's phone bookings with an app: doctors publish their slots, patients book on their own, the administrator manages the accounts."
+    },
+    "does": {
+      "fr": "MEDIGOO, une application Android native en Java pour trois profils : le patient réserve un créneau et reçoit des rappels, le médecin gère ses créneaux et le statut de ses rendez-vous, l'administrateur gère les utilisateurs. Toutes les données sont stockées sur l'appareil avec Room.",
+      "en": "MEDIGOO, a native Android app in Java for three profiles: patients book a slot and get reminders, doctors manage their slots and the status of their appointments, the administrator manages users. All data is stored on the device with Room."
+    },
+    "role": {
+      "fr": "Conception et développement de toute l'application : les écrans des trois rôles, la base Room (entités, DAO, clés étrangères), la réservation en transaction et les rappels par notification Android.",
+      "en": "Designed and built the whole app: the screens of the three roles, the Room database (entities, DAOs, foreign keys), booking in a transaction and reminders as Android notifications."
+    },
+    "gallery": [
+      {
+        "image": "./media/shot-patient.png",
+        "title": {
+          "fr": "Côté patient.",
+          "en": "Patient side."
+        },
+        "text": {
+          "fr": "Les créneaux libres de tous les médecins, réservés en un geste avec un motif.",
+          "en": "Every doctor's free slots, booked in one tap with a reason."
+        }
+      },
+      {
+        "image": "./media/shot-doctor.png",
+        "title": {
+          "fr": "Côté médecin.",
+          "en": "Doctor side."
+        },
+        "text": {
+          "fr": "Ses rendez-vous, leur statut, et un rappel envoyé au patient.",
+          "en": "Their appointments, their status, and a reminder sent to the patient."
+        }
+      },
+      {
+        "image": "./media/shot-inspector.png",
+        "title": {
+          "fr": "Sous le capot.",
+          "en": "Under the hood."
+        },
+        "text": {
+          "fr": "Les tables Room et chaque requête des DAO, vues dans le Database Inspector.",
+          "en": "The Room tables and every DAO query, seen in the Database Inspector."
+        }
+      }
+    ]
+  }
 }

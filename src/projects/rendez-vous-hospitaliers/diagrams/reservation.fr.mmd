@@ -1,0 +1,17 @@
+sequenceDiagram
+  actor P as Patient
+  participant A as AppointmentActivity
+  participant D as CreneauDisponibleAdapter
+  participant R as Room (DAO)
+  P->>A: ouvre Rendez-vous
+  A->>R: CreneauDao.getAll() (thread de fond)
+  R-->>A: créneaux disponibles + médecins
+  P->>D: Réserver, motif facultatif
+  D->>R: CreneauDao.getById(id)
+  alt créneau déjà pris
+    D-->>P: Toast "Créneau déjà pris"
+  else libre
+    D->>R: runInTransaction
+    Note over R: insert RendezVous (confirmé)<br/>update Creneau disponible = 0
+    D-->>P: Toast "Rendez-vous confirmé!"
+  end

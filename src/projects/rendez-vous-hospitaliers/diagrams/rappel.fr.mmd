@@ -1,0 +1,16 @@
+sequenceDiagram
+  actor M as Médecin
+  participant A as RendezVousAdapter
+  participant R as Room (DAO)
+  participant N as Android
+  actor P as Patient
+  M->>A: Envoyer rappel
+  A->>R: NotificationDao.insert(Rappel de rendez-vous)
+  alt permission accordée
+    A->>N: NotificationManagerCompat.notify()
+  else première fois
+    A->>N: demande POST_NOTIFICATIONS
+  end
+  P->>R: Dashboard : getUnreadCount() (LiveData)
+  R-->>P: badge du nombre de non lues
+  P->>R: touche le rappel : markAsRead(id)

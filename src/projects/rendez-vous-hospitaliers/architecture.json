@@ -1,0 +1,482 @@
+{
+  "overview": {
+    "width": 1290,
+    "height": 640,
+    "nodeHeight": 96,
+    "nodeWidth": 220,
+    "nodes": [
+      {
+        "id": "users",
+        "x": 10,
+        "y": 260,
+        "logo": "user",
+        "title": {
+          "fr": "Utilisateurs",
+          "en": "Users"
+        },
+        "subtitle": {
+          "fr": "patient, médecin, admin",
+          "en": "patient, doctor, admin"
+        }
+      },
+      {
+        "id": "act",
+        "x": 340,
+        "y": 260,
+        "logo": "android",
+        "title": {
+          "fr": "Activités",
+          "en": "Activities"
+        },
+        "subtitle": {
+          "fr": "17 écrans en Java",
+          "en": "17 screens in Java"
+        }
+      },
+      {
+        "id": "session",
+        "x": 340,
+        "y": 60,
+        "logo": "user",
+        "title": {
+          "fr": "UserSession",
+          "en": "UserSession"
+        },
+        "subtitle": {
+          "fr": "compte connecté",
+          "en": "signed-in account"
+        }
+      },
+      {
+        "id": "adapters",
+        "x": 340,
+        "y": 460,
+        "logo": "layers",
+        "title": {
+          "fr": "Adapters",
+          "en": "Adapters"
+        },
+        "subtitle": {
+          "fr": "RecyclerView, 6 listes",
+          "en": "RecyclerView, 6 lists"
+        }
+      },
+      {
+        "id": "dao",
+        "x": 680,
+        "y": 260,
+        "logo": "database",
+        "title": {
+          "fr": "DAO Room",
+          "en": "DAO Room"
+        },
+        "subtitle": {
+          "fr": "5 interfaces, @Query",
+          "en": "5 interfaces, @Query"
+        }
+      },
+      {
+        "id": "appdb",
+        "x": 680,
+        "y": 60,
+        "logo": "database",
+        "title": {
+          "fr": "AppDatabase",
+          "en": "AppDatabase"
+        },
+        "subtitle": {
+          "fr": "admin créé au départ",
+          "en": "admin seeded first"
+        }
+      },
+      {
+        "id": "notif",
+        "x": 680,
+        "y": 460,
+        "logo": "android",
+        "title": {
+          "fr": "Notifications",
+          "en": "Notifications"
+        },
+        "subtitle": {
+          "fr": "NotificationCompat",
+          "en": "NotificationCompat"
+        }
+      },
+      {
+        "id": "sqlite",
+        "x": 1020,
+        "y": 260,
+        "logo": "sqlite",
+        "title": {
+          "fr": "SQLite",
+          "en": "SQLite"
+        },
+        "subtitle": {
+          "fr": "hospital_database2",
+          "en": "hospital_database2"
+        }
+      }
+    ],
+    "wires": [
+      {
+        "from": "users",
+        "to": "act",
+        "path": "M230 308H340",
+        "label": {
+          "fr": "touche",
+          "en": "taps"
+        },
+        "labelX": 285,
+        "labelY": 308,
+        "once": false
+      },
+      {
+        "from": "act",
+        "to": "session",
+        "path": "M450 260V156",
+        "label": {
+          "fr": "lit, écrit",
+          "en": "reads, writes"
+        },
+        "labelX": 450,
+        "labelY": 208,
+        "once": false
+      },
+      {
+        "from": "act",
+        "to": "adapters",
+        "path": "M450 356V460",
+        "label": {
+          "fr": "listes",
+          "en": "lists"
+        },
+        "labelX": 450,
+        "labelY": 408,
+        "once": false
+      },
+      {
+        "from": "act",
+        "to": "dao",
+        "path": "M560 300H680",
+        "label": {
+          "fr": "hors du\nthread UI",
+          "en": "off the\nUI thread"
+        },
+        "labelX": 620,
+        "labelY": 300,
+        "once": false
+      },
+      {
+        "from": "adapters",
+        "to": "dao",
+        "path": "M560 490H650V336H680",
+        "label": {
+          "fr": "réserve,\nrappels",
+          "en": "books,\nreminders"
+        },
+        "labelX": 650,
+        "labelY": 413,
+        "once": false
+      },
+      {
+        "from": "adapters",
+        "to": "notif",
+        "path": "M560 524H680",
+        "label": {
+          "fr": "notify()",
+          "en": "notify()"
+        },
+        "labelX": 605,
+        "labelY": 524,
+        "once": false
+      },
+      {
+        "from": "dao",
+        "to": "appdb",
+        "path": "M790 260V156",
+        "label": {
+          "fr": "getInstance",
+          "en": "getInstance"
+        },
+        "labelX": 790,
+        "labelY": 208,
+        "once": false
+      },
+      {
+        "from": "dao",
+        "to": "sqlite",
+        "path": "M900 308H1020",
+        "label": {
+          "fr": "SQL",
+          "en": "SQL"
+        },
+        "labelX": 960,
+        "labelY": 308,
+        "once": false
+      },
+      {
+        "from": "appdb",
+        "to": "sqlite",
+        "path": "M900 108H1130V260",
+        "label": {
+          "fr": "crée le fichier",
+          "en": "creates the file"
+        },
+        "labelX": 1130,
+        "labelY": 108,
+        "once": false
+      }
+    ],
+    "group": {
+      "x": 300,
+      "y": 20,
+      "w": 970,
+      "h": 610,
+      "logo": "android",
+      "label": {
+        "fr": "Téléphone Android",
+        "en": "Android phone"
+      }
+    },
+    "caption": {
+      "fr": "Tout tourne sur le téléphone : les écrans lisent et écrivent la base Room sur un thread de fond, et la session n'est qu'un objet en mémoire. Les rappels passent par le système de notifications d'Android.",
+      "en": "Everything runs on the phone: screens read and write the Room database on a background thread, and the session is just an object in memory. Reminders go through Android's notification system."
+    }
+  },
+  "stack": [
+    {
+      "name": {
+        "fr": "Application",
+        "en": "Application"
+      },
+      "items": [
+        {
+          "name": "Java",
+          "logo": "java",
+          "note": {
+            "fr": "17 activités",
+            "en": "17 activities"
+          }
+        },
+        {
+          "name": "Android SDK",
+          "logo": "android",
+          "note": {
+            "fr": "minSdk 21, targetSdk 35",
+            "en": "minSdk 21, targetSdk 35"
+          }
+        },
+        {
+          "name": "Material Components",
+          "logo": "android",
+          "note": {
+            "fr": "cartes, champs, boutons",
+            "en": "cards, fields, buttons"
+          }
+        },
+        {
+          "name": "RecyclerView",
+          "logo": "layers",
+          "note": {
+            "fr": "6 adapters",
+            "en": "6 adapters"
+          }
+        }
+      ]
+    },
+    {
+      "name": {
+        "fr": "Données",
+        "en": "Data"
+      },
+      "items": [
+        {
+          "name": "Room",
+          "logo": "database",
+          "note": {
+            "fr": "entités, DAO, transactions",
+            "en": "entities, DAOs, transactions"
+          }
+        },
+        {
+          "name": "SQLite",
+          "logo": "sqlite",
+          "note": {
+            "fr": "fichier sur l’appareil",
+            "en": "file on the device"
+          }
+        },
+        {
+          "name": "LiveData",
+          "logo": "android",
+          "note": {
+            "fr": "badge des notifications non lues",
+            "en": "unread notifications badge"
+          }
+        }
+      ]
+    },
+    {
+      "name": {
+        "fr": "Système",
+        "en": "System"
+      },
+      "items": [
+        {
+          "name": "NotificationCompat",
+          "logo": "android",
+          "note": {
+            "fr": "rappels, permission POST_NOTIFICATIONS",
+            "en": "reminders, POST_NOTIFICATIONS permission"
+          }
+        },
+        {
+          "name": "Android Studio",
+          "logo": "android",
+          "note": {
+            "fr": "AGP 8.9, Gradle",
+            "en": "AGP 8.9, Gradle"
+          }
+        }
+      ]
+    }
+  ],
+  "diagrams": [
+    {
+      "id": "reservation",
+      "title": {
+        "fr": "Réserver un créneau",
+        "en": "Booking a slot"
+      },
+      "caption": {
+        "fr": "Le créneau est relu juste avant d'écrire : s'il vient d'être pris, la réservation s'arrête. Sinon, le rendez-vous et le créneau sont écrits dans une seule transaction Room.",
+        "en": "The slot is read again just before writing: if it was just taken, booking stops. Otherwise the appointment and the slot are written in a single Room transaction."
+      }
+    },
+    {
+      "id": "rappel",
+      "title": {
+        "fr": "Rappel au patient",
+        "en": "Reminder to the patient"
+      },
+      "caption": {
+        "fr": "Le rappel est d'abord une ligne dans la table notifications, que le patient retrouve dans l'application ; il devient aussi une notification Android si la permission est accordée.",
+        "en": "The reminder is first a row in the notifications table, which the patient finds in the app; it also becomes an Android notification when the permission is granted."
+      }
+    },
+    {
+      "id": "donnees",
+      "title": {
+        "fr": "Modèle de données",
+        "en": "Data model"
+      },
+      "caption": {
+        "fr": "Une seule table pour les trois rôles. Les clés étrangères suppriment en cascade : supprimer un médecin supprime ses créneaux et ses rendez-vous.",
+        "en": "One table for the three roles. Foreign keys cascade: deleting a doctor deletes their slots and appointments."
+      }
+    }
+  ],
+  "choices": [
+    {
+      "title": {
+        "fr": "Room plutôt que SQLite à la main",
+        "en": "Room rather than raw SQLite"
+      },
+      "why": {
+        "fr": "Requêtes vérifiées à la compilation, entités annotées et transactions sans code de curseur.",
+        "en": "Queries checked at compile time, annotated entities and transactions without cursor code."
+      },
+      "alternative": {
+        "fr": "SQLiteOpenHelper et des Cursor.",
+        "en": "SQLiteOpenHelper and Cursors."
+      },
+      "tradeoff": {
+        "fr": "Chaque appel doit partir sur un autre thread que celui de l’interface.",
+        "en": "Every call must run on a thread other than the UI one."
+      }
+    },
+    {
+      "title": {
+        "fr": "Réservation en transaction",
+        "en": "Booking in a transaction"
+      },
+      "why": {
+        "fr": "Le rendez-vous et le créneau réservé sont écrits ensemble : jamais l'un sans l'autre.",
+        "en": "The appointment and the booked slot are written together: never one without the other."
+      },
+      "alternative": {
+        "fr": "Deux écritures séparées.",
+        "en": "Two separate writes."
+      },
+      "tradeoff": {
+        "fr": "Un peu plus de code autour de runInTransaction.",
+        "en": "A little more code around runInTransaction."
+      }
+    },
+    {
+      "title": {
+        "fr": "Une table pour tous les rôles",
+        "en": "One table for every role"
+      },
+      "why": {
+        "fr": "Connexion unique par e-mail ; le rôle décide du tableau de bord ouvert.",
+        "en": "One sign-in by e-mail; the role decides which dashboard opens."
+      },
+      "alternative": {
+        "fr": "Une table par profil.",
+        "en": "One table per profile."
+      },
+      "tradeoff": {
+        "fr": "Des colonnes vides selon le rôle (spécialité, antécédents).",
+        "en": "Empty columns depending on the role (speciality, history)."
+      }
+    },
+    {
+      "title": {
+        "fr": "LiveData pour le badge",
+        "en": "LiveData for the badge"
+      },
+      "why": {
+        "fr": "Le compteur de notifications non lues se met à jour seul quand la table change.",
+        "en": "The unread counter updates itself when the table changes."
+      },
+      "alternative": {
+        "fr": "Recompter à chaque ouverture.",
+        "en": "Counting again on every visit."
+      },
+      "tradeoff": {
+        "fr": "Un observateur lié au cycle de vie de l’écran.",
+        "en": "An observer tied to the screen lifecycle."
+      }
+    }
+  ],
+  "limits": {
+    "fr": [
+      "Les données restent sur l'appareil : pas encore de synchronisation entre plusieurs téléphones.",
+      "Les rappels sont envoyés à la main par le médecin, pas encore programmés.",
+      "Dates et heures se saisissent au clavier, sans sélecteur de date.",
+      "Les notes de consultation existent dans la base mais n'ont pas encore d'écran."
+    ],
+    "en": [
+      "Data stays on the device: no sync between several phones yet.",
+      "Reminders are sent by hand by the doctor, not scheduled yet.",
+      "Dates and times are typed in, with no date picker.",
+      "Consultation notes exist in the database but have no screen yet."
+    ]
+  },
+  "next": {
+    "fr": [
+      "Une API (Spring Boot) pour partager les rendez-vous entre les téléphones du patient et du médecin.",
+      "Des rappels programmés la veille avec WorkManager.",
+      "Des sélecteurs de date et d'heure Material.",
+      "Un écran de notes de consultation pour le médecin."
+    ],
+    "en": [
+      "An API (Spring Boot) to share appointments between the patient's and the doctor's phones.",
+      "Reminders scheduled the day before with WorkManager.",
+      "Material date and time pickers.",
+      "A consultation notes screen for doctors."
+    ]
+  }
+}

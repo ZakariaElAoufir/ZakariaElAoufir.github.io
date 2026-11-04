@@ -1,0 +1,42 @@
+erDiagram
+  UTILISATEUR ||--o{ CRENEAU : "publishes"
+  UTILISATEUR ||--o{ RENDEZVOUS : "patient, doctor"
+  CRENEAU ||--o| RENDEZVOUS : "booked by"
+  RENDEZVOUS ||--o| CONSULTATION : "leads to"
+  UTILISATEUR ||--o{ NOTIFICATIONS : "receives"
+  UTILISATEUR {
+    long id PK
+    string email UK
+    string password
+    string role "Admin, Medecin, Patient"
+    string specialite "doctor"
+    string antecedents "patient"
+  }
+  CRENEAU {
+    long id PK
+    long medecin_id FK
+    string date "YYYY-MM-DD"
+    string heure_debut
+    string heure_fin
+    bool disponible
+  }
+  RENDEZVOUS {
+    long id PK
+    long patient_id FK
+    long medecin_id FK
+    long creneau_id FK
+    string motif
+    string statut "en_attente, confirmé, annulé, terminé"
+  }
+  CONSULTATION {
+    long id PK
+    long rendezvous_id FK
+    string note_medecin
+  }
+  NOTIFICATIONS {
+    long id PK
+    long user_id FK
+    string title
+    string message
+    bool is_read
+  }
