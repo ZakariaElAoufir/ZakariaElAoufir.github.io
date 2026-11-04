@@ -1,0 +1,673 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Home Energy Tracker · Démo · Zakaria El Aoufir</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400;500;600;700&family=Archivo:wght@400;500;600;800&family=Open+Sans:wght@400;600;700&family=Inter:wght@400;500;600&family=Source+Code+Pro:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="noir.css">
+<script>document.documentElement.classList.add('js')</script>
+<style>
+.frame { box-shadow: 0 -4px 0 var(--line), 0 4px 0 var(--line), -4px 0 0 var(--line), 4px 0 0 var(--line); }
+/* ---------- project page shell (same as AgriGPT) ---------- */
+.intro { padding-top: 140px; }
+.crumbs { display: flex; gap: 10px; font: 500 15px/1 var(--display); color: var(--ash); }
+.intro h1.big { margin: 18px 0; }
+.tags { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px; }
+.type { display: inline-flex; padding: 6px 12px; font: 600 15px/1 var(--display); letter-spacing: .04em; text-transform: uppercase; clip-path: var(--pix); background: var(--ivory); color: var(--night); }
+.date { display: inline-flex; align-items: center; gap: 7px; font-size: 15px; color: var(--ash); }
+.tabs { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-top: 32px; }
+.tab { display: inline-flex; align-items: center; gap: 8px; padding: 12px 20px 14px; font: 700 16px/1 var(--display); text-transform: uppercase; background: var(--deep); clip-path: var(--pix); color: var(--ash); }
+.tab[aria-current] { background: var(--accent); color: var(--ivory); box-shadow: inset 0 -4px 0 var(--accent-dark); }
+.tabs .code { margin-left: auto; }
+.about { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 28px; margin-top: 56px; }
+.about article { background: var(--deep); padding: 26px 26px 28px; }
+.about h2 { font: 600 18px/1.2 var(--display); text-transform: uppercase; letter-spacing: .04em; color: var(--accent-text); margin-bottom: 10px; }
+.about p { color: var(--ash); }
+.sim { display: flex; align-items: center; gap: 12px; margin: 72px 0 26px; padding: 12px 18px; background: var(--raise); font-size: 15px; }
+.sim i { width: 10px; height: 10px; flex: none; background: var(--accent-text); animation: blink 1.6s steps(2) infinite; }
+@keyframes blink { 50% { opacity: .25; } }
+.sim b { font-family: var(--display); font-weight: 600; text-transform: uppercase; letter-spacing: .04em; }
+
+/* ---------- the demo window ---------- */
+.wide { --w: min(1680px, calc(100vw - 2 * var(--margin))); width: var(--w); margin-left: calc((100% - var(--w)) / 2); }
+.window { background: var(--deep); }
+.window.max { position: fixed; inset: 0; z-index: 100; display: flex; flex-direction: column; box-shadow: none; }
+.window.max .app { flex: 1; height: auto; }
+body.locked { overflow: hidden; }
+.chrome { display: flex; align-items: center; gap: 12px; padding: 10px 14px 0; background: var(--deep); }
+.chrome .dots { display: flex; gap: 6px; margin-bottom: 10px; }
+.chrome .dots i { width: 10px; height: 10px; background: var(--line); }
+.btabs { display: flex; gap: 4px; flex: 1; min-width: 0; overflow-x: auto; }
+.btab { display: inline-flex; align-items: center; gap: 8px; padding: 9px 14px 11px; border: 0; background: var(--night); color: var(--ash); font: 500 14px/1 var(--display); cursor: pointer; white-space: nowrap; clip-path: polygon(0 4px, 4px 4px, 4px 0, calc(100% - 4px) 0, calc(100% - 4px) 4px, 100% 4px, 100% 100%, 0 100%); }
+.btab img { width: 16px; height: 16px; }
+.btab .n { min-width: 18px; padding: 2px 5px; background: var(--accent); color: var(--ivory); font-size: 12px; }
+.btab[aria-selected="true"] { background: #fff; color: #222; }
+.btab:hover:not([aria-selected="true"]) { color: var(--ivory); }
+.full-btn { margin-bottom: 8px; flex: none; }
+.urlbar { display: flex; align-items: center; gap: 10px; padding: 8px 14px; background: #fff; border-bottom: 1px solid #ddd; }
+.urlbar span { flex: 1; padding: 5px 12px; background: #f1f3f4; color: #333; border-radius: 14px; font: 400 13px/1.3 Inter, sans-serif; }
+
+/* scenario controls: portfolio-side, they drive the simulated platform */
+.ctrl { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 22px; padding: 12px 14px 14px; background: var(--deep); border-top: 4px solid var(--night); color: var(--ivory); font-size: 14px; }
+.ctrl .lab { font: 600 14px/1.2 var(--display); text-transform: uppercase; letter-spacing: .04em; color: var(--accent-text); }
+.ctrl label { display: inline-flex; align-items: center; gap: 10px; }
+.ctrl input[type=range] { width: 170px; accent-color: var(--accent-text); }
+.ctrl output { font: 600 14px/1 var(--display); min-width: 70px; }
+.ctrl .stat { margin-left: auto; display: flex; gap: 18px; color: var(--ash); }
+.ctrl .stat b { color: var(--ivory); font-family: var(--display); font-weight: 600; }
+
+.app { position: relative; height: clamp(620px, 80vh, 920px); background: #fff; overflow: hidden; }
+.view { position: absolute; inset: 0; display: none; overflow: auto; }
+.view.on { display: block; }
+
+/* ===== 1. API via the gateway, in the Swagger UI look ===== */
+.sw { font: 400 14px/1.45 "Open Sans", sans-serif; color: #3b4151; background: #fff; min-height: 100%; }
+.sw-top { display: flex; align-items: center; gap: 18px; padding: 10px 26px; background: #1b1b1b; color: #fff; }
+.sw-top .logo { display: flex; align-items: center; gap: 8px; font: 700 18px/1 "Open Sans", sans-serif; color: #fff; }
+.sw-top .logo img { width: 30px; height: 30px; filter: invert(70%) sepia(60%) saturate(500%) hue-rotate(60deg); }
+.sw-top .def { margin-left: auto; display: flex; align-items: center; gap: 10px; font-size: 13px; }
+.sw-top select { padding: 6px 30px 6px 10px; border: 2px solid #62a03f; border-radius: 4px; font: 700 13px "Open Sans", sans-serif; }
+.sw-body { max-width: 1240px; margin: 0 auto; padding: 22px 26px 40px; }
+.sw-info h2 { font: 600 30px/1.2 "Open Sans", sans-serif; color: #3b4151; display: flex; align-items: center; gap: 10px; }
+.sw-info h2 small { font-size: 11px; padding: 2px 6px; background: #7d8492; color: #fff; border-radius: 57px; font-weight: 700; }
+.sw-info p { margin-top: 6px; font-size: 14px; }
+.sw-info code { font: 600 13px "Source Code Pro", monospace; color: #9012fe; }
+.sw-scheme { display: flex; align-items: center; justify-content: space-between; margin: 22px -26px 0; padding: 20px 26px; box-shadow: 0 1px 2px 0 rgba(0,0,0,.15); }
+.sw-scheme .srv { font-size: 12px; font-weight: 700; }
+.sw-scheme .srv span { display: block; margin-top: 4px; padding: 6px 10px; border: 1px solid #d9d9d9; border-radius: 4px; font: 600 13px "Source Code Pro", monospace; font-weight: 400; }
+.sw-btn { display: inline-flex; align-items: center; gap: 8px; padding: 6px 22px; border: 2px solid #49cc90; border-radius: 4px; background: transparent; color: #49cc90; font: 700 14px "Open Sans", sans-serif; cursor: pointer; }
+.sw-btn.locked { color: #49cc90; }
+.sw-btn svg { width: 16px; height: 16px; }
+.sw-tag { margin-top: 26px; }
+.sw-tag h3 { display: flex; align-items: baseline; gap: 12px; padding: 10px 10px 10px 0; border-bottom: 1px solid rgba(59,65,81,.3); font: 600 22px/1.3 "Open Sans", sans-serif; }
+.sw-tag h3 small { font-size: 13px; font-weight: 400; }
+.op { margin: 0 0 12px; border: 1px solid; border-radius: 4px; }
+.op.get { border-color: #61affe; background: rgba(97,175,254,.1); }
+.op.post { border-color: #49cc90; background: rgba(73,204,144,.1); }
+.op.put { border-color: #fca130; background: rgba(252,161,48,.1); }
+.op.delete { border-color: #f93e3e; background: rgba(249,62,62,.1); }
+.op > button { display: flex; align-items: center; gap: 14px; width: 100%; padding: 6px; border: 0; background: none; font: inherit; color: inherit; cursor: pointer; text-align: left; }
+.op .m { min-width: 80px; padding: 6px 0; border-radius: 3px; color: #fff; font: 700 14px "Open Sans", sans-serif; text-align: center; }
+.op.get .m { background: #61affe; } .op.post .m { background: #49cc90; } .op.put .m { background: #fca130; } .op.delete .m { background: #f93e3e; }
+.op .p { font: 600 15px "Source Code Pro", monospace; color: #3b4151; }
+.op .d { font-size: 13px; color: #3b4151; }
+.op .lk { margin-left: auto; width: 18px; height: 18px; color: #3b4151; opacity: .7; }
+.op-body { display: none; border-top: 1px solid currentColor; padding: 0 0 14px; background: rgba(255,255,255,.6); }
+.op.open .op-body { display: block; }
+.op-sec { display: flex; align-items: center; justify-content: space-between; padding: 10px 20px; background: rgba(255,255,255,.8); box-shadow: 0 1px 2px rgba(0,0,0,.1); font: 600 14px "Open Sans", sans-serif; }
+.op-sec .try { padding: 5px 22px; border: 2px solid #888; border-radius: 4px; background: transparent; font: 700 14px "Open Sans", sans-serif; cursor: pointer; }
+.op-sec .try.cancel { border-color: #ff6060; color: #ff6060; }
+.op-fields { padding: 12px 20px; display: grid; gap: 12px; }
+.op-fields label { display: grid; grid-template-columns: 160px 1fr; gap: 10px; align-items: start; font: 600 14px "Open Sans", sans-serif; }
+.op-fields label small { display: block; font: 400 12px "Source Code Pro", monospace; color: #999; }
+.op-fields input, .op-fields textarea { padding: 6px 10px; border: 1px solid #d9d9d9; border-radius: 4px; font: 400 13px "Source Code Pro", monospace; background: #fff; }
+.op-fields textarea { min-height: 120px; resize: vertical; }
+.op-fields [disabled] { background: rgba(255,255,255,.6); color: #888; }
+.exec { margin: 0 20px; width: calc(100% - 40px); padding: 8px; border: 0; border-radius: 4px; background: #4990e2; color: #fff; font: 700 14px "Open Sans", sans-serif; cursor: pointer; }
+.op-res { padding: 0 20px; }
+.op-res h4 { margin: 14px 0 6px; font: 600 13px "Open Sans", sans-serif; }
+.op-res pre { padding: 10px 12px; border-radius: 4px; background: #333; color: #fff; font: 600 12px/1.5 "Source Code Pro", monospace; white-space: pre-wrap; word-break: break-word; max-height: 260px; overflow: auto; }
+.op-res .code { display: flex; gap: 20px; font: 600 13px "Open Sans", sans-serif; }
+.op-res .code b { min-width: 40px; }
+.op-res .code b.err { color: #f93e3e; }
+.loading { padding: 10px 20px; font-style: italic; color: #777; }
+/* authorize dialog */
+.sw-modal { position: absolute; inset: 0; z-index: 5; display: none; place-items: start center; padding-top: 80px; background: rgba(0,0,0,.6); }
+.sw-modal.on { display: grid; }
+.sw-modal .box { width: min(620px, 92%); background: #fff; border-radius: 4px; box-shadow: 0 10px 30px rgba(0,0,0,.4); }
+.sw-modal header { display: flex; justify-content: space-between; padding: 12px 20px; border-bottom: 1px solid #ebebeb; font: 700 20px "Open Sans", sans-serif; }
+.sw-modal header button { border: 0; background: none; font-size: 20px; cursor: pointer; }
+.sw-modal .inner { padding: 16px 20px 20px; display: grid; gap: 10px; font-size: 14px; }
+.sw-modal .inner h4 { font: 700 16px "Open Sans", sans-serif; }
+.sw-modal .inner input { padding: 8px 10px; border: 1px solid #d9d9d9; border-radius: 4px; font: 400 12px "Source Code Pro", monospace; }
+.sw-modal .row { display: flex; gap: 10px; }
+.sw-modal .kc { border-color: #4d4d4d; color: #4d4d4d; }
+
+/* ===== 2. Kafka UI ===== */
+.kui { display: grid; grid-template-columns: 220px 1fr; min-height: 100%; font: 400 14px/1.45 Inter, sans-serif; color: #171a1c; background: #fff; }
+.kui nav { border-right: 1px solid #e3e6e8; padding: 14px 10px; background: #fff; }
+.kui nav .brand { display: flex; align-items: center; gap: 8px; padding: 4px 8px 16px; font-weight: 600; }
+.kui nav .brand i { width: 22px; height: 22px; background: #4f4ffa; border-radius: 6px; }
+.kui nav .cl { padding: 6px 8px; font-weight: 600; font-size: 13px; color: #73848c; }
+.kui nav a { display: block; padding: 6px 8px 6px 18px; border-radius: 6px; color: #454f54; font-size: 14px; cursor: pointer; }
+.kui nav a.on { background: #e3e6e8; color: #171a1c; font-weight: 500; }
+.kui main { padding: 16px 24px; }
+.kui h2 { font: 600 22px/1.3 Inter, sans-serif; margin-bottom: 14px; display: flex; align-items: center; gap: 10px; }
+.kui h2 .bc { color: #73848c; font-weight: 500; cursor: pointer; }
+.kui table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.kui th { text-align: left; padding: 8px 10px; color: #73848c; font-weight: 500; border-bottom: 1px solid #e3e6e8; text-transform: uppercase; font-size: 12px; }
+.kui td { padding: 9px 10px; border-bottom: 1px solid #f1f2f3; vertical-align: top; }
+.kui td.link { color: #4f4ffa; cursor: pointer; font-weight: 500; }
+.kui td code { font: 400 12px "Source Code Pro", monospace; color: #171a1c; }
+.kui .tabsk { display: flex; gap: 22px; border-bottom: 1px solid #e3e6e8; margin-bottom: 12px; }
+.kui .tabsk span { padding: 8px 0; color: #73848c; font-weight: 500; cursor: pointer; }
+.kui .tabsk span.on { color: #171a1c; border-bottom: 2px solid #4f4ffa; }
+.kui .lag { display: inline-block; padding: 1px 8px; border-radius: 10px; background: #e8f7ee; color: #1f7a45; font-weight: 600; }
+.kui .lag.warn { background: #fff4e5; color: #a35a00; }
+.kui .new { animation: flash 1.2s ease-out; }
+@keyframes flash { from { background: #fff7c2; } }
+
+/* ===== 3. Mailpit ===== */
+.mp { display: grid; grid-template-rows: auto 1fr; min-height: 100%; font: 400 14px/1.5 -apple-system, "Segoe UI", Roboto, sans-serif; color: #212529; background: #fff; }
+.mp-top { display: flex; align-items: center; gap: 14px; padding: 10px 18px; background: #2c3e50; color: #fff; }
+.mp-top b { font-size: 18px; }
+.mp-top input { flex: 1; max-width: 420px; padding: 5px 10px; border: 0; border-radius: 4px; }
+.mp-main { display: grid; grid-template-columns: 200px 1fr; min-height: 0; }
+.mp-side { padding: 14px; border-right: 1px solid #dee2e6; background: #f8f9fa; }
+.mp-side a { display: flex; justify-content: space-between; padding: 6px 10px; border-radius: 4px; background: #e9ecef; font-weight: 600; }
+.mp-side a span { padding: 0 7px; border-radius: 10px; background: #2c3e50; color: #fff; font-size: 12px; }
+.mp-list { overflow: auto; }
+.mp-item { display: grid; grid-template-columns: 220px 1fr 90px; gap: 14px; padding: 10px 16px; border-bottom: 1px solid #dee2e6; cursor: pointer; }
+.mp-item.unread { font-weight: 700; }
+.mp-item.unread .from::before { content: ""; display: inline-block; width: 8px; height: 8px; margin-right: 8px; border-radius: 50%; background: #0d6efd; }
+.mp-item:hover { background: #f1f3f5; }
+.mp-item .when { color: #6c757d; font-size: 13px; text-align: right; font-weight: 400; }
+.mp-empty { padding: 40px; color: #6c757d; text-align: center; }
+.mp-msg { padding: 18px 24px; }
+.mp-msg .back { border: 1px solid #ced4da; background: #fff; border-radius: 4px; padding: 4px 12px; cursor: pointer; }
+.mp-msg table { margin: 16px 0; font-size: 14px; }
+.mp-msg th { text-align: right; padding: 3px 14px 3px 0; color: #6c757d; font-weight: 400; }
+.mp-msg h3 { font-size: 20px; }
+.mp-msg pre { padding: 16px; border: 1px solid #dee2e6; border-radius: 4px; font: 400 14px/1.6 "Source Code Pro", monospace; background: #fff; white-space: pre-wrap; }
+
+/* ===== 4. Grafana (dark theme) ===== */
+.gf { min-height: 100%; background: #111217; color: #ccccdc; font: 400 13px/1.4 Inter, sans-serif; padding: 12px 16px 24px; }
+.gf-top { display: flex; align-items: center; gap: 12px; padding: 4px 4px 14px; }
+.gf-top h2 { font: 500 18px Inter, sans-serif; color: #ccccdc; }
+.gf-top .crumb { color: #8e8e9e; }
+.gf-top .pick { margin-left: auto; display: flex; gap: 8px; }
+.gf-top .pick span { padding: 5px 10px; border: 1px solid #2c3235; border-radius: 2px; background: #181b1f; font-size: 12px; }
+.gf-grid { display: grid; grid-template-columns: repeat(24, minmax(0, 1fr)); gap: 8px; }
+.gf-panel { background: #181b1f; border: 1px solid #22252b; border-radius: 2px; padding: 8px 10px 10px; display: flex; flex-direction: column; min-height: 0; }
+.gf-panel h4 { font: 500 13px Inter, sans-serif; color: #ccccdc; margin-bottom: 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.gf-panel svg { width: 100%; flex: 1; min-height: 0; }
+.gf-panel svg text { fill: #8e8e9e; font: 400 10px Inter, sans-serif; }
+.gf-legend { display: flex; flex-wrap: wrap; gap: 4px 14px; margin-top: 4px; font-size: 11px; }
+.gf-legend span { display: inline-flex; align-items: center; gap: 6px; }
+.gf-legend i { width: 14px; height: 4px; border-radius: 2px; }
+.gf-stat { flex: 1; display: grid; place-items: center; font: 500 40px Inter, sans-serif; color: #73bf69; }
+.gf-stat.bad { color: #f2495c; }
+.gf-table { width: 100%; border-collapse: collapse; font-size: 11px; }
+.gf-table th { text-align: left; color: #6e9fff; padding: 3px 4px; border-bottom: 1px solid #2c3235; font-weight: 500; }
+.gf-table td { padding: 3px 4px; border-bottom: 1px solid #22252b; white-space: nowrap; }
+
+/* ---------- under the hood: the pipeline, live ---------- */
+.hood { margin-top: 40px; }
+.hood h2 { font: 700 26px/1.1 var(--display); text-transform: uppercase; text-shadow: 3px 3px 0 var(--accent-dark); }
+.hood > p { color: var(--ash); margin: 8px 0 22px; max-width: 80ch; }
+.pipe { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 18px; }
+.stage { position: relative; background: var(--deep); padding: 14px 14px 16px; box-shadow: 0 -4px 0 var(--line), 0 4px 0 var(--line), -4px 0 0 var(--line), 4px 0 0 var(--line); transition: background .25s; }
+.stage:not(:last-child)::after { content: ""; position: absolute; right: -18px; top: 30px; width: 14px; height: 4px; background: var(--line); }
+.stage.hot { background: var(--raise); box-shadow: 0 -4px 0 var(--accent-text), 0 4px 0 var(--accent-text), -4px 0 0 var(--accent-text), 4px 0 0 var(--accent-text); }
+.stage.alarm { box-shadow: 0 -4px 0 #e0a35e, 0 4px 0 #e0a35e, -4px 0 0 #e0a35e, 4px 0 0 #e0a35e; }
+.stage h3 { font: 600 14px/1.2 var(--display); text-transform: uppercase; color: var(--accent-text); }
+.stage b { display: block; margin: 8px 0 4px; font: 700 24px/1 var(--display); color: var(--ivory); }
+.stage p { font-size: 13px; line-height: 1.4; color: var(--ash); }
+.agg { margin-top: 18px; padding: 12px 16px; background: var(--night); font-size: 14px; color: var(--ash); }
+.agg b { color: var(--ivory); font-weight: 500; }
+
+/* ---------- phone ---------- */
+.phone { display: none; margin-top: 56px; }
+.gallery { display: grid; gap: 22px; }
+.shot { background: var(--deep); padding: 14px; }
+.shot .screen { background: #fff; color: #222; padding: 14px; font: 400 12px/1.45 "Open Sans", sans-serif; }
+.shot .screen.dark { background: #181b1f; color: #ccccdc; }
+.shot figcaption { margin-top: 12px; font-size: 15px; color: var(--ash); }
+.shot figcaption strong { color: var(--ivory); font-weight: 500; }
+.desk-note { margin-top: 22px; padding: 18px; background: var(--raise); }
+.desk-note p { margin-bottom: 12px; }
+@media (max-width: 1023px) { .desktop { display: none; } .phone { display: block; } }
+@media (max-width: 960px) { .about { grid-template-columns: 1fr; } .tabs .code { margin-left: 0; } }
+</style>
+</head>
+<body>
+<div class="city" aria-hidden="true"><img src="media/ville-nuit.jpg" alt=""><canvas></canvas></div>
+
+<header class="top" id="top">
+  <a class="wordmark" href="accueil.html">Zakaria <b>El Aoufir</b></a>
+  <nav aria-label="Navigation principale"><a href="accueil.html">Accueil</a><a href="projets.html" aria-current="page">Projets</a><a href="certifications.html">Certifications</a></nav>
+  <a class="lang" href="#"><b>FR</b> / EN</a>
+  <a class="btn small" href="../public/cv/Zakaria_El_Aoufir_CV_FR.pdf"><svg class="i"><use href="icons.svg#download"/></svg>CV</a>
+  <button class="burger" aria-label="Ouvrir le menu" aria-expanded="false"><svg class="i" style="width:26px;height:26px"><use href="icons.svg#menu"/></svg></button>
+</header>
+
+<main>
+  <section class="block intro">
+    <div class="instant">
+      <p class="crumbs reveal"><a href="projets.html">Projets</a><span>/</span><span>Home Energy Tracker</span></p>
+      <h1 class="big reveal" style="--d:100ms">Home Energy Tracker</h1>
+      <div class="tags reveal" style="--d:180ms"><span class="type">Projet personnel</span><span class="date"><svg class="i"><use href="icons.svg#calendar"/></svg>2026</span></div>
+      <div class="tabs reveal" style="--d:240ms">
+        <a class="tab" href="projet-het.html" aria-current="page"><svg class="i"><use href="icons.svg#play"/></svg>Démo</a>
+        <a class="tab" href="projet-het-architecture.html"><svg class="i"><use href="icons.svg#layers"/></svg>Architecture</a>
+        <a class="btn small ghost code" href="https://github.com/ZakariaElAoufir/Microservice-Home-Energy-Tracker"><svg class="i"><use href="icons.svg#code"/></svg>Code</a>
+      </div>
+    </div>
+
+    <div class="about">
+      <article class="frame reveal"><h2>Le problème</h2><p>Une maison connectée produit des milliers de relevés de consommation par minute. Il faut les encaisser sans perte, les additionner par foyer, et prévenir le propriétaire dès qu'il dépasse son seuil.</p></article>
+      <article class="frame reveal" style="--d:100ms"><h2>Ce que fait la plateforme</h2><p>7 microservices Spring Boot : les relevés passent par Kafka, sont stockés dans InfluxDB et agrégés toutes les 10 secondes ; un dépassement déclenche un e-mail, et une IA locale propose des conseils d'économie. Le tout derrière une gateway sécurisée par Keycloak, supervisé par Prometheus et Grafana.</p></article>
+      <article class="frame reveal" style="--d:200ms"><h2>Mon rôle</h2><p>À confirmer : projet réalisé seul, à partir d'un sujet présenté par LeetJourney (backend, Kafka, InfluxDB, alertes, IA locale, supervision, Docker Compose).</p></article>
+    </div>
+
+    <div class="desktop">
+      <p class="sim frame"><i></i><span><b>Simulation : données fictives.</b> La plateforme est rejouée dans votre navigateur, aux vraies cadences du projet ; aucun serveur n'est appelé.</span></p>
+
+      <div class="wide">
+        <div class="window frame" id="window">
+          <div class="chrome">
+            <span class="dots"><i></i><i></i><i></i></span>
+            <div class="btabs" role="tablist">
+              <button class="btab" role="tab" aria-selected="true" data-v="api"><img src="media/logos/swagger.svg" alt="">API · gateway :9000</button>
+              <button class="btab" role="tab" aria-selected="false" data-v="kafka"><img src="media/logos/kafka.svg" alt="">Kafka UI · :8070</button>
+              <button class="btab" role="tab" aria-selected="false" data-v="mail"><img src="media/logos/mail.svg" alt="">Mailpit · :8025 <span class="n" id="mail-n" hidden>0</span></button>
+              <button class="btab" role="tab" aria-selected="false" data-v="grafana"><img src="media/logos/grafana.svg" alt="">Grafana · :3000</button>
+            </div>
+            <button class="btn small ghost full-btn" id="full"><svg class="i"><use href="icons.svg#layers"/></svg><span>Plein écran</span></button>
+          </div>
+          <div class="ctrl">
+            <span class="lab">Scénario</span>
+            <button class="btn small" id="sim"><svg class="i"><use href="icons.svg#play"/></svg><span>Lancer le simulateur</span></button>
+            <label>Seuil d'alerte de l'utilisateur 1 <input type="range" id="thr" min="20" max="600" step="10" value="120"><output id="thr-o">120 kWh</output></label>
+            <label><input type="checkbox" id="alerting" checked> Alertes activées</label>
+            <span class="stat"><span>Relevés : <b id="st-sent">0</b></span><span>Utilisateur 1, dernière heure : <b id="st-user">0,0 kWh</b></span></span>
+          </div>
+          <div class="urlbar"><span id="url">localhost:9000/swagger-ui.html</span></div>
+          <div class="app">
+            <!-- 1. API -->
+            <section class="view on" id="v-api">
+              <div class="sw">
+                <div class="sw-top"><span class="logo"><img src="media/logos/swagger.svg" alt="">Swagger</span><span class="def">Select a definition <select><option>Home Energy Tracker (via api-gateway)</option></select></span></div>
+                <div class="sw-body">
+                  <div class="sw-info"><h2>Home Energy Tracker API <small>1.0.0</small></h2><p>Toutes les routes passent par <code>api-gateway</code> et demandent un jeton JWT Keycloak.</p></div>
+                  <div class="sw-scheme"><div class="srv">Servers<span>http://localhost:9000</span></div>
+                    <button class="sw-btn" id="authorize"><span>Authorize</span><svg viewBox="0 0 20 20" fill="currentColor"><path id="lock-path" d="M15.8 8H14V5.6C14 2.703 12.665 1 10 1 7.334 1 6 2.703 6 5.6V6h2v-.801C8 3.754 8.797 3 10 3c1.203 0 2 .754 2 2.199V8H4c-.553 0-1 .646-1 1.199V17c0 .549.428 1.139.951 1.307l1.197.387C5.672 18.861 6.55 19 7.1 19h5.8c.549 0 1.428-.139 1.951-.307l1.196-.387c.524-.167.953-.757.953-1.306V9.199C17 8.646 16.352 8 15.8 8z"/></svg></button>
+                  </div>
+                  <div id="ops"></div>
+                </div>
+                <div class="sw-modal" id="auth-modal">
+                  <div class="box">
+                    <header>Available authorizations<button id="auth-x" aria-label="Fermer">×</button></header>
+                    <div class="inner">
+                      <h4>bearerAuth (http, Bearer)</h4>
+                      <p>Jeton émis par Keycloak, realm <code>het-security-realm</code>.</p>
+                      <input id="tok" placeholder="Value" autocomplete="off">
+                      <div class="row"><button class="sw-btn kc" id="get-token">Obtenir un jeton Keycloak</button><button class="sw-btn" id="auth-ok">Authorize</button><button class="sw-btn kc" id="logout">Logout</button></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
+            <!-- 2. Kafka UI -->
+            <section class="view" id="v-kafka"><div class="kui">
+              <nav><div class="brand"><i></i>UI for Apache Kafka</div><div class="cl">local</div>
+                <a data-k="topics" class="on">Topics</a><a data-k="consumers">Consumers</a></nav>
+              <main id="kafka-main"></main>
+            </div></section>
+            <!-- 3. Mailpit -->
+            <section class="view" id="v-mail"><div class="mp">
+              <div class="mp-top"><b>Mailpit</b><input placeholder="Search mailbox" disabled></div>
+              <div class="mp-main"><div class="mp-side"><a>Inbox <span id="mail-count">0</span></a></div><div class="mp-list" id="mail-main"></div></div>
+            </div></section>
+            <!-- 4. Grafana -->
+            <section class="view" id="v-grafana"><div class="gf">
+              <div class="gf-top"><span class="crumb">Dashboards ›</span><h2>Home Energy Tracker - Overview</h2><span class="pick"><span>Last 15 minutes</span><span>Refresh 10s</span></span></div>
+              <div class="gf-grid" id="gf"></div>
+            </div></section>
+          </div>
+        </div>
+      </div>
+
+      <section class="hood">
+        <h2>Sous le capot</h2>
+        <p>Le pipeline du projet, aux vraies cadences : 1 000 relevés toutes les 5 secondes répartis sur 199 appareils (l'utilisateur 1 en possède 6), agrégation toutes les 10 secondes sur la dernière heure.</p>
+        <div class="pipe" id="pipe">
+          <div class="stage" data-s="sim"><h3>Simulateur</h3><b>0</b><p>relevés envoyés</p></div>
+          <div class="stage" data-s="ing"><h3>ingestion</h3><b>0</b><p>POST /api/v1/ingestion → 201</p></div>
+          <div class="stage" data-s="ku"><h3>energy-usage</h3><b>0</b><p>messages Kafka</p></div>
+          <div class="stage" data-s="infl"><h3>usage → InfluxDB</h3><b>0</b><p>points écrits</p></div>
+          <div class="stage" data-s="agg"><h3>Agrégation</h3><b>0</b><p>passages (toutes les 10 s)</p></div>
+          <div class="stage" data-s="ka"><h3>energy-alerts</h3><b>0</b><p>événements d'alerte</p></div>
+          <div class="stage" data-s="mail"><h3>alert → Mailpit</h3><b>0</b><p>e-mails envoyés</p></div>
+        </div>
+        <p class="agg" id="agg">Lancez le simulateur : le dernier passage d'agrégation s'affichera ici.</p>
+      </section>
+    </div>
+
+    <div class="phone">
+      <div class="gallery">
+        <figure class="shot frame"><div class="screen"><b>GET /api/v1/insight/saving-tips/1</b><br>Code 200 · {"userId": 1, "tips": "Your total usage over the last 3 days…", "energyUsage": 184.3}</div><figcaption><strong>Une API derrière une gateway.</strong> Chaque route demande un jeton Keycloak ; sans lui, la gateway répond 401.</figcaption></figure>
+        <figure class="shot frame"><div class="screen dark"><b>Home Energy Tracker - Overview</b><br>HTTP request rate · JVM heap · Scrape target up · 4xx / 5xx</div><figcaption><strong>Supervision.</strong> Le tableau de bord Grafana suit le débit et la santé des 7 services.</figcaption></figure>
+        <figure class="shot frame"><div class="screen"><b>Energy Usage Alert for User 1</b><br>Alert: Energy consumption threshold exceeded<br>Threshold: 120.0<br>Energy Consumed: 131.42</div><figcaption><strong>Alerte e-mail.</strong> Dès que la consommation de la dernière heure dépasse le seuil, alert-service envoie un e-mail.</figcaption></figure>
+      </div>
+      <div class="desk-note"><p>La démo interactive est disponible sur ordinateur.</p><button class="btn small"><svg class="i"><use href="icons.svg#check"/></svg>Copier le lien</button></div>
+    </div>
+  </section>
+</main>
+
+<footer><span>Zakaria El Aoufir, 2026</span><nav><a href="#">E-mail</a><a href="#">LinkedIn</a><a href="#">GitHub</a><a href="#">Code du site</a></nav></footer>
+
+<script src="noir.js"></script>
+<script>
+// ======================================================================
+// A small in-browser replay of the platform. Rules copied from the code:
+// - simulator: 1 000 readings / 5 s, deviceId random in [1, 200), energy random in [0, 2) rounded to 0.01
+// - usage-service: every 10 s, sum of the last hour per device, owner via device-service, threshold via user-service,
+//   alert on energy-alerts when total > threshold and alerting is on (no dedup: again every 10 s)
+// - alert-service: subject "Energy Usage Alert for User {id}", body "Alert: …\nThreshold: …\nEnergy Consumed: …"
+// - gateway: every /api/v1 route needs a JWT, otherwise 401
+// ======================================================================
+const $ = id => document.getElementById(id);
+const fmt = (n, d = 1) => n.toLocaleString('fr-FR', { minimumFractionDigits: d, maximumFractionDigits: d });
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+
+const state = {
+  running: false, token: null,
+  user: { id: 1, name: 'Demo', surname: 'User', email: 'demo.user@het.local', address: '12 rue des Lilas, Rabat', alerting: true, energyAlertingThreshold: 120 },
+  devices: [
+    { id: 1, name: 'Enceinte salon', type: 'SPEAKER', location: 'Salon', userId: 1 },
+    { id: 2, name: 'Caméra entrée', type: 'CAMERA', location: 'Entrée', userId: 1 },
+    { id: 3, name: 'Thermostat', type: 'THERMOSTAT', location: 'Couloir', userId: 1 },
+    { id: 4, name: 'Lumière cuisine', type: 'LIGHT', location: 'Cuisine', userId: 1 },
+    { id: 5, name: 'Serrure', type: 'LOCK', location: 'Porte d\'entrée', userId: 1 },
+    { id: 6, name: 'Sonnette', type: 'DOORBELL', location: 'Porte d\'entrée', userId: 1 }
+  ],
+  nextDeviceId: 200,
+  readings: [],           // {deviceId, energy, t} kept for one hour
+  counts: { sim: 0, ing: 0, ku: 0, infl: 0, agg: 0, ka: 0, mail: 0 },
+  usageMsgs: [], alertMsgs: [], mails: [],
+  http: [],               // recent gateway calls for Grafana: {app, uri, method, status, t}
+  status4xx: 0
+};
+
+// ---------- tabs, full screen, scenario ----------
+const URLS = { api: 'localhost:9000/swagger-ui.html', kafka: 'localhost:8070/ui/clusters/local/all-topics', mail: 'localhost:8025', grafana: 'localhost:3000/d/het-overview/home-energy-tracker-overview' };
+let view = 'api';
+document.querySelectorAll('.btab').forEach(b => b.addEventListener('click', () => {
+  view = b.dataset.v;
+  document.querySelectorAll('.btab').forEach(x => x.setAttribute('aria-selected', x === b));
+  document.querySelectorAll('.view').forEach(v => v.classList.toggle('on', v.id === 'v-' + view));
+  $('url').textContent = URLS[view];
+  render();
+}));
+const setFull = on => { $('window').classList.toggle('max', on); document.body.classList.toggle('locked', on); $('full').querySelector('span').textContent = on ? 'Quitter le plein écran' : 'Plein écran'; };
+$('full').addEventListener('click', () => setFull(!$('window').classList.contains('max')));
+addEventListener('keydown', e => { if (e.key === 'Escape') { if ($('auth-modal').classList.contains('on')) $('auth-modal').classList.remove('on'); else setFull(false); } });
+
+$('sim').addEventListener('click', () => {
+  state.running = !state.running;
+  $('sim').querySelector('span').textContent = state.running ? 'Arrêter le simulateur' : 'Lancer le simulateur';
+  $('sim').querySelector('use').setAttribute('href', state.running ? 'icons.svg#check' : 'icons.svg#play');
+  if (state.running) batch();
+});
+$('thr').addEventListener('input', e => { state.user.energyAlertingThreshold = +e.target.value; syncScenario(); });
+$('alerting').addEventListener('change', e => { state.user.alerting = e.target.checked; });
+const syncScenario = () => {
+  $('thr').value = state.user.energyAlertingThreshold; $('thr-o').textContent = state.user.energyAlertingThreshold + ' kWh';
+  $('alerting').checked = state.user.alerting;
+};
+
+// ---------- the pipeline ----------
+const userDevices = () => state.devices.filter(d => d.userId === 1).map(d => d.id);
+const hourSum = () => { const ids = new Set(userDevices()); return state.readings.filter(r => ids.has(r.deviceId)).reduce((s, r) => s + r.energy, 0); };
+const pulse = key => { const el = document.querySelector(`.stage[data-s="${key}"]`); el.querySelector('b').textContent = state.counts[key].toLocaleString('fr-FR'); el.classList.add('hot'); setTimeout(() => el.classList.remove('hot'), 600); };
+
+function ingest(deviceId, energy, fromSimulator) {
+  const t = Date.now();
+  state.readings.push({ deviceId, energy, t });
+  if (state.usageMsgs.length > 60) state.usageMsgs.shift();
+  return { deviceId, energyConsumed: energy, timestamp: new Date(t).toISOString() };
+}
+
+function batch() {
+  if (!state.running) return;
+  // 1 000 readings like ParallelDataSimulator; only a sample is kept for the Kafka message list
+  for (let i = 0; i < 1000; i++) {
+    const deviceId = 1 + Math.floor(Math.random() * 199);
+    const energy = Math.round(Math.random() * 2 * 100) / 100;
+    const ev = ingest(deviceId, energy, true);
+    if (i % 40 === 0 || deviceId <= 6) state.usageMsgs.push({ offset: state.counts.ku + i, ev, t: Date.now() });
+  }
+  state.usageMsgs = state.usageMsgs.slice(-80);
+  state.counts.sim += 1000; state.counts.ing += 1000; state.counts.ku += 1000; state.counts.infl += 1000;
+  for (let i = 0; i < 40; i++) state.http.push({ app: 'ingestion-service', uri: '/api/v1/ingestion', method: 'POST', status: 201, t: Date.now() });
+  ['sim', 'ing', 'ku', 'infl'].forEach((k, i) => setTimeout(() => pulse(k), i * 180));
+  render();
+  setTimeout(batch, 5000);
+}
+
+function aggregate() {
+  const cutoff = Date.now() - 3600_000;
+  state.readings = state.readings.filter(r => r.t >= cutoff);
+  if (!state.readings.length) return;
+  state.counts.agg++; pulse('agg');
+  // the owner lookups and the user lookup, as calls to device-service and user-service
+  state.http.push({ app: 'device-service', uri: '/api/v1/device/{id}', method: 'GET', status: 200, t: Date.now() });
+  state.http.push({ app: 'user-service', uri: '/api/v1/user/{id}', method: 'GET', status: 200, t: Date.now() });
+  const total = hourSum(), thr = state.user.energyAlertingThreshold;
+  let line = `Passage n° ${state.counts.agg} : 199 appareils additionnés ; <b>utilisateur 1</b> (6 appareils) : <b>${fmt(total, 2)} kWh</b> sur la dernière heure, seuil <b>${thr} kWh</b>`;
+  if (!state.user.alerting) line += ' : alertes désactivées, rien n\'est envoyé.';
+  else if (total > thr) {
+    line += ' : <b>dépassé</b>, événement publié sur energy-alerts, e-mail envoyé.';
+    const ev = { userId: 1, message: 'Energy consumption threshold exceeded', threshold: thr, energyConsumed: Math.round(total * 100) / 100, email: state.user.email };
+    state.alertMsgs.push({ offset: state.counts.ka, ev, t: Date.now() });
+    state.counts.ka++; setTimeout(() => pulse('ka'), 300);
+    state.mails.unshift({ id: state.counts.mail, ev, t: Date.now(), read: false });
+    state.counts.mail++; setTimeout(() => pulse('mail'), 600);
+    document.querySelector('.stage[data-s="ka"]').classList.add('alarm');
+  } else {
+    line += ' : sous le seuil.';
+    document.querySelector('.stage[data-s="ka"]').classList.remove('alarm');
+  }
+  $('agg').innerHTML = line;
+  render();
+}
+setInterval(aggregate, 10000);
+
+// ---------- 1. API ----------
+const OPS = [
+  { tag: 'user-service', m: 'get', p: '/api/v1/user/{id}', d: 'Lire un utilisateur', params: { id: 1 } },
+  { tag: 'user-service', m: 'put', p: '/api/v1/user/{id}', d: 'Modifier un utilisateur (seuil, alertes)', params: { id: 1 }, body: () => JSON.stringify({ ...state.user, id: undefined }, null, 2) },
+  { tag: 'device-service', m: 'get', p: '/api/v1/device/user/{userId}', d: "Appareils d'un utilisateur", params: { userId: 1 } },
+  { tag: 'device-service', m: 'post', p: '/api/v1/device/create', d: 'Créer un appareil', body: () => JSON.stringify({ name: 'Prise bureau', type: 'LIGHT', location: 'Bureau', userId: 1 }, null, 2) },
+  { tag: 'device-service', m: 'delete', p: '/api/v1/device/delete/{id}', d: 'Supprimer un appareil', params: { id: 6 } },
+  { tag: 'ingestion-service', m: 'post', p: '/api/v1/ingestion', d: 'Envoyer un relevé de consommation', body: () => JSON.stringify({ deviceId: 3, energyConsumed: 25.5, timestamp: new Date().toISOString() }, null, 2) },
+  { tag: 'insight-service', m: 'get', p: '/api/v1/insight/saving-tips/{userId}', d: "Conseils d'économie (IA locale)", params: { userId: 1 } },
+  { tag: 'insight-service', m: 'get', p: '/api/v1/insight/overview/{userId}', d: 'Synthèse par appareil (IA locale)', params: { userId: 1 } }
+];
+const TAG_DESC = { 'user-service': 'utilisateurs et seuils', 'device-service': 'appareils', 'ingestion-service': 'relevés', 'insight-service': 'conseils par Ollama' };
+const openOps = new Set(), tryOps = new Set(), results = {};
+
+function renderOps() {
+  const locked = !!state.token;
+  const tags = [...new Set(OPS.map(o => o.tag))];
+  $('ops').innerHTML = tags.map(tag => `<div class="sw-tag"><h3>${tag} <small>${TAG_DESC[tag]}</small></h3>` + OPS.map((o, i) => o.tag !== tag ? '' : `
+    <div class="op ${o.m} ${openOps.has(i) ? 'open' : ''}" data-i="${i}">
+      <button class="head"><span class="m">${o.m.toUpperCase()}</span><span class="p">${o.p}</span><span class="d">${o.d}</span>
+        <svg class="lk" viewBox="0 0 20 20" fill="currentColor"><path d="${locked ? 'M15.8 8H14V5.6C14 2.703 12.665 1 10 1 7.334 1 6 2.703 6 5.6V8H4c-.553 0-1 .646-1 1.199V17c0 .549.428 1.139.951 1.307l1.197.387C5.672 18.861 6.55 19 7.1 19h5.8c.549 0 1.428-.139 1.951-.307l1.196-.387c.524-.167.953-.757.953-1.306V9.199C17 8.646 16.352 8 15.8 8zM12 8H8V5.199C8 3.754 8.797 3 10 3c1.203 0 2 .754 2 2.199V8z' : 'M15.8 8H14V5.6C14 2.703 12.665 1 10 1 7.334 1 6 2.703 6 5.6V6h2v-.801C8 3.754 8.797 3 10 3c1.203 0 2 .754 2 2.199V8H4c-.553 0-1 .646-1 1.199V17c0 .549.428 1.139.951 1.307l1.197.387C5.672 18.861 6.55 19 7.1 19h5.8c.549 0 1.428-.139 1.951-.307l1.196-.387c.524-.167.953-.757.953-1.306V9.199C17 8.646 16.352 8 15.8 8z'}"/></svg></button>
+      <div class="op-body">
+        <div class="op-sec">${o.body ? 'Request body' : 'Parameters'}<button class="try ${tryOps.has(i) ? 'cancel' : ''}">${tryOps.has(i) ? 'Cancel' : 'Try it out'}</button></div>
+        <div class="op-fields">
+          ${Object.entries(o.params || {}).map(([k, v]) => `<label><span>${k} <small>integer (path)</small></span><input data-param="${k}" value="${v}" ${tryOps.has(i) ? '' : 'disabled'}></label>`).join('')}
+          ${o.body ? `<label><span>body <small>application/json</small></span><textarea data-body ${tryOps.has(i) ? '' : 'disabled'}>${esc(o.body())}</textarea></label>` : ''}
+        </div>
+        ${tryOps.has(i) ? '<button class="exec">Execute</button>' : ''}
+        <div class="op-res">${results[i] ?? ''}</div>
+      </div>
+    </div>`).join('') + '</div>').join('');
+}
+
+function call(i, el) {
+  const o = OPS[i];
+  const params = {}; el.querySelectorAll('[data-param]').forEach(inp => params[inp.dataset.param] = inp.value.trim());
+  const path = o.p.replace(/\{(\w+)\}/g, (_, k) => params[k]);
+  const bodyText = el.querySelector('[data-body]')?.value;
+  const curl = `curl -X '${o.m.toUpperCase()}' \\\n  'http://localhost:9000${path}' \\\n  -H 'accept: */*'${state.token ? ` \\\n  -H 'Authorization: Bearer ${state.token.slice(0, 24)}…'` : ''}${bodyText ? ` \\\n  -H 'Content-Type: application/json' \\\n  -d '${bodyText.replace(/\s+/g, ' ')}'` : ''}`;
+  const app = o.tag;
+  const show = (status, body, headers = 'content-type: application/json') => {
+    state.http.push({ app: status === 401 ? 'api-gateway' : app, uri: o.p, method: o.m.toUpperCase(), status, t: Date.now() });
+    if (status >= 400 && status < 500) state.status4xx++;
+    results[i] = `<h4>Curl</h4><pre>${esc(curl)}</pre><h4>Request URL</h4><pre>http://localhost:9000${esc(path)}</pre>
+      <h4>Server response</h4><div class="code"><b class="${status >= 400 ? 'err' : ''}">${status}</b><span>${status === 401 ? 'Error: Unauthorized' : ''}</span></div>
+      ${body !== '' ? `<h4>Response body</h4><pre>${esc(body)}</pre>` : ''}<h4>Response headers</h4><pre>${esc(headers)}</pre>`;
+    renderOps(); render();
+  };
+  if (!state.token) return show(401, '', 'www-authenticate: Bearer\ncontent-length: 0');
+  let body;
+  try { body = bodyText ? JSON.parse(bodyText) : null; } catch { return show(400, JSON.stringify({ status: 400, error: 'Bad Request', message: 'JSON parse error' }, null, 2)); }
+  const id = +Object.values(params)[0];
+  switch (i) {
+    case 0: return id === 1 ? show(200, JSON.stringify(state.user, null, 2)) : show(404, '');
+    case 1:
+      if (id !== 1) return show(404, 'User not found', 'content-type: text/plain');
+      Object.assign(state.user, { ...body, id: 1 });
+      state.user.energyAlertingThreshold = Math.max(0, +state.user.energyAlertingThreshold || 0);
+      syncScenario();
+      return show(200, 'User Updated successfully', 'content-type: text/plain');
+    case 2: return show(200, JSON.stringify(state.devices.filter(d => d.userId === id), null, 2));
+    case 3: { const d = { id: state.nextDeviceId++, name: body.name, type: body.type, location: body.location, userId: body.userId }; state.devices.push(d); return show(201, JSON.stringify(d, null, 2)); }
+    case 4: state.devices = state.devices.filter(d => d.id !== id); return show(204, '', 'content-length: 0');
+    case 5: {
+      const ev = ingest(+body.deviceId, +body.energyConsumed, false);
+      state.usageMsgs.push({ offset: state.counts.ku, ev, t: Date.now(), mine: true });
+      ['sim', 'ing', 'ku', 'infl'].forEach(k => { if (k !== 'sim') state.counts[k]++; });
+      ['ing', 'ku', 'infl'].forEach((k, n) => setTimeout(() => pulse(k), n * 180));
+      return show(201, '', 'content-length: 0');
+    }
+    case 6: case 7: {
+      results[i] = '<p class="loading">Waiting for insight-service (Ollama)…</p>'; renderOps();
+      const total = Math.round(hourSum() * 100) / 100;
+      const tips = i === 6
+        ? `Your total energy usage over the past 3 days is ${total} kWh. To reduce it: lower the thermostat by 1 to 2 °C when nobody is home, switch the speaker and camera to eco mode at night, and use LED bulbs with motion sensors in the kitchen. Compared with an average household, this is a moderate consumption; most of it comes from heating.`
+        : `Overview for the past 3 days: the thermostat is the largest consumer, followed by the kitchen light. The camera, lock and doorbell use little energy but run all day. Actionable insight: schedule the thermostat and the lights, and check the speaker's standby consumption.`;
+      return setTimeout(() => show(200, JSON.stringify({ userId: id, tips, energyUsage: total }, null, 2)), 1800);
+    }
+  }
+}
+
+$('ops').addEventListener('click', e => {
+  const op = e.target.closest('.op'); if (!op) return;
+  const i = +op.dataset.i;
+  if (e.target.closest('.head')) { openOps.has(i) ? openOps.delete(i) : openOps.add(i); renderOps(); }
+  else if (e.target.closest('.try')) { tryOps.has(i) ? tryOps.delete(i) : tryOps.add(i); renderOps(); }
+  else if (e.target.closest('.exec')) call(i, op);
+});
+$('authorize').addEventListener('click', () => { $('tok').value = state.token ?? ''; $('auth-modal').classList.add('on'); });
+$('auth-x').addEventListener('click', () => $('auth-modal').classList.remove('on'));
+$('get-token').addEventListener('click', () => { $('tok').value = 'eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJoZXQifQ.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjgwOTEvcmVhbG1zL2hldC1zZWN1cml0eS1yZWFsbSJ9.c2lnbmF0dXJl'; });
+$('auth-ok').addEventListener('click', () => { state.token = $('tok').value.trim() || null; $('auth-modal').classList.remove('on'); renderOps(); });
+$('logout').addEventListener('click', () => { state.token = null; $('tok').value = ''; renderOps(); });
+
+// ---------- 2. Kafka UI ----------
+let kView = 'topics', kTopic = null;
+document.querySelectorAll('.kui nav a').forEach(a => a.addEventListener('click', () => { kView = a.dataset.k; kTopic = null; document.querySelectorAll('.kui nav a').forEach(x => x.classList.toggle('on', x === a)); render(); }));
+function renderKafka() {
+  const m = $('kafka-main');
+  if (kView === 'consumers') {
+    const lagU = state.running ? Math.floor(Math.random() * 40) : 0;
+    m.innerHTML = `<h2>Consumers</h2><table><thead><tr><th>Group ID</th><th>Num of members</th><th>Topics</th><th>Consumer lag</th><th>State</th></tr></thead><tbody>
+      <tr><td class="link">usage-service</td><td>1</td><td>energy-usage</td><td><span class="lag ${lagU > 20 ? 'warn' : ''}">${lagU}</span></td><td>STABLE</td></tr>
+      <tr><td class="link">alert-service</td><td>1</td><td>energy-alerts</td><td><span class="lag">0</span></td><td>STABLE</td></tr></tbody></table>`;
+    return;
+  }
+  if (!kTopic) {
+    m.innerHTML = `<h2>Topics</h2><table><thead><tr><th>Topic name</th><th>Partitions</th><th>Out of sync replicas</th><th>Replication factor</th><th>Number of messages</th><th>Size</th></tr></thead><tbody>
+      ${[['energy-usage', state.counts.ku], ['energy-alerts', state.counts.ka]].map(([n, c]) => `<tr><td class="link" data-topic="${n}">${n}</td><td>1</td><td>0</td><td>1</td><td>${c.toLocaleString('fr-FR')}</td><td>${fmt(c * 0.11 / 1024, 2)} MB</td></tr>`).join('')}</tbody></table>`;
+    m.querySelectorAll('[data-topic]').forEach(td => td.addEventListener('click', () => { kTopic = td.dataset.topic; render(); }));
+    return;
+  }
+  const msgs = (kTopic === 'energy-usage' ? state.usageMsgs : state.alertMsgs).slice(-30).reverse();
+  m.innerHTML = `<h2><span class="bc" id="k-back">Topics</span> › ${kTopic}</h2><div class="tabsk"><span>Overview</span><span class="on">Messages</span><span>Consumers</span><span>Settings</span></div>
+    <table><thead><tr><th>Offset</th><th>Partition</th><th>Timestamp</th><th>Key</th><th>Value</th></tr></thead><tbody>
+    ${msgs.length ? msgs.map(x => `<tr class="${Date.now() - x.t < 1500 ? 'new' : ''}"><td>${x.offset}</td><td>0</td><td>${new Date(x.t).toLocaleTimeString('fr-FR')}</td><td>null</td><td><code>${esc(JSON.stringify(x.ev))}</code></td></tr>`).join('') : '<tr><td colspan="5">No messages found</td></tr>'}</tbody></table>`;
+  $('k-back').addEventListener('click', () => { kTopic = null; render(); });
+}
+
+// ---------- 3. Mailpit ----------
+let openMail = null;
+function renderMail() {
+  const unread = state.mails.filter(m => !m.read).length;
+  $('mail-count').textContent = state.mails.length;
+  $('mail-n').hidden = !unread; $('mail-n').textContent = unread;
+  const box = $('mail-main');
+  if (openMail !== null) {
+    const m = state.mails.find(x => x.id === openMail);
+    box.innerHTML = `<div class="mp-msg"><button class="back" id="mp-back">‹ Back</button>
+      <table><tr><th>From</th><td>noreply@zakariadev.com</td></tr><tr><th>To</th><td>${m.ev.email}</td></tr><tr><th>Date</th><td>${new Date(m.t).toLocaleString('fr-FR')}</td></tr></table>
+      <h3>Energy Usage Alert for User ${m.ev.userId}</h3><br><pre>Alert: ${m.ev.message}\nThreshold: ${m.ev.threshold.toFixed(1)}\nEnergy Consumed: ${m.ev.energyConsumed}</pre></div>`;
+    $('mp-back').addEventListener('click', () => { openMail = null; render(); });
+    return;
+  }
+  box.innerHTML = state.mails.length ? state.mails.slice(0, 50).map(m => `<div class="mp-item ${m.read ? '' : 'unread'}" data-id="${m.id}"><span class="from">noreply@zakariadev.com</span><span>Energy Usage Alert for User ${m.ev.userId}</span><span class="when">${new Date(m.t).toLocaleTimeString('fr-FR')}</span></div>`).join('')
+    : '<p class="mp-empty">No messages in your mailbox</p>';
+  box.querySelectorAll('.mp-item').forEach(el => el.addEventListener('click', () => { openMail = +el.dataset.id; state.mails.find(x => x.id === openMail).read = true; render(); }));
+}
+
+// ---------- 4. Grafana ----------
+const COLORS = ['#73bf69', '#f2cc0c', '#5794f2', '#ff9830', '#f2495c', '#b877d9', '#8ab8ff'];
+const APPS = ['api-gateway', 'user-service', 'device-service', 'ingestion-service', 'usage-service', 'alert-service', 'insight-service'];
+const series = { rate: {}, heap: {}, status: {} };
+APPS.forEach((a, i) => { series.rate[a] = []; series.heap[a] = Array.from({ length: 60 }, () => 140 + i * 18 + Math.random() * 10); });
+function sampleGrafana() {
+  const now = Date.now(), win = state.http.filter(h => now - h.t < 10000);
+  state.http = state.http.filter(h => now - h.t < 60000);
+  APPS.forEach((a, i) => {
+    let r = win.filter(h => h.app === a).length / 10;
+    if (a === 'ingestion-service' && state.running) r = 200 + Math.random() * 6;
+    if (a === 'api-gateway') r += 0.2 + Math.random() * .1;
+    if (a === 'usage-service' && state.running) r += 0.4;
+    series.rate[a].push(r + Math.random() * .05); if (series.rate[a].length > 60) series.rate[a].shift();
+    const h = series.heap[a]; let v = h.at(-1) + (Math.random() - .45) * 6 + (a === 'usage-service' && state.running ? 2 : 0);
+    if (v > 260 + i * 18) v = 150 + i * 18;   // a garbage collection
+    h.push(v); if (h.length > 60) h.shift();
+  });
+  const byStatus = {}; win.forEach(h => byStatus[h.status] = (byStatus[h.status] || 0) + 1);
+  if (state.running) byStatus[201] = (byStatus[201] || 0) + 2000;
+  ['200', '201', '204', '401', '404'].forEach(s => { (series.status[s] ||= []).push((byStatus[s] || 0) / 10); if (series.status[s].length > 60) series.status[s].shift(); });
+}
+function chart(lines, unit, max) {
+  const W = 600, H = 150, all = lines.flatMap(l => l.data), top = max ?? Math.max(1, ...all) * 1.15;
+  const y = v => H - 16 - (v / top) * (H - 26);
+  const paths = lines.map(l => `<polyline fill="none" stroke="${l.color}" stroke-width="1.6" points="${l.data.map((v, i) => `${40 + i * (W - 44) / 59},${y(v).toFixed(1)}`).join(' ')}"/>`).join('');
+  const grid = [0, .5, 1].map(f => `<line x1="40" x2="${W}" y1="${y(top * f)}" y2="${y(top * f)}" stroke="#22252b"/><text x="0" y="${y(top * f) + 3}">${unit(top * f)}</text>`).join('');
+  return `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none">${grid}${paths}</svg>`;
+}
+const legend = lines => `<div class="gf-legend">${lines.map(l => `<span><i style="background:${l.color}"></i>${l.name}</span>`).join('')}</div>`;
+function renderGrafana() {
+  const rateLines = APPS.map((a, i) => ({ name: a, color: COLORS[i], data: series.rate[a] }));
+  const heapLines = APPS.map((a, i) => ({ name: a, color: COLORS[i], data: series.heap[a] }));
+  const upLines = APPS.map((a, i) => ({ name: a, color: COLORS[i], data: Array(60).fill(1) }));
+  const statLines = Object.entries(series.status).map(([s, d], i) => ({ name: s, color: COLORS[i], data: d }));
+  const rps = v => v >= 10 ? Math.round(v) + ' req/s' : v.toFixed(1) + ' req/s';
+  const now = Date.now(), win = state.http.filter(h => now - h.t < 10000);
+  const top = Object.values(win.reduce((acc, h) => { const k = h.app + h.uri + h.method + h.status; (acc[k] ||= { ...h, n: 0 }).n++; return acc; }, {}))
+    .map(r => ({ ...r, rate: r.app === 'ingestion-service' && state.running ? 200 : r.n / 10 })).sort((a, b) => b.rate - a.rate).slice(0, 5);
+  const rate4 = (series.status['401']?.at(-1) || 0) + (series.status['404']?.at(-1) || 0);
+  $('gf').innerHTML = `
+    <div class="gf-panel" style="grid-column: span 12; height: 230px"><h4>HTTP request rate (by application tag)</h4>${chart(rateLines, rps)}${legend(rateLines)}</div>
+    <div class="gf-panel" style="grid-column: span 12; height: 230px"><h4>JVM heap used (by application tag)</h4>${chart(heapLines, v => Math.round(v) + ' MiB')}${legend(heapLines)}</div>
+    <div class="gf-panel" style="grid-column: span 24; height: 180px"><h4>Scrape target up (1 = reachable)</h4>${chart(upLines, v => v.toFixed(1), 1.3)}${legend(upLines)}</div>
+    <div class="gf-panel" style="grid-column: span 12; height: 220px"><h4>HTTP request rate by status code (all services)</h4>${chart(statLines, rps)}${legend(statLines)}</div>
+    <div class="gf-panel" style="grid-column: span 4; height: 220px"><h4>Client error rate (4xx)</h4><div class="gf-stat ${rate4 > 0 ? 'bad' : ''}">${rate4.toFixed(2)}</div></div>
+    <div class="gf-panel" style="grid-column: span 4; height: 220px"><h4>Server error rate (5xx)</h4><div class="gf-stat">0</div></div>
+    <div class="gf-panel" style="grid-column: span 4; height: 220px"><h4>Top endpoints by request rate</h4><table class="gf-table"><tr><th>application</th><th>uri</th><th>status</th><th>req/s</th></tr>
+      ${top.length ? top.map(r => `<tr><td>${r.app}</td><td>${r.method} ${r.uri}</td><td>${r.status}</td><td>${r.rate.toFixed(1)}</td></tr>`).join('') : '<tr><td colspan="4">No data</td></tr>'}</table></div>`;
+}
+
+// ---------- render loop ----------
+function render() {
+  $('st-sent').textContent = state.counts.sim.toLocaleString('fr-FR');
+  $('st-user').textContent = fmt(hourSum()) + ' kWh';
+  renderMail();
+  if (view === 'kafka') renderKafka();
+  if (view === 'grafana') renderGrafana();
+}
+setInterval(() => { sampleGrafana(); if (view === 'grafana' || view === 'kafka') render(); }, 2000);
+for (let i = 0; i < 60; i++) sampleGrafana();
+renderOps(); render();
+</script>
+</body>
+</html>

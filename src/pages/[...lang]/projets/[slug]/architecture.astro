@@ -25,7 +25,8 @@ const sections = [
   { id: 'stack', label: t('arch.stack') },
   ...arch.diagrams.map(d => ({ id: d.id, label: pick(d.title, lang) })),
   { id: 'choix', label: t('arch.choices') },
-  { id: 'limites', label: t('arch.limitsAndNext') }
+  { id: 'limites', label: t('arch.limitsAndNext') },
+  ...(arch.credits ? [{ id: 'origine', label: t('arch.credits') }] : [])
 ];
 ---
 <BaseLayout lang={lang} title={t('meta.architectureTitle', { name })} description={t('arch.overviewTitle', { name })}>
@@ -93,6 +94,13 @@ const sections = [
             <article class="px-frame"><h3>{t('arch.next')}</h3><ul>{arch.next[lang].map(l => <li>{l}</li>)}</ul></article>
           </div>
         </section>
+
+        {arch.credits && (
+          <section class="panel" id="origine">
+            <h2 class="sub">{t('arch.credits')}</h2>
+            <article class="credits px-frame"><ul>{arch.credits[lang].map(l => <li>{l}</li>)}</ul></article>
+          </section>
+        )}
       </div>
     </div>
   </section>
@@ -170,7 +178,9 @@ const sections = [
   dd { margin: 0; color: var(--ash); }
   .limits { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; }
   .limits ul { padding-left: 20px; display: grid; gap: 8px; color: var(--ash); list-style: square; }
-  .limits li::marker { color: var(--accent-text); }
+  .limits li::marker, .credits li::marker { color: var(--accent-text); }
+  .credits { background: var(--deep); padding: 22px 24px; }
+  .credits ul { padding-left: 20px; display: grid; gap: 8px; color: var(--ash); list-style: square; }
 
   .full { position: fixed; inset: 0; z-index: 80; display: flex; flex-direction: column; background: rgba(18, 18, 47, .97); padding: 16px; }
   .full[hidden] { display: none; }

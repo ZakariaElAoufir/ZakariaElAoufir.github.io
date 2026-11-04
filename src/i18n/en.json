@@ -80,5 +80,6 @@
   "arch.alternative": "Alternative",
   "arch.tradeoff": "Trade-off",
   "arch.limits": "Known limits",
-  "arch.next": "Next steps"
+  "arch.next": "Next steps",
+  "arch.credits": "Origin"
 }

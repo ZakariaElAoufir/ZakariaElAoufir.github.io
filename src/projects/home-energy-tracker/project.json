@@ -41,5 +41,55 @@
     "Ollama",
     "Grafana"
   ],
-  "hasDemo": false
+  "hasDemo": true,
+  "thumbnail": "./media/thumbnail.png",
+  "detail": {
+    "problem": {
+      "fr": "Une maison connectée produit des milliers de relevés de consommation par minute. Il faut les encaisser sans perte, les additionner par foyer, et prévenir le propriétaire dès qu'il dépasse son seuil.",
+      "en": "A connected home produces thousands of consumption readings per minute. They must be taken in without loss, added up per household, and the owner warned as soon as they exceed their threshold."
+    },
+    "does": {
+      "fr": "7 microservices Spring Boot : les relevés passent par Kafka, sont stockés dans InfluxDB et agrégés toutes les 10 secondes ; un dépassement déclenche un e-mail, et une IA locale propose des conseils d'économie. Le tout derrière une gateway sécurisée par Keycloak, supervisé par Prometheus et Grafana.",
+      "en": "7 Spring Boot microservices: readings go through Kafka, are stored in InfluxDB and summed every 10 seconds; going over the threshold triggers an e-mail, and a local AI suggests ways to save energy. All of it behind a gateway secured by Keycloak, monitored with Prometheus and Grafana."
+    },
+    "role": {
+      "fr": "Conception et développement des 7 microservices, du pipeline Kafka et InfluxDB, des alertes, de l'IA locale, de la sécurité et de la supervision, à partir d'un sujet présenté par LeetJourney.",
+      "en": "Designed and built the 7 microservices, the Kafka and InfluxDB pipeline, the alerts, the local AI, security and monitoring, from a problem presented by LeetJourney."
+    },
+    "gallery": [
+      {
+        "image": "./media/shot-api.png",
+        "title": {
+          "fr": "Une API derrière une gateway.",
+          "en": "An API behind a gateway."
+        },
+        "text": {
+          "fr": "Chaque route demande un jeton Keycloak ; sans lui, la gateway répond 401.",
+          "en": "Every route needs a Keycloak token; without it, the gateway answers 401."
+        }
+      },
+      {
+        "image": "./media/shot-grafana.png",
+        "title": {
+          "fr": "Supervision.",
+          "en": "Monitoring."
+        },
+        "text": {
+          "fr": "Le tableau de bord Grafana suit le débit et la santé des 7 services pendant que le simulateur tourne.",
+          "en": "The Grafana dashboard follows the traffic and health of the 7 services while the simulator runs."
+        }
+      },
+      {
+        "image": "./media/shot-mail.png",
+        "title": {
+          "fr": "Alerte e-mail.",
+          "en": "E-mail alert."
+        },
+        "text": {
+          "fr": "Dès que la consommation de la dernière heure dépasse le seuil, alert-service envoie un e-mail.",
+          "en": "As soon as the last hour's consumption exceeds the threshold, alert-service sends an e-mail."
+        }
+      }
+    ]
+  }
 }

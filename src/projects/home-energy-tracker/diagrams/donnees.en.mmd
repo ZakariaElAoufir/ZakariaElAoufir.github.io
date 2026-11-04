@@ -1,0 +1,23 @@
+erDiagram
+  USER ||--o{ DEVICE : owns
+  USER ||--o{ ALERT : receives
+  USER {
+    bigint id PK
+    varchar name
+    varchar email UK
+    tinyint alerting
+    double energy_alerting_threshold
+  }
+  DEVICE {
+    bigint id PK
+    varchar name
+    varchar type "SPEAKER, CAMERA, THERMOSTAT..."
+    varchar location
+    bigint user_id FK
+  }
+  ALERT {
+    bigint id PK
+    bigint user_id
+    tinyint sent
+    timestamp created_at
+  }

@@ -1,0 +1,25 @@
+sequenceDiagram
+  participant S as Simulator
+  participant I as ingestion-service
+  participant K as Kafka
+  participant U as usage-service
+  participant X as InfluxDB
+  participant D as device-service
+  participant Us as user-service
+  participant A as alert-service
+  participant M as Mailpit
+  S->>I: POST /api/v1/ingestion {deviceId, energyConsumed, timestamp}
+  I->>K: topic energy-usage
+  I-->>S: 201 Created
+  K->>U: energy-usage (usage-service group)
+  U->>X: energy_usage point
+  loop every 10 seconds
+    U->>X: sum of the last hour per device
+    U->>D: GET /api/v1/device/{id} (owner)
+    U->>Us: GET /api/v1/user/{id} (threshold, e-mail, alerting)
+    alt total > threshold
+      U->>K: topic energy-alerts {userId, threshold, energyConsumed, email}
+      K->>A: energy-alerts (alert-service group)
+      A->>M: e-mail "Energy Usage Alert for User …"
+    end
+  end

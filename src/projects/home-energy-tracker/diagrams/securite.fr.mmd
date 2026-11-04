@@ -1,0 +1,23 @@
+sequenceDiagram
+  actor C as Client
+  participant KC as Keycloak
+  participant G as API Gateway
+  participant S as insight-service
+  participant U as usage-service
+  participant O as Ollama
+  C->>KC: demande un jeton (het-security-realm)
+  KC-->>C: JWT
+  C->>G: GET /api/v1/insight/saving-tips/1 + Bearer JWT
+  G->>KC: clés publiques (JWKS)
+  alt jeton absent ou invalide
+    G-->>C: 401 Unauthorized
+  else jeton valide
+    G->>S: route insight-service (circuit breaker)
+    S->>U: GET /api/v1/usage/1?days=3
+    U-->>S: appareils et kWh consommés
+    S->>O: prompt (Spring AI)
+    O-->>S: conseils
+    S-->>G: {userId, tips, energyUsage}
+    G-->>C: 200 OK
+  end
+  Note over G: service en panne : le circuit breaker renvoie la route de secours (503)

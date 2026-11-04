@@ -1,0 +1,805 @@
+{
+  "overview": {
+    "width": 1520,
+    "height": 926,
+    "nodes": [
+      {
+        "id": "client",
+        "x": 20,
+        "y": 230,
+        "logo": "user",
+        "title": {
+          "fr": "Client",
+          "en": "Client"
+        },
+        "subtitle": {
+          "fr": "appareils, Swagger",
+          "en": "devices, Swagger"
+        }
+      },
+      {
+        "id": "kc",
+        "x": 340,
+        "y": 40,
+        "logo": "keycloak",
+        "title": {
+          "fr": "Keycloak",
+          "en": "Keycloak"
+        },
+        "subtitle": {
+          "fr": "het-security-realm",
+          "en": "het-security-realm"
+        }
+      },
+      {
+        "id": "gw",
+        "x": 340,
+        "y": 230,
+        "logo": "gateway",
+        "title": {
+          "fr": "API Gateway",
+          "en": "API Gateway"
+        },
+        "subtitle": {
+          "fr": ":9000, Resilience4j",
+          "en": ":9000, Resilience4j"
+        }
+      },
+      {
+        "id": "user",
+        "x": 660,
+        "y": 40,
+        "logo": "springboot",
+        "title": {
+          "fr": "user-service",
+          "en": "user-service"
+        },
+        "subtitle": {
+          "fr": ":8080, seuils",
+          "en": ":8080, thresholds"
+        }
+      },
+      {
+        "id": "device",
+        "x": 660,
+        "y": 230,
+        "logo": "springboot",
+        "title": {
+          "fr": "device-service",
+          "en": "device-service"
+        },
+        "subtitle": {
+          "fr": ":8081, appareils",
+          "en": ":8081, devices"
+        }
+      },
+      {
+        "id": "ing",
+        "x": 660,
+        "y": 420,
+        "logo": "springboot",
+        "title": {
+          "fr": "ingestion",
+          "en": "ingestion"
+        },
+        "subtitle": {
+          "fr": ":8082, simulateur",
+          "en": ":8082, simulator"
+        }
+      },
+      {
+        "id": "insight",
+        "x": 660,
+        "y": 610,
+        "logo": "springboot",
+        "title": {
+          "fr": "insight-service",
+          "en": "insight-service"
+        },
+        "subtitle": {
+          "fr": ":8085, Spring AI",
+          "en": ":8085, Spring AI"
+        }
+      },
+      {
+        "id": "ollama",
+        "x": 660,
+        "y": 800,
+        "logo": "ollama",
+        "title": {
+          "fr": "Ollama",
+          "en": "Ollama"
+        },
+        "subtitle": {
+          "fr": "deepseek-coder",
+          "en": "deepseek-coder"
+        }
+      },
+      {
+        "id": "mysql",
+        "x": 980,
+        "y": 40,
+        "logo": "mysql",
+        "title": {
+          "fr": "MySQL",
+          "en": "MySQL"
+        },
+        "subtitle": {
+          "fr": "user, device, alert",
+          "en": "user, device, alert"
+        }
+      },
+      {
+        "id": "kafka",
+        "x": 980,
+        "y": 420,
+        "logo": "kafka",
+        "title": {
+          "fr": "Kafka",
+          "en": "Kafka"
+        },
+        "subtitle": {
+          "fr": "KRaft, 2 topics",
+          "en": "KRaft, 2 topics"
+        }
+      },
+      {
+        "id": "alert",
+        "x": 980,
+        "y": 610,
+        "logo": "springboot",
+        "title": {
+          "fr": "alert-service",
+          "en": "alert-service"
+        },
+        "subtitle": {
+          "fr": ":8084",
+          "en": ":8084"
+        }
+      },
+      {
+        "id": "mail",
+        "x": 980,
+        "y": 800,
+        "logo": "mail",
+        "title": {
+          "fr": "Mailpit",
+          "en": "Mailpit"
+        },
+        "subtitle": {
+          "fr": "SMTP :1025",
+          "en": "SMTP :1025"
+        }
+      },
+      {
+        "id": "prom",
+        "x": 1300,
+        "y": 40,
+        "logo": "prometheus",
+        "title": {
+          "fr": "Prometheus",
+          "en": "Prometheus"
+        },
+        "subtitle": {
+          "fr": "scrape 7 services",
+          "en": "scrapes 7 services"
+        }
+      },
+      {
+        "id": "grafana",
+        "x": 1300,
+        "y": 230,
+        "logo": "grafana",
+        "title": {
+          "fr": "Grafana",
+          "en": "Grafana"
+        },
+        "subtitle": {
+          "fr": "tableau de bord",
+          "en": "dashboard"
+        }
+      },
+      {
+        "id": "usage",
+        "x": 1300,
+        "y": 420,
+        "logo": "springboot",
+        "title": {
+          "fr": "usage-service",
+          "en": "usage-service"
+        },
+        "subtitle": {
+          "fr": ":8083, agrège / 10 s",
+          "en": ":8083, sums / 10 s"
+        }
+      },
+      {
+        "id": "influx",
+        "x": 1300,
+        "y": 610,
+        "logo": "influxdb",
+        "title": {
+          "fr": "InfluxDB",
+          "en": "InfluxDB"
+        },
+        "subtitle": {
+          "fr": "usage-bucket",
+          "en": "usage-bucket"
+        }
+      }
+    ],
+    "wires": [
+      {
+        "from": "client",
+        "to": "gw",
+        "path": "M220 278H340",
+        "label": {
+          "fr": "HTTP + JWT",
+          "en": "HTTP + JWT"
+        },
+        "labelX": 280.0,
+        "labelY": 258,
+        "once": false
+      },
+      {
+        "from": "gw",
+        "to": "kc",
+        "path": "M440 230V136",
+        "label": {
+          "fr": "vérifie le jeton",
+          "en": "checks the token"
+        },
+        "labelX": 440,
+        "labelY": 183.0,
+        "once": false
+      },
+      {
+        "from": "gw",
+        "to": "user",
+        "path": "M540 248H620V88H660",
+        "label": {
+          "fr": "/api/v1/user",
+          "en": "/api/v1/user"
+        },
+        "labelX": 620,
+        "labelY": 168.0,
+        "once": false
+      },
+      {
+        "from": "gw",
+        "to": "device",
+        "path": "M540 278H660",
+        "label": {
+          "fr": "/device",
+          "en": "/device"
+        },
+        "labelX": 580.0,
+        "labelY": 262,
+        "once": false
+      },
+      {
+        "from": "gw",
+        "to": "ing",
+        "path": "M540 308H620V468H660",
+        "label": {
+          "fr": "/api/v1/\ningestion",
+          "en": "/api/v1/\ningestion"
+        },
+        "labelX": 620,
+        "labelY": 388.0,
+        "once": false
+      },
+      {
+        "from": "gw",
+        "to": "insight",
+        "path": "M480 326V658H660",
+        "label": {
+          "fr": "/api/v1/\ninsight",
+          "en": "/api/v1/\ninsight"
+        },
+        "labelX": 480,
+        "labelY": 532.0,
+        "once": false
+      },
+      {
+        "from": "user",
+        "to": "mysql",
+        "path": "M860 88H980",
+        "label": {
+          "fr": "JPA, Flyway",
+          "en": "JPA, Flyway"
+        },
+        "labelX": 920.0,
+        "labelY": 70,
+        "once": false
+      },
+      {
+        "from": "device",
+        "to": "mysql",
+        "path": "M860 278H1120V136",
+        "label": {
+          "fr": "JPA",
+          "en": "JPA"
+        },
+        "labelX": 910,
+        "labelY": 262,
+        "once": false
+      },
+      {
+        "from": "ing",
+        "to": "kafka",
+        "path": "M860 468H980",
+        "label": {
+          "fr": "publie\nenergy-usage",
+          "en": "publishes\nenergy-usage"
+        },
+        "labelX": 920.0,
+        "labelY": 434,
+        "once": false
+      },
+      {
+        "from": "kafka",
+        "to": "usage",
+        "path": "M1180 450H1300",
+        "label": {
+          "fr": "energy-usage",
+          "en": "energy-usage"
+        },
+        "labelX": 1240.0,
+        "labelY": 432,
+        "once": false
+      },
+      {
+        "from": "usage",
+        "to": "kafka",
+        "path": "M1300 486H1180",
+        "label": {
+          "fr": "energy-alerts",
+          "en": "energy-alerts"
+        },
+        "labelX": 1240.0,
+        "labelY": 506,
+        "once": false
+      },
+      {
+        "from": "usage",
+        "to": "influx",
+        "path": "M1400 516V610",
+        "label": {
+          "fr": "écrit, somme 1 h",
+          "en": "writes, sums 1 h"
+        },
+        "labelX": 1400,
+        "labelY": 563.0,
+        "once": false
+      },
+      {
+        "from": "usage",
+        "to": "device",
+        "path": "M1330 420V370H760V326",
+        "label": {
+          "fr": "propriétaire de l'appareil",
+          "en": "device owner"
+        },
+        "labelX": 1030.0,
+        "labelY": 370,
+        "once": false
+      },
+      {
+        "from": "usage",
+        "to": "user",
+        "path": "M1380 420V342H1040V170H800V136",
+        "label": {
+          "fr": "seuil, e-mail",
+          "en": "threshold, e-mail"
+        },
+        "labelX": 920.0,
+        "labelY": 170,
+        "once": false
+      },
+      {
+        "from": "kafka",
+        "to": "alert",
+        "path": "M1080 516V610",
+        "label": {
+          "fr": "energy-alerts",
+          "en": "energy-alerts"
+        },
+        "labelX": 1080,
+        "labelY": 563.0,
+        "once": false
+      },
+      {
+        "from": "alert",
+        "to": "mail",
+        "path": "M1080 706V800",
+        "label": {
+          "fr": "e-mail",
+          "en": "e-mail"
+        },
+        "labelX": 1080,
+        "labelY": 753.0,
+        "once": false
+      },
+      {
+        "from": "insight",
+        "to": "usage",
+        "path": "M820 610V546H1400V516",
+        "label": {
+          "fr": "conso. des 3 jours",
+          "en": "usage over 3 days"
+        },
+        "labelX": 900.0,
+        "labelY": 546,
+        "once": false
+      },
+      {
+        "from": "insight",
+        "to": "ollama",
+        "path": "M760 706V800",
+        "label": {
+          "fr": "prompt",
+          "en": "prompt"
+        },
+        "labelX": 760,
+        "labelY": 753.0,
+        "once": false
+      },
+      {
+        "from": "grafana",
+        "to": "prom",
+        "path": "M1400 230V136",
+        "label": {
+          "fr": "PromQL",
+          "en": "PromQL"
+        },
+        "labelX": 1400,
+        "labelY": 183.0,
+        "once": false
+      }
+    ]
+  },
+  "stack": [
+    {
+      "name": {
+        "fr": "Microservices",
+        "en": "Microservices"
+      },
+      "items": [
+        {
+          "name": "Java 21",
+          "logo": "java",
+          "note": {
+            "fr": "7 services",
+            "en": "7 services"
+          }
+        },
+        {
+          "name": "Spring Boot",
+          "logo": "springboot",
+          "note": {
+            "fr": "REST, Actuator",
+            "en": "REST, Actuator"
+          }
+        },
+        {
+          "name": "Spring Cloud Gateway",
+          "logo": "gateway",
+          "note": {
+            "fr": "point d’entrée :9000",
+            "en": "entry point :9000"
+          }
+        },
+        {
+          "name": "Spring Data JPA",
+          "logo": "spring",
+          "note": {
+            "fr": "Flyway pour le schéma",
+            "en": "Flyway for the schema"
+          }
+        },
+        {
+          "name": "Spring AI",
+          "logo": "spring",
+          "note": {
+            "fr": "client Ollama",
+            "en": "Ollama client"
+          }
+        }
+      ]
+    },
+    {
+      "name": {
+        "fr": "Données et messagerie",
+        "en": "Data and messaging"
+      },
+      "items": [
+        {
+          "name": "MySQL",
+          "logo": "mysql",
+          "note": {
+            "fr": "utilisateurs, appareils, alertes",
+            "en": "users, devices, alerts"
+          }
+        },
+        {
+          "name": "InfluxDB 2",
+          "logo": "influxdb",
+          "note": {
+            "fr": "séries temporelles",
+            "en": "time series"
+          }
+        },
+        {
+          "name": "Apache Kafka",
+          "logo": "kafka",
+          "note": {
+            "fr": "KRaft, energy-usage, energy-alerts",
+            "en": "KRaft, energy-usage, energy-alerts"
+          }
+        },
+        {
+          "name": "Kafka UI",
+          "logo": "kafka",
+          "note": {
+            "fr": "topics et messages",
+            "en": "topics and messages"
+          }
+        }
+      ]
+    },
+    {
+      "name": {
+        "fr": "Sécurité et résilience",
+        "en": "Security and resilience"
+      },
+      "items": [
+        {
+          "name": "Keycloak",
+          "logo": "keycloak",
+          "note": {
+            "fr": "JWT, het-security-realm",
+            "en": "JWT, het-security-realm"
+          }
+        },
+        {
+          "name": "OAuth2 Resource Server",
+          "logo": "springsecurity",
+          "note": {
+            "fr": "validation à la gateway",
+            "en": "validated at the gateway"
+          }
+        },
+        {
+          "name": "Resilience4j",
+          "logo": "bolt",
+          "note": {
+            "fr": "circuit breaker, route de secours",
+            "en": "circuit breaker, fallback route"
+          }
+        }
+      ]
+    },
+    {
+      "name": {
+        "fr": "Observabilité et outils",
+        "en": "Observability and tools"
+      },
+      "items": [
+        {
+          "name": "Prometheus",
+          "logo": "prometheus",
+          "note": {
+            "fr": "/actuator/prometheus",
+            "en": "/actuator/prometheus"
+          }
+        },
+        {
+          "name": "Grafana",
+          "logo": "grafana",
+          "note": {
+            "fr": "tableau de bord provisionné",
+            "en": "provisioned dashboard"
+          }
+        },
+        {
+          "name": "Springdoc OpenAPI",
+          "logo": "swagger",
+          "note": {
+            "fr": "Swagger UI",
+            "en": "Swagger UI"
+          }
+        },
+        {
+          "name": "Mailpit",
+          "logo": "mail",
+          "note": {
+            "fr": "boîte mail de test",
+            "en": "test mailbox"
+          }
+        },
+        {
+          "name": "Docker Compose",
+          "logo": "docker",
+          "note": {
+            "fr": "toute l’infrastructure",
+            "en": "the whole infrastructure"
+          }
+        },
+        {
+          "name": "Ollama",
+          "logo": "ollama",
+          "note": {
+            "fr": "LLM local",
+            "en": "local LLM"
+          }
+        }
+      ]
+    }
+  ],
+  "diagrams": [
+    {
+      "id": "releve",
+      "title": {
+        "fr": "Parcours d'un relevé",
+        "en": "Journey of a reading"
+      },
+      "caption": {
+        "fr": "Le relevé ne fait que passer par ingestion-service : Kafka découple la réception, qui encaisse 1 000 relevés toutes les 5 secondes, du stockage et du calcul des alertes, faits par usage-service à son rythme.",
+        "en": "A reading only passes through ingestion-service: Kafka decouples reception, which takes 1,000 readings every 5 seconds, from storage and alert computation, done by usage-service at its own pace."
+      }
+    },
+    {
+      "id": "securite",
+      "title": {
+        "fr": "Requête sécurisée",
+        "en": "Secured request"
+      },
+      "caption": {
+        "fr": "Seule la gateway est exposée : elle valide le JWT émis par Keycloak, puis route vers le service. Si un service tombe, le circuit breaker Resilience4j répond par une route de secours au lieu d'attendre.",
+        "en": "Only the gateway is exposed: it validates the JWT issued by Keycloak, then routes to the service. If a service goes down, the Resilience4j circuit breaker answers with a fallback route instead of waiting."
+      }
+    },
+    {
+      "id": "donnees",
+      "title": {
+        "fr": "Modèle de données",
+        "en": "Data model"
+      },
+      "caption": {
+        "fr": "Schéma MySQL créé par les migrations Flyway de user-service. Les relevés, eux, vont dans InfluxDB (mesure energy_usage, tag deviceId, champ energyConsumed).",
+        "en": "MySQL schema created by user-service's Flyway migrations. Readings go to InfluxDB instead (measurement energy_usage, tag deviceId, field energyConsumed)."
+      }
+    }
+  ],
+  "choices": [
+    {
+      "title": {
+        "fr": "Kafka entre ingestion et usage",
+        "en": "Kafka between ingestion and usage"
+      },
+      "why": {
+        "fr": "La réception des relevés ne dépend plus du stockage : si usage-service ralentit, les messages attendent dans le topic.",
+        "en": "Receiving readings no longer depends on storage: if usage-service slows down, messages wait in the topic."
+      },
+      "alternative": {
+        "fr": "Des appels REST directs d'ingestion vers usage.",
+        "en": "Direct REST calls from ingestion to usage."
+      },
+      "tradeoff": {
+        "fr": "Un broker de plus à faire tourner, et des événements à garder compatibles des deux côtés.",
+        "en": "One more broker to run, and events to keep compatible on both sides."
+      }
+    },
+    {
+      "title": {
+        "fr": "InfluxDB pour les relevés",
+        "en": "InfluxDB for readings"
+      },
+      "why": {
+        "fr": "Base de séries temporelles : écritures massives et sommes par fenêtre de temps (Flux) sans index à gérer.",
+        "en": "A time-series database: heavy writes and sums over time windows (Flux) without managing indexes."
+      },
+      "alternative": {
+        "fr": "Une table MySQL de relevés.",
+        "en": "A MySQL table of readings."
+      },
+      "tradeoff": {
+        "fr": "Deux bases à maintenir ; le langage Flux est spécifique.",
+        "en": "Two databases to maintain; Flux is a language of its own."
+      }
+    },
+    {
+      "title": {
+        "fr": "Gateway + Keycloak",
+        "en": "Gateway + Keycloak"
+      },
+      "why": {
+        "fr": "Un seul point d'entrée sécurisé par JWT ; les services restent simples, derrière. Circuit breaker par route.",
+        "en": "A single entry point secured by JWT; the services behind it stay simple. A circuit breaker per route."
+      },
+      "alternative": {
+        "fr": "Valider le jeton dans chaque service.",
+        "en": "Validating the token in every service."
+      },
+      "tradeoff": {
+        "fr": "La gateway devient un point critique ; le realm Keycloak se configure à la main.",
+        "en": "The gateway becomes a critical point; the Keycloak realm is set up by hand."
+      }
+    },
+    {
+      "title": {
+        "fr": "IA locale avec Spring AI",
+        "en": "Local AI with Spring AI"
+      },
+      "why": {
+        "fr": "Les conseils sont générés sans envoyer les données de consommation à un service externe.",
+        "en": "Tips are generated without sending consumption data to an external service."
+      },
+      "alternative": {
+        "fr": "Une API hébergée (OpenAI, Mistral).",
+        "en": "A hosted API (OpenAI, Mistral)."
+      },
+      "tradeoff": {
+        "fr": "Qualité limitée par le modèle local choisi.",
+        "en": "Quality is limited by the local model chosen."
+      }
+    },
+    {
+      "title": {
+        "fr": "Prometheus + Grafana",
+        "en": "Prometheus + Grafana"
+      },
+      "why": {
+        "fr": "Chaque service expose ses métriques ; le tableau de bord est provisionné au démarrage, sans clic.",
+        "en": "Every service exposes its metrics; the dashboard is provisioned at startup, with no clicks."
+      },
+      "alternative": {
+        "fr": "Les seuls logs des services.",
+        "en": "The services' logs alone."
+      },
+      "tradeoff": {
+        "fr": "Deux conteneurs de plus en local.",
+        "en": "Two more containers to run locally."
+      }
+    }
+  ],
+  "limits": {
+    "fr": [
+      "Tant que le seuil est dépassé, une alerte repart toutes les 10 secondes : pas de déduplication.",
+      "L'agrégation appelle device-service puis user-service pour chaque appareil (beaucoup d'appels REST).",
+      "Le simulateur tire des identifiants d'appareils au hasard, y compris inexistants.",
+      "Jeton InfluxDB et mots de passe écrits dans la configuration.",
+      "Swagger agrégé : seule la documentation de user-service est branchée à la gateway."
+    ],
+    "en": [
+      "While the threshold is exceeded, an alert goes out again every 10 seconds: no deduplication.",
+      "Aggregation calls device-service then user-service for every device (many REST calls).",
+      "The simulator picks random device ids, including ones that do not exist.",
+      "InfluxDB token and passwords are written in the configuration.",
+      "Aggregated Swagger: only user-service's documentation is wired to the gateway."
+    ]
+  },
+  "next": {
+    "fr": [
+      "Mémoriser la dernière alerte envoyée par utilisateur.",
+      "Mettre en cache les propriétaires d'appareils et les seuils.",
+      "Secrets en variables d'environnement, realm Keycloak exporté.",
+      "Une interface web pour les utilisateurs."
+    ],
+    "en": [
+      "Remember the last alert sent per user.",
+      "Cache device owners and thresholds.",
+      "Secrets in environment variables, exported Keycloak realm.",
+      "A web interface for users."
+    ]
+  },
+  "credits": {
+    "fr": [
+      "Projet inspiré de la problématique de suivi d'énergie en microservices présentée par LeetJourney."
+    ],
+    "en": [
+      "Project inspired by the microservices energy-tracking problem presented by LeetJourney."
+    ]
+  }
+}

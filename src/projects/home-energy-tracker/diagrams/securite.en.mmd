@@ -1,0 +1,23 @@
+sequenceDiagram
+  actor C as Client
+  participant KC as Keycloak
+  participant G as API Gateway
+  participant S as insight-service
+  participant U as usage-service
+  participant O as Ollama
+  C->>KC: asks for a token (het-security-realm)
+  KC-->>C: JWT
+  C->>G: GET /api/v1/insight/saving-tips/1 + Bearer JWT
+  G->>KC: public keys (JWKS)
+  alt missing or invalid token
+    G-->>C: 401 Unauthorized
+  else valid token
+    G->>S: insight-service route (circuit breaker)
+    S->>U: GET /api/v1/usage/1?days=3
+    U-->>S: devices and kWh used
+    S->>O: prompt (Spring AI)
+    O-->>S: tips
+    S-->>G: {userId, tips, energyUsage}
+    G-->>C: 200 OK
+  end
+  Note over G: service down: the circuit breaker returns the fallback route (503)

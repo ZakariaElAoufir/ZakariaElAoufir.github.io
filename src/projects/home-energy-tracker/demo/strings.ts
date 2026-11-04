@@ -1,0 +1,55 @@
+// Portfolio-side texts around the demo. The tools themselves (Swagger, Kafka UI, Mailpit, Grafana) stay in English, as they are.
+export const strings = {
+  fr: {
+    fullscreen: 'Plein écran',
+    exitFullscreen: 'Quitter le plein écran',
+    scenario: 'Scénario',
+    start: 'Lancer le simulateur',
+    stop: 'Arrêter le simulateur',
+    threshold: "Seuil d'alerte de l'utilisateur 1",
+    alerting: 'Alertes activées',
+    sent: 'Relevés :',
+    userHour: 'Utilisateur 1, dernière heure :',
+    apiNote: 'Toutes les routes passent par api-gateway et demandent un jeton JWT Keycloak.',
+    tokenHelp: 'Jeton émis par Keycloak, realm het-security-realm.',
+    getToken: 'Obtenir un jeton Keycloak',
+    summaries: ['Lire un utilisateur', 'Modifier un utilisateur (seuil, alertes)', "Appareils d'un utilisateur", 'Créer un appareil', 'Supprimer un appareil',
+      'Envoyer un relevé de consommation', "Conseils d'économie (IA locale)", 'Synthèse par appareil (IA locale)'],
+    tags: { 'user-service': 'utilisateurs et seuils', 'device-service': 'appareils', 'ingestion-service': 'relevés', 'insight-service': 'conseils par Ollama' } as Record<string, string>,
+    hoodTitle: 'Sous le capot',
+    hoodLead: "Le pipeline du projet, aux vraies cadences : 1 000 relevés toutes les 5 secondes répartis sur 199 appareils (l'utilisateur 1 en possède 6), agrégation toutes les 10 secondes sur la dernière heure.",
+    stages: [['Simulateur', 'relevés envoyés'], ['ingestion', 'POST /api/v1/ingestion → 201'], ['energy-usage', 'messages Kafka'], ['usage → InfluxDB', 'points écrits'],
+      ['Agrégation', 'passages (toutes les 10 s)'], ['energy-alerts', "événements d'alerte"], ['alert → Mailpit', 'e-mails envoyés']],
+    idle: 'Lancez le simulateur : le dernier passage d’agrégation s’affichera ici.',
+    aggregation: (n: number, total: string, threshold: number) => `Passage n° ${n} : 199 appareils additionnés ; utilisateur 1 (6 appareils) : ${total} kWh sur la dernière heure, seuil ${threshold} kWh`,
+    outcomes: { alert: ' : dépassé, événement publié sur energy-alerts, e-mail envoyé (à nouveau toutes les 10 s tant que le seuil est dépassé).', below: ' : sous le seuil.', disabled: " : alertes désactivées, rien n'est envoyé." },
+    number: 'fr-FR'
+  },
+  en: {
+    fullscreen: 'Full screen',
+    exitFullscreen: 'Exit full screen',
+    scenario: 'Scenario',
+    start: 'Start the simulator',
+    stop: 'Stop the simulator',
+    threshold: "User 1's alert threshold",
+    alerting: 'Alerts on',
+    sent: 'Readings:',
+    userHour: 'User 1, last hour:',
+    apiNote: 'Every route goes through api-gateway and needs a Keycloak JWT.',
+    tokenHelp: 'Token issued by Keycloak, realm het-security-realm.',
+    getToken: 'Get a Keycloak token',
+    summaries: ['Read a user', 'Update a user (threshold, alerts)', "A user's devices", 'Create a device', 'Delete a device',
+      'Send a consumption reading', 'Saving tips (local AI)', 'Per-device overview (local AI)'],
+    tags: { 'user-service': 'users and thresholds', 'device-service': 'devices', 'ingestion-service': 'readings', 'insight-service': 'tips from Ollama' } as Record<string, string>,
+    hoodTitle: 'Under the hood',
+    hoodLead: "The project's pipeline at its real pace: 1,000 readings every 5 seconds over 199 devices (user 1 owns 6), summed over the last hour every 10 seconds.",
+    stages: [['Simulator', 'readings sent'], ['ingestion', 'POST /api/v1/ingestion → 201'], ['energy-usage', 'Kafka messages'], ['usage → InfluxDB', 'points written'],
+      ['Aggregation', 'runs (every 10 s)'], ['energy-alerts', 'alert events'], ['alert → Mailpit', 'e-mails sent']],
+    idle: 'Start the simulator: the latest aggregation run will show here.',
+    aggregation: (n: number, total: string, threshold: number) => `Run #${n}: 199 devices summed; user 1 (6 devices): ${total} kWh over the last hour, threshold ${threshold} kWh`,
+    outcomes: { alert: ': exceeded, event published on energy-alerts, e-mail sent (again every 10 s while above the threshold).', below: ': under the threshold.', disabled: ': alerts off, nothing is sent.' },
+    number: 'en-GB'
+  }
+};
+
+export type DemoStrings = (typeof strings)['fr'];

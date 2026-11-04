@@ -14,7 +14,7 @@ await page.goto('http://localhost:4321/projets/agrigpt/', { waitUntil: 'networki
 await page.waitForSelector('.agd .st-side .conv button');
 await page.evaluate(() => document.fonts.ready);
 // the site's fixed header would cover the top of every capture
-await page.addStyleTag({ content: '.top { display: none !important; }' });
+await page.addStyleTag({ content: '.top, astro-dev-toolbar { display: none !important; }' });
 
 const clickText = (sel, text) => page.evaluate((s, t) => [...document.querySelectorAll(s)].find(b => b.textContent.includes(t)).click(), sel, text);
 const clipOf = (from, to, pad = 0) => page.evaluate((f, t, p) => {

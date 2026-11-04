@@ -80,5 +80,6 @@
   "arch.alternative": "Alternative",
   "arch.tradeoff": "Compromis",
   "arch.limits": "Limites connues",
-  "arch.next": "Pistes"
+  "arch.next": "Pistes",
+  "arch.credits": "Origine"
 }

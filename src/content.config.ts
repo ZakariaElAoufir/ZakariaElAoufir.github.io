@@ -119,7 +119,9 @@ const architectures = defineCollection({
     diagrams: z.array(z.object({ id: z.string(), title: localized, caption: localized })),
     choices: z.array(z.object({ title: localized, why: localized, alternative: localized, tradeoff: localized })),
     limits: localizedList,
-    next: localizedList
+    next: localizedList,
+    /** Where the project comes from, when it follows a tutorial or a published problem. */
+    credits: localizedList.optional()
   })
 });
 
