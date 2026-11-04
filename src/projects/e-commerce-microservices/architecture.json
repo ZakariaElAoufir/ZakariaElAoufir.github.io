@@ -633,34 +633,30 @@
   ],
   "limits": {
     "fr": [
-      "Sur /products, sans jeton, la gateway laisse passer l'en-tête X-User-Role: ADMIN que le frontend envoie lui-même : product-service accepte alors une création ou une suppression.",
-      "Le paiement est simulé (réussit si le total dépasse zéro) ; les champs de carte ne quittent pas le navigateur.",
-      "Secret JWT et mot de passe admin par défaut (admin / admin123) écrits dans la configuration.",
-      "Un utilisateur désactivé peut encore se connecter : la connexion ne vérifie pas le champ enabled.",
-      "Les erreurs métier (identifiant inconnu, nom déjà pris) remontent en 500 au lieu de 400 ou 401.",
-      "Aucune route Angular n'est protégée : /admin s'ouvre en client, seules les requêtes sont refusées par la gateway."
+      "Le paiement est simulé : aucun prestataire de paiement réel n'est branché.",
+      "Pas encore de page de commandes : le client voit l'historique de ses paiements.",
+      "Une seule instance par service : Eureka permet d'en lancer plusieurs, mais Docker Compose n'en démarre qu'une.",
+      "Les tests automatisés se limitent au démarrage de chaque service."
     ],
     "en": [
-      "On /products, without a token, the gateway lets through the X-User-Role: ADMIN header that the front end sends itself: product-service then accepts a creation or a deletion.",
-      "Payment is simulated (succeeds when the total is above zero); card fields never leave the browser.",
-      "JWT secret and default admin password (admin / admin123) written in the configuration.",
-      "A disabled user can still sign in: login does not check the enabled field.",
-      "Business errors (unknown username, name already taken) come back as 500 instead of 400 or 401.",
-      "No Angular route is guarded: /admin opens for a customer, only the requests are refused by the gateway."
+      "Payment is simulated: no real payment provider is plugged in.",
+      "No orders page yet: customers see their payment history.",
+      "One instance per service: Eureka allows several, but Docker Compose starts only one.",
+      "Automated tests only cover each service's start-up."
     ]
   },
   "next": {
     "fr": [
-      "Retirer à la gateway tout en-tête X-User-* venu du client avant de router.",
-      "Garde de route Angular sur /admin et contrôle de enabled à la connexion.",
-      "Secrets en variables d'environnement, compte admin créé au premier lancement.",
-      "Un vrai prestataire de paiement en mode test, et une table des commandes."
+      "Ajouter l'IA pour l'assistance des clients, sous forme d'un chatbot : questions sur les produits, le panier et la livraison.",
+      "Brancher un vrai prestataire de paiement en mode test.",
+      "Une page de suivi des commandes.",
+      "Des tests d'intégration entre les services."
     ],
     "en": [
-      "Strip any client-sent X-User-* header at the gateway before routing.",
-      "An Angular route guard on /admin and an enabled check at sign-in.",
-      "Secrets in environment variables, admin account created on first run.",
-      "A real payment provider in test mode, and an orders table."
+      "Add AI for customer support, as a chatbot: questions about products, the cart and delivery.",
+      "Plug in a real payment provider in test mode.",
+      "An order tracking page.",
+      "Integration tests between the services."
     ]
   }
 }
