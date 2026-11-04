@@ -1,0 +1,22 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Hero from '../../components/home/Hero.astro';
+import Education from '../../components/home/Education.astro';
+import Experiences from '../../components/home/Experiences.astro';
+import FeaturedProjects from '../../components/home/FeaturedProjects.astro';
+import SkillTree from '../../components/home/SkillTree.astro';
+import Contact from '../../components/home/Contact.astro';
+import { langPaths, toLang, useTranslations } from '../../i18n/utils';
+
+export const getStaticPaths = langPaths;
+const lang = toLang(Astro.params.lang);
+const t = useTranslations(lang);
+---
+<BaseLayout lang={lang} title={t('meta.homeTitle')} description={t('meta.homeDescription')}>
+  <Hero lang={lang} />
+  <Education lang={lang} />
+  <Experiences lang={lang} />
+  <FeaturedProjects lang={lang} />
+  <SkillTree lang={lang} />
+  <Contact lang={lang} />
+</BaseLayout>

@@ -1,0 +1,25 @@
+{
+  "order": 6,
+  "published": true,
+  "type": "academique",
+  "period": {
+    "fr": "2025 – 2026",
+    "en": "2025 – 2026"
+  },
+  "title": {
+    "fr": "Plateforme e-commerce microservices",
+    "en": "Microservices e-commerce platform"
+  },
+  "shortTitle": {
+    "fr": "E-commerce microservices",
+    "en": "Microservices e-commerce"
+  },
+  "repo": null,
+  "stack": [
+    "Spring Boot",
+    "Angular",
+    "PostgreSQL",
+    "Docker"
+  ],
+  "hasDemo": false
+}

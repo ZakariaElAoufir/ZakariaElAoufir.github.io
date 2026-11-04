@@ -1,0 +1,24 @@
+---
+import { getEntry } from 'astro:content';
+import { useTranslations, type Lang } from '../i18n/utils';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+const profile = (await getEntry('profile', 'profile'))!.data;
+---
+<footer>
+  <span>{profile.firstName} {profile.lastName}, {new Date().getFullYear()}</span>
+  <nav>
+    <a href={`mailto:${profile.email}`}>{t('footer.email')}</a>
+    <a href={profile.linkedin}>LinkedIn</a>
+    <a href={profile.github}>GitHub</a>
+    <a href={profile.siteRepo}>{t('footer.siteCode')}</a>
+  </nav>
+</footer>
+
+<style>
+  footer { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 16px; margin-top: clamp(100px, 12vw, 160px); padding: 28px var(--margin); background: var(--deep); box-shadow: 0 -4px 0 var(--line); font-size: 15px; color: var(--ash); }
+  nav { display: flex; flex-wrap: wrap; gap: 22px; }
+  a:hover { color: var(--accent-text); }
+</style>

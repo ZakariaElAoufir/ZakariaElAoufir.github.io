@@ -1,0 +1,27 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Icon from '../components/Icon.astro';
+import { useTranslations } from '../i18n/utils';
+
+// GitHub Pages serves one 404 page for every language, so it stays in French (the default).
+const t = useTranslations('fr');
+---
+<BaseLayout lang="fr" title={t('meta.notFoundTitle')} description={t('notFound.text')}>
+  <section class="block lost instant">
+    <p class="code reveal">404</p>
+    <h1 class="big reveal" style="--d:120ms">{t('notFound.title')}</h1>
+    <p class="reveal" style="--d:200ms">{t('notFound.text')}</p>
+    <div class="actions reveal" style="--d:280ms">
+      <a class="btn" href="/">{t('nav.home')}<Icon name="arrow" /></a>
+      <a class="btn ghost" href="/projets/">{t('nav.projects')}<Icon name="arrow" /></a>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .lost { min-height: 80svh; padding-top: 150px; }
+  .code { font: 700 clamp(80px, 14vw, 180px)/1 var(--display); color: var(--accent-text); text-shadow: 6px 6px 0 var(--accent-dark); }
+  .big { margin-bottom: 24px; }
+  p:not(.code) { color: var(--ash); font-size: 19px; }
+  .actions { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 32px; }
+</style>

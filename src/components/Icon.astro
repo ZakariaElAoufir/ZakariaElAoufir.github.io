@@ -1,0 +1,6 @@
+---
+// One line icon from the shared sprite in public/icons.svg.
+interface Props { name: string; size?: number }
+const { name, size } = Astro.props;
+---
+<svg class="i" aria-hidden="true" style={size ? `width:${size}px;height:${size}px` : undefined}><use href={`/icons.svg#${name}`} /></svg>

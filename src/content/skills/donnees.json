@@ -1,0 +1,30 @@
+{
+  "order": 4,
+  "position": "ml",
+  "name": {
+    "fr": "Données",
+    "en": "Data"
+  },
+  "items": [
+    {
+      "name": "PostgreSQL",
+      "logo": "postgresql"
+    },
+    {
+      "name": "MySQL",
+      "logo": "mysql"
+    },
+    {
+      "name": "SQLite",
+      "logo": "sqlite"
+    },
+    {
+      "name": "InfluxDB",
+      "logo": "influxdb"
+    },
+    {
+      "name": "Supabase",
+      "logo": "supabase"
+    }
+  ]
+}

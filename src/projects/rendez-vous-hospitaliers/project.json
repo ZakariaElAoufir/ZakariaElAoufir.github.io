@@ -1,0 +1,24 @@
+{
+  "order": 7,
+  "published": true,
+  "type": "academique",
+  "period": {
+    "fr": "2024 – 2025",
+    "en": "2024 – 2025"
+  },
+  "title": {
+    "fr": "Application de rendez-vous hospitaliers",
+    "en": "Hospital appointment application"
+  },
+  "shortTitle": {
+    "fr": "Rendez-vous hospitaliers",
+    "en": "Hospital appointments"
+  },
+  "repo": "https://github.com/ZakariaElAoufir/AndroidStudioProject",
+  "stack": [
+    "Java",
+    "Android Studio",
+    "SQLite Room"
+  ],
+  "hasDemo": false
+}

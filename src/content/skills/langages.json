@@ -1,0 +1,50 @@
+{
+  "order": 1,
+  "position": "tl",
+  "name": {
+    "fr": "Langages",
+    "en": "Languages"
+  },
+  "items": [
+    {
+      "name": "Java",
+      "logo": "java"
+    },
+    {
+      "name": "Python",
+      "logo": "python"
+    },
+    {
+      "name": "JavaScript",
+      "logo": "javascript"
+    },
+    {
+      "name": "Dart",
+      "logo": "dart"
+    },
+    {
+      "name": "C",
+      "logo": "c"
+    },
+    {
+      "name": "C++",
+      "logo": "cplusplus"
+    },
+    {
+      "name": "C#",
+      "logo": "csharp"
+    },
+    {
+      "name": "PL/SQL",
+      "logo": "database"
+    },
+    {
+      "name": "HTML",
+      "logo": "html"
+    },
+    {
+      "name": "CSS",
+      "logo": "css"
+    }
+  ]
+}

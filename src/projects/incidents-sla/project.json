@@ -1,0 +1,26 @@
+{
+  "order": 2,
+  "published": true,
+  "type": "stage",
+  "company": "DXC Technology",
+  "period": {
+    "fr": "Juillet – août 2025",
+    "en": "July – August 2025"
+  },
+  "title": {
+    "fr": "Gestion centralisée des incidents",
+    "en": "Centralized incident management"
+  },
+  "shortTitle": {
+    "fr": "Incidents et SLA",
+    "en": "Incidents and SLA"
+  },
+  "repo": null,
+  "stack": [
+    "Java",
+    "Spring Boot",
+    "Angular",
+    "MySQL"
+  ],
+  "hasDemo": false
+}

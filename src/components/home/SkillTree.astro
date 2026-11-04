@@ -1,0 +1,115 @@
+---
+import { Image } from 'astro:assets';
+import { getCollection, getEntry } from 'astro:content';
+import portrait from '../../assets/profile.png';
+import { pick, useTranslations, type Lang } from '../../i18n/utils';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+const p = (await getEntry('profile', 'profile'))!.data;
+const branches = (await getCollection('skills')).sort((a, b) => a.data.order - b.data.order);
+---
+<section class="block" id="competences">
+  <h2 class="big reveal">{t('home.skills')}</h2>
+  <div class="tree">
+    <svg class="wires" aria-hidden="true"></svg>
+    <div class="hub reveal">
+      <Image src={portrait} alt="" widths={[96, 192]} sizes="96px" />
+      <strong>{p.firstName}</strong>
+      <span>{pick(p.shortRole, lang)}</span>
+      <ul class="tongues" aria-label={t('home.spokenLanguages')}>{p.spokenLanguages.map(l => <li>{pick(l, lang)}</li>)}</ul>
+    </div>
+    {branches.map(({ data }, i) => (
+      <article class="branch px-frame reveal" data-pos={data.position} style={`--d:${120 + i * 60}ms`}>
+        <h3>{pick(data.name, lang)}<span>{data.items.length}</span></h3>
+        <ul>
+          {data.items.map(s => <li class="leaf"><i style={`--logo:url(/logos/${s.logo}.svg)`}></i>{s.name}</li>)}
+        </ul>
+      </article>
+    ))}
+  </div>
+</section>
+
+<script>
+  // the tree's wires: right-angled pixel lines from me to each branch, redrawn when the layout changes
+  const tree = document.querySelector<HTMLElement>('.tree');
+  const wires = tree?.querySelector('.wires');
+  const hub = tree?.querySelector<HTMLElement>('.hub');
+  if (tree && wires && hub) {
+    const box = (el: HTMLElement) => ({ l: el.offsetLeft, t: el.offsetTop, r: el.offsetLeft + el.offsetWidth, b: el.offsetTop + el.offsetHeight,
+      x: el.offsetLeft + el.offsetWidth / 2, y: el.offsetTop + el.offsetHeight / 2 });
+    type Box = ReturnType<typeof box>;
+    const route = (pos: string, h: Box, c: Box) => {
+      const y = Math.min(Math.max(h.y, c.t + 30), c.b - 30);
+      switch (pos) {
+        case 'ml': return `M${h.l} ${y}H${c.r}`;
+        case 'mr': return `M${h.r} ${y}H${c.l}`;
+        case 'tc': return `M${h.x} ${h.t}V${c.b}`;
+        case 'bc': return `M${h.x} ${h.b}V${c.t}`;
+        case 'tl': case 'tr': return `M${pos === 'tl' ? h.l + 28 : h.r - 28} ${h.t}V${c.b + 36}H${c.x}V${c.b}`;
+        default: return `M${pos === 'bl' ? h.l + 28 : h.r - 28} ${h.b}V${c.t - 36}H${c.x}V${c.t}`;
+      }
+    };
+    const draw = () => {
+      if (getComputedStyle(wires).display === 'none') return;
+      const h = box(hub);
+      wires.innerHTML = [...tree.querySelectorAll<HTMLElement>('.branch')]
+        .map(b => `<path data-pos="${b.dataset.pos}" d="${route(b.dataset.pos!, h, box(b))}"/>`).join('');
+    };
+    new ResizeObserver(draw).observe(tree);
+    tree.querySelectorAll<HTMLElement>('.branch').forEach(b => {
+      const wire = () => wires.querySelector(`[data-pos="${b.dataset.pos}"]`);
+      b.addEventListener('mouseenter', () => wire()?.classList.add('on'));
+      b.addEventListener('mouseleave', () => wire()?.classList.remove('on'));
+    });
+  }
+</script>
+
+<style>
+  /* a tree growing out of me, one branch per category, one leaf per technology with its logo */
+  .tree { position: relative; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); grid-template-areas: "tl tc tr" "ml hub mr" "bl bc br"; gap: 72px 56px; align-items: center; }
+  .wires { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
+  .wires :global(path) { fill: none; stroke: var(--line); stroke-width: 4; stroke-linecap: square; stroke-linejoin: miter; shape-rendering: crispEdges; }
+  .wires :global(path.on) { stroke: var(--accent-text); stroke-dasharray: 8 8; animation: flow .6s linear infinite; }
+  @keyframes flow { to { stroke-dashoffset: -16; } }
+  .hub { grid-area: hub; justify-self: center; position: relative; display: grid; justify-items: center; text-align: center; gap: 6px; padding: 24px 28px; background: var(--raise); }
+  .hub img { width: 96px; height: 96px; object-fit: cover; object-position: center 22%; margin-bottom: 8px; box-shadow: 0 0 0 4px var(--deep), 0 0 0 8px var(--accent-text); }
+  .hub strong { font: 800 26px/1 var(--name); text-transform: uppercase; }
+  .hub > span { font: 500 15px/1.3 var(--display); color: var(--accent-text); }
+  .tongues { list-style: none; padding: 0; display: flex; gap: 6px; margin-top: 8px; font-size: 13px; }
+  .tongues li { padding: 3px 8px; background: var(--deep); clip-path: var(--pix); }
+  .branch { position: relative; background: var(--deep); padding: 22px 22px 24px; align-self: stretch; }
+  .branch[data-pos="tl"] { grid-area: tl; } .branch[data-pos="tc"] { grid-area: tc; } .branch[data-pos="tr"] { grid-area: tr; }
+  .branch[data-pos="ml"] { grid-area: ml; align-self: center; } .branch[data-pos="mr"] { grid-area: mr; align-self: center; }
+  .branch[data-pos="bl"] { grid-area: bl; } .branch[data-pos="bc"] { grid-area: bc; } .branch[data-pos="br"] { grid-area: br; }
+  h3 { display: flex; align-items: center; justify-content: space-between; gap: 12px; font: 600 19px/1.2 var(--display); text-transform: uppercase; letter-spacing: .04em; color: var(--accent-text); }
+  h3 span { font: 600 13px/1 var(--display); color: var(--ash); padding: 4px 7px; background: var(--raise); clip-path: var(--pix); }
+  /* the leaves hang from a pixel twig on the left */
+  .branch ul { list-style: none; padding: 0 0 0 16px; margin-top: 16px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px 10px; border-left: 4px solid var(--line); }
+  .leaf { position: relative; display: flex; align-items: center; gap: 10px; padding: 7px 10px; font-size: 15px; background: var(--night); transition: transform .3s var(--ease), opacity .3s, background .2s; }
+  .leaf::before { content: ""; position: absolute; left: -16px; top: calc(50% - 2px); width: 12px; height: 4px; background: var(--line); }
+  .leaf:nth-child(even)::before { display: none; }
+  .leaf i { flex: none; width: 22px; height: 22px; background: var(--accent-text); -webkit-mask: var(--logo) center / contain no-repeat; mask: var(--logo) center / contain no-repeat; transition: background .2s; }
+  /* desktop: the pointed leaf comes forward, the others step back */
+  @media (hover: hover) and (pointer: fine) and (min-width: 961px) {
+    .leaf:hover { z-index: 2; transform: scale(1.22); background: var(--accent); box-shadow: 0 -4px 0 var(--accent-text), 0 4px 0 var(--accent-text), -4px 0 0 var(--accent-text), 4px 0 0 var(--accent-text); }
+    .leaf:hover i { background: var(--ivory); }
+    .tree:has(.leaf:hover) .leaf:not(:hover) { opacity: .45; }
+    .branch:hover { --frame: var(--accent-text); }
+  }
+  /* narrow desktop: three columns are too tight for two leaves side by side */
+  @media (min-width: 961px) and (max-width: 1240px) {
+    .branch ul { grid-template-columns: 1fr; }
+    .leaf:nth-child(even)::before { display: block; }
+  }
+  /* phone and tablet: a vertical tree, trunk on the left, no hover effect */
+  @media (max-width: 960px) {
+    .tree { grid-template-columns: 1fr; grid-template-areas: none; gap: 28px; padding-left: 28px; }
+    .tree::before { content: ""; position: absolute; left: 0; top: 40px; bottom: 40px; width: 4px; background: var(--line); }
+    .wires { display: none; }
+    .hub, .branch[data-pos] { grid-area: auto; justify-self: stretch; align-self: auto; }
+    .hub::before, .branch::before { content: ""; position: absolute; left: -28px; top: 34px; width: 24px; height: 4px; background: var(--line); }
+    .leaf { font-size: 14px; padding: 7px 8px; gap: 8px; }
+  }
+</style>

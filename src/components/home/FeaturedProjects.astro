@@ -1,0 +1,64 @@
+---
+import Icon from '../Icon.astro';
+import { publishedProjects } from '../../lib/projects';
+import { localePath, pick, useTranslations, type Lang } from '../../i18n/utils';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+const featured = (await publishedProjects()).filter(p => p.data.featured && p.data.card);
+const projectsPage = localePath(lang, '/projets/');
+---
+<section class="block" id="projets">
+  <h2 class="big reveal">{t('home.projects')}</h2>
+  <div class="towers">
+    {featured.map(({ id, data }, i) => {
+      const name = pick(data.shortTitle, lang);
+      return (
+        <article class="proj px-frame reveal" style={`--d:${i * 120}ms`}>
+          <a class="facade" href={`${projectsPage}#${id}`} aria-label={t('home.openProject', { name })}><strong>{name}</strong></a>
+          <div class="body">
+            <p class="years">{pick(data.period, lang)}</p>
+            <h3>{pick(data.card!.title, lang)}</h3>
+            <p>{pick(data.card!.summary, lang)}</p>
+            <div class="chips">{data.card!.stack.map(s => <span>{s}</span>)}</div>
+            <div class="links">
+              {data.hasDemo && <a href={localePath(lang, `/projets/${id}/`)}><Icon name="play" />{t('projects.demo')}</a>}
+              {data.hasDemo && <a href={localePath(lang, `/projets/${id}/architecture/`)}><Icon name="layers" />{t('projects.architecture')}</a>}
+              {data.repo
+                ? <a href={data.repo}><Icon name="code" />{t('projects.code')}</a>
+                : <span class="private"><Icon name="lock" />{t('projects.private')}</span>}
+            </div>
+          </div>
+        </article>
+      );
+    })}
+  </div>
+  <div class="all reveal"><a class="btn ghost" href={projectsPage}>{t('home.allProjects')}<Icon name="arrow" /></a></div>
+</section>
+
+<style>
+  .towers { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; align-items: end; }
+  .proj { display: flex; flex-direction: column; background: var(--deep); padding-top: 20px; }
+  .proj:nth-child(2) { margin-bottom: 60px; }
+  .proj:hover { transform: translateY(-8px); background: var(--raise); --frame: var(--accent-text); }
+  /* a lit facade drawn in CSS stands in for the project picture */
+  .facade { position: relative; display: block; aspect-ratio: 4 / 3; margin: 0 20px; background: var(--night); overflow: hidden; clip-path: var(--pix); }
+  .facade::before { content: ""; position: absolute; inset: 0; transition: opacity .6s; background:
+    linear-gradient(90deg, transparent 0 46%, var(--deep) 46% 54%, transparent 54%),
+    repeating-linear-gradient(90deg, rgba(80, 80, 220, .14) 0 10%, transparent 10% 14%),
+    repeating-linear-gradient(0deg, var(--night) 0 6%, transparent 6% 14%); }
+  .proj:hover .facade::before { opacity: .4; }
+  .facade strong { position: absolute; left: 18px; bottom: 16px; right: 18px; font: 700 24px/1 var(--display); text-transform: uppercase; }
+  .body { padding: 26px 28px 30px; display: flex; flex-direction: column; flex: 1; }
+  .years { font: 600 16px/1 var(--display); letter-spacing: .06em; text-transform: uppercase; color: var(--accent-text); }
+  h3 { font: 600 22px/1.2 var(--text); margin: 10px 0; }
+  .body > p:not(.years) { color: var(--ash); font-size: 16px; }
+  .chips { margin-top: 16px; }
+  .links { margin-top: auto; padding-top: 22px; }
+  .all { display: flex; justify-content: center; margin-top: 56px; }
+  @media (max-width: 960px) {
+    .towers { grid-template-columns: 1fr; }
+    .proj:nth-child(2) { margin-bottom: 0; }
+  }
+</style>

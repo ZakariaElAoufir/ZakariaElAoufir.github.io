@@ -1,0 +1,23 @@
+{
+  "order": 8,
+  "published": true,
+  "type": "academique",
+  "period": {
+    "fr": "2024 – 2025",
+    "en": "2024 – 2025"
+  },
+  "title": {
+    "fr": "Simulateur bancaire",
+    "en": "Banking simulator"
+  },
+  "shortTitle": {
+    "fr": "Simulateur bancaire",
+    "en": "Banking simulator"
+  },
+  "repo": null,
+  "stack": [
+    "Java",
+    "Swing"
+  ],
+  "hasDemo": false
+}

@@ -1,0 +1,60 @@
+{
+  "firstName": "Zakaria",
+  "lastName": "El Aoufir",
+  "role": {
+    "fr": "Ingénieur logiciel · Full Stack Java / Angular",
+    "en": "Software engineer · Full Stack Java / Angular"
+  },
+  "shortRole": {
+    "fr": "Full stack Java / Angular",
+    "en": "Full stack Java / Angular"
+  },
+  "status": {
+    "fr": "Ouvert à un CDI",
+    "en": "Open to a permanent position"
+  },
+  "summary": {
+    "fr": "Ingénieur diplômé de l'EMSI, option MIAGE. Je bâtis des applications Java et Angular sur des architectures microservices, Spring Boot, Kafka et Docker, et j'y intègre de l'intelligence artificielle.",
+    "en": "Engineer graduated from EMSI, MIAGE option. I build Java and Angular applications on microservices architectures, Spring Boot, Kafka and Docker, and integrate artificial intelligence into them."
+  },
+  "email": "zakaria.elaoufir@gmail.com",
+  "linkedin": "https://www.linkedin.com/in/zakaria-el-aoufir-329627282",
+  "github": "https://github.com/ZakariaElAoufir",
+  "siteRepo": "https://github.com/ZakariaElAoufir/ZakariaElAoufir.github.io",
+  "spokenLanguages": [
+    {
+      "fr": "Français",
+      "en": "French"
+    },
+    {
+      "fr": "Arabe",
+      "en": "Arabic"
+    },
+    {
+      "fr": "Anglais",
+      "en": "English"
+    }
+  ],
+  "marquee": [
+    {
+      "fr": "Ouvert à un CDI",
+      "en": "Open to a permanent role"
+    },
+    {
+      "fr": "Java",
+      "en": "Java"
+    },
+    {
+      "fr": "Angular",
+      "en": "Angular"
+    },
+    {
+      "fr": "Spring Boot",
+      "en": "Spring Boot"
+    },
+    {
+      "fr": "Kafka",
+      "en": "Kafka"
+    }
+  ]
+}

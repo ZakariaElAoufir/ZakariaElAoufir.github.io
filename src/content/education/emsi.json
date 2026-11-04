@@ -1,0 +1,13 @@
+{
+  "order": 1,
+  "years": "2022 – 2026",
+  "school": {
+    "fr": "EMSI, École Marocaine des Sciences de l'Ingénieur",
+    "en": "EMSI, École Marocaine des Sciences de l'Ingénieur"
+  },
+  "degree": {
+    "fr": "Diplôme d'ingénieur d'État en Ingénierie Informatique et Réseaux, option MIAGE",
+    "en": "State Engineering Degree in Computer Science and Networks, MIAGE option"
+  },
+  "city": "Rabat"
+}

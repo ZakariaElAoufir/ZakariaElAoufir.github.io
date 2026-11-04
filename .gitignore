@@ -1,1 +1,4 @@
 .taste-skill/
+node_modules/
+dist/
+.astro/

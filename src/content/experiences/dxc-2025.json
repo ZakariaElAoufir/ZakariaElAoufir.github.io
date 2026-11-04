@@ -1,0 +1,27 @@
+{
+  "order": 2,
+  "year": 2025,
+  "period": {
+    "fr": "Juillet – août 2025",
+    "en": "July – August 2025"
+  },
+  "company": "DXC Technology",
+  "post": {
+    "fr": "Stagiaire développeur Full Stack",
+    "en": "Full Stack Developer Intern"
+  },
+  "place": "Technopolis, Sala Al Jadida",
+  "bullets": [
+    {
+      "fr": "Développement, au sein d'une équipe Agile Scrum, d'une application web full stack (Java, Spring Boot, Angular, MySQL) pour la gestion centralisée des incidents et le suivi des engagements de niveau de service (SLA).",
+      "en": "Developed, within an Agile Scrum team, a full stack web application (Java, Spring Boot, Angular, MySQL) for centralized incident management and Service Level Agreement (SLA) tracking."
+    }
+  ],
+  "stack": [
+    "Java",
+    "Spring Boot",
+    "Angular",
+    "MySQL"
+  ],
+  "project": "incidents-sla"
+}

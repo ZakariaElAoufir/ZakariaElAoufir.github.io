@@ -217,22 +217,24 @@ Aperçu : `python -m http.server 4400` à la racine du dépôt (config « maquet
 ## État d'avancement (2026-11-04)
 
 **Fait**
-- Spec fonctionnelle validée (ce fichier).
-- Direction artistique « Nuit pixel » déclinée sur les 3 maquettes HTML (voir ci-dessus). Les anciennes maquettes A/B/C/D et la direction « Metropolis noir » sont abandonnées.
-- Infos des projets GitHub récupérées depuis leurs README (AgriGPT, TheWall_Flutter, Microservice-Home-Energy-Tracker).
-
-**En attente de confirmation de Zakaria** (dernière question posée)
-- **Types de projets devinés** : Home Energy Tracker et AgriGPT = « personnel » ; e-commerce microservices, rendez-vous hospitaliers, simulateur bancaire, vente de formations Django = « académique ». The Wall = « académique, binôme » (d'après son README ; sa part : messagerie privée et gestion des amis).
-- **Bouton Code** mis seulement quand un dépôt GitHub correspond clairement (absent pour e-commerce, simulateur bancaire, formations Django).
-- **Compétences ajoutées** depuis GitHub : Dart, Supabase, ligne IA (RAG, Ollama, FAISS, Spring AI).
-- Validation finale des 3 maquettes (l'effet de survol des images projets n'a été vérifié qu'en CSS, pas à l'œil).
+- Spec fonctionnelle validée (ce fichier) ; direction artistique « Nuit pixel » validée sur les maquettes ; types de projets confirmés par Zakaria.
+- **Site Astro en place** (toutes les pages sauf les démos), fidèle aux maquettes, en FR et EN :
+  - `/` et `/en/` : accueil complet (hero, formation, expériences + cadran, 3 projets mis en avant, arbre de compétences, contact) ;
+  - `/projets/` et `/en/projets/` : 9 projets, une ligne chacun ;
+  - `/certifications/` et `/en/certifications/` : liste vide pour l'instant (état « Bientôt »), les certificats fictifs des maquettes ne sont pas repris ;
+  - `404`.
+- Structure : `src/content/` (profil, formation, expériences, compétences, certifications : JSON validés par schéma, champs `fr`/`en` obligatoires), `src/projects/<slug>/` (`project.json` + `fr.md` / `en.md`), `src/i18n/` (textes d'interface + `useTranslations`, `localePath`, `alternatePath`), `src/components/` (Header, Footer, Icon, `home/*`), `src/layouts/BaseLayout.astro`, `src/scripts/site.ts` (menu, scroll reveal, pluie), `src/styles/global.css` (tokens + Tailwind v4).
+- Images optimisées au build (`src/assets/profile.png`, `src/assets/ville-nuit.jpg` → WebP). Polices auto-hébergées via `@fontsource`. Logos dans `public/logos/`, sprite d'icônes `public/icons.svg`, CV dans `public/cv/`.
+- Boutons **Démo** et **Architecture** masqués tant que `hasDemo` vaut `false` (tous les projets pour l'instant) ; l'image d'un projet sans démo n'est pas un lien.
+- Tests Vitest (parité des clés FR/EN, sélecteur de langue), `astro check` sans erreur, build OK (7 pages). Workflow `.github/workflows/deploy.yml` prêt : déploie sur Pages à chaque push sur `main` (activer « GitHub Actions » comme source dans Settings → Pages).
+- Dépendances : astro 5, @astrojs/check, typescript, tailwindcss 4 + @tailwindcss/vite, @fontsource/pixelify-sans, @fontsource/archivo ; vitest en dev. `overrides.vite` fixé en 6.x pour n'avoir qu'une version de Vite (sinon `astro check` échoue). **React et Mermaid pas encore installés** : ils arrivent avec la première démo.
+- Aperçu : config « site » de `.claude/launch.json` (`npm run dev`, port 4321).
 
 **Étapes suivantes** (dans l'ordre)
-1. Obtenir les confirmations ci-dessus et corriger les maquettes si besoin.
-2. Initialiser le projet Astro 5 + React + Tailwind v4 (demander avant d'ajouter les dépendances), avec le workflow GitHub Actions → Pages.
-3. Porter la direction artistique : tokens Tailwind depuis la palette, layout commun (en-tête, fond ville, pied de page), puis Accueil, Projets, Certifications, en FR puis EN.
-4. Retirer `maquettes/` du dépôt (ou la passer dans `.gitignore`) une fois le site Astro fidèle aux maquettes.
-5. Ensuite, projet par projet : `SPEC-project-<slug>.md`, démo mockée, page architecture.
+1. Zakaria relit le site (FR et EN, PC et mobile) ; corriger les écarts avec les maquettes.
+2. Supprimer `maquettes/` une fois le site validé.
+3. Démos, **projet par projet**, chacun validé avant le suivant : `SPEC-project-<slug>.md`, installation de React (îlots `client:media`) et Mermaid au premier projet, pages `/projets/<slug>/` (démo) et `/projets/<slug>/architecture/`, puis `hasDemo: true`.
+4. Fusion dans `main` (= mise en ligne) quand Zakaria le décide.
 
 **Outils** : les skills `frontend-design` et `taste-skill` sont installés au niveau utilisateur (`~/.claude/skills/`), **pas dans ce dépôt**. Le dossier `.taste-skill/` (ignoré par Git) ne contient que des fichiers de travail du skill.
 

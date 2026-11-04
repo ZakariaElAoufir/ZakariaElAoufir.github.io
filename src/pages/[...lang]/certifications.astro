@@ -1,0 +1,77 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Icon from '../../components/Icon.astro';
+import { langPaths, pick, toLang, useTranslations } from '../../i18n/utils';
+
+export const getStaticPaths = langPaths;
+const lang = toLang(Astro.params.lang);
+const t = useTranslations(lang);
+const certs = (await getCollection('certifications')).sort((a, b) => a.data.order - b.data.order);
+---
+<BaseLayout lang={lang} title={t('meta.certificationsTitle')} description={t('meta.certificationsDescription')}>
+  <section class="block intro">
+    <div class="instant">
+      <h1 class="big reveal">{t('certifications.title')}</h1>
+      <p class="lead reveal" style="--d:150ms">{t('certifications.lead')}</p>
+    </div>
+
+    {certs.length > 0 && (
+      <div class="certs">
+        {certs.map(({ data }, i) => (
+          <article class="cert px-frame reveal" style={`--d:${(i % 2) * 120}ms`}>
+            <div class="paper">
+              <div>
+                <span class="org">{data.issuer}{data.partner && ` · ${data.partner}`}</span>
+                <span class="name">{pick(data.name, lang)}</span>
+                <span class="to">{t('certifications.awardedTo')}</span>
+              </div>
+              <span class="seal"><Icon name="award" /></span>
+            </div>
+            <div class="body">
+              <div class="meta"><span><Icon name="award" />{data.issuer}</span><span><Icon name="calendar" />{pick(data.date, lang)}</span></div>
+              <h2>{pick(data.name, lang)}</h2>
+              <div class="chips">{data.skills.map(s => <span>{s}</span>)}</div>
+              <div class="links"><a href={data.verifyUrl}><Icon name="check" />{t('certifications.verify')}</a></div>
+            </div>
+          </article>
+        ))}
+      </div>
+    )}
+
+    <div class="empty px-frame reveal">
+      <h2>{t('certifications.emptyTitle')}</h2>
+      <p>{t('certifications.emptyText')}</p>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .intro { padding-top: 150px; }
+  .lead { max-width: 60ch; font-size: 19px; margin-top: -24px; }
+  .certs { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 32px; margin-top: 64px; }
+  .cert { display: flex; flex-direction: column; background: var(--deep); padding-top: 20px; }
+  .cert:hover { transform: translateY(-8px); background: var(--raise); --frame: var(--accent-text); }
+  /* the certificate itself, drawn as a small framed document */
+  .paper { position: relative; margin: 0 28px; aspect-ratio: 16 / 9; background: var(--ivory); color: var(--night); display: grid; place-items: center; text-align: center; padding: 22px; overflow: hidden; }
+  .paper::before { content: ""; position: absolute; inset: 10px; border: 2px solid var(--night); outline: 4px dotted var(--night); outline-offset: -12px; }
+  .org { position: relative; font: 600 14px/1 var(--display); letter-spacing: .06em; text-transform: uppercase; }
+  .name { position: relative; display: block; margin-top: 10px; font: 700 clamp(20px, 1.9vw, 26px)/1.05 var(--display); text-transform: uppercase; }
+  .to { position: relative; display: block; margin-top: 10px; font-size: 14px; }
+  .seal { position: absolute; right: 22px; bottom: 18px; width: 54px; height: 54px; clip-path: var(--pix); background: var(--accent); color: var(--ivory); display: grid; place-items: center; transition: transform .35s var(--ease); }
+  .seal :global(.i) { width: 26px; height: 26px; }
+  .cert:hover .seal { transform: translateY(-6px); }
+  .body { padding: 26px 28px 30px; display: flex; flex-direction: column; flex: 1; }
+  .meta { display: flex; flex-wrap: wrap; gap: 8px 18px; font-size: 15px; color: var(--ash); }
+  .meta span { display: inline-flex; align-items: center; gap: 7px; }
+  .body h2 { font: 600 22px/1.25 var(--text); margin: 12px 0 0; }
+  .body .links { margin-top: auto; padding-top: 24px; }
+  .empty { margin-top: 64px; padding: 56px 40px; background: var(--deep); text-align: center; }
+  .empty h2 { font: 700 32px/1 var(--display); text-transform: uppercase; }
+  .empty p { color: var(--ash); margin-top: 12px; }
+  @media (max-width: 960px) {
+    .certs { grid-template-columns: 1fr; }
+    .paper { margin: 0 18px; }
+    .body { padding: 22px 18px 26px; }
+  }
+</style>

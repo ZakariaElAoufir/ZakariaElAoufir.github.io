@@ -1,0 +1,30 @@
+{
+  "order": 3,
+  "year": 2024,
+  "period": {
+    "fr": "Juillet – août 2024",
+    "en": "July – August 2024"
+  },
+  "company": "Holding Al Omrane",
+  "post": {
+    "fr": "Stagiaire informatique",
+    "en": "IT Intern"
+  },
+  "place": "Rabat, Mahaj",
+  "bullets": [
+    {
+      "fr": "Déploiement et configuration de Snipe-IT, solution de gestion des actifs informatiques, sur un hyperviseur Nutanix avec Ubuntu Server.",
+      "en": "Deployed and configured Snipe-IT, an IT asset management solution, on a Nutanix hypervisor with Ubuntu Server."
+    },
+    {
+      "fr": "Migration et intégration de l'inventaire complet des actifs depuis Excel vers la nouvelle solution, fiabilisant le suivi du parc informatique.",
+      "en": "Migrated and integrated the complete asset inventory from Excel into the new solution, improving the reliability of IT equipment tracking."
+    }
+  ],
+  "stack": [
+    "Snipe-IT",
+    "Ubuntu Server",
+    "Nutanix",
+    "Excel"
+  ]
+}

@@ -1,0 +1,1 @@
+A farming chat assistant that runs locally. It answers from a corpus of PDF documents (FAO, INRA, ONSSA) using RAG, shows the sources it used and keeps the conversation history, which can be exported to PDF.

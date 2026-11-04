@@ -1,0 +1,53 @@
+---
+import Icon from './Icon.astro';
+import { alternatePath, localePath, useTranslations, type Lang } from '../i18n/utils';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+const here = Astro.url.pathname;
+const other = alternatePath(here);
+const links = [
+  { href: localePath(lang, '/'), label: t('nav.home') },
+  { href: localePath(lang, '/projets/'), label: t('nav.projects') },
+  { href: localePath(lang, '/certifications/'), label: t('nav.certifications') }
+];
+const isCurrent = (href: string) => here.replace(/\/$/, '') === href.replace(/\/$/, '');
+---
+<header class="top" id="top">
+  <a class="wordmark" href={localePath(lang, '/')}>Zakaria <b>El Aoufir</b></a>
+  <nav aria-label={t('nav.label')}>
+    {links.map(l => <a href={l.href} aria-current={isCurrent(l.href) ? 'page' : undefined}>{l.label}</a>)}
+  </nav>
+  <a class="lang" href={other.path} hreflang={other.lang} lang={other.lang} title={t('nav.switchLanguage')}>
+    {lang === 'fr' ? <><b>FR</b> / EN</> : <>FR / <b>EN</b></>}
+  </a>
+  <a class="btn small" href={t('cv.file')} download><Icon name="download" />{t('cv.button')}</a>
+  <button class="burger" aria-label={t('nav.openMenu')} aria-expanded="false" data-open={t('nav.openMenu')} data-close={t('nav.closeMenu')}>
+    <Icon name="menu" size={26} />
+  </button>
+</header>
+
+<style>
+  .top { position: fixed; inset: 0 0 auto; z-index: 50; display: flex; align-items: center; gap: 36px; padding: 20px var(--margin); transition: background .4s, padding .4s; }
+  .top:global(.scrolled), .top:global(.open) { background: rgba(18, 18, 47, .94); padding-block: 12px; box-shadow: 0 4px 0 var(--line); }
+  .wordmark { font: 800 clamp(17px, 1.6vw, 21px)/1 var(--name); letter-spacing: .02em; text-transform: uppercase; white-space: nowrap; }
+  .wordmark b { color: var(--accent-text); font-weight: 800; }
+  nav { display: flex; gap: 30px; margin-left: auto; }
+  nav a { font: 500 16px/1 var(--display); color: var(--ash); padding: 8px 0; background: linear-gradient(var(--accent-text), var(--accent-text)) left bottom / 0 4px no-repeat; transition: background-size .3s var(--ease), color .2s; }
+  nav a:hover, nav a[aria-current] { color: var(--ivory); background-size: 100% 4px; }
+  .lang { font: 500 16px/1 var(--display); color: var(--ash); }
+  .lang b { color: var(--accent-text); font-weight: 700; }
+  .lang:hover { color: var(--ivory); }
+  .burger { display: none; background: none; border: 0; color: var(--ivory); padding: 0; cursor: pointer; }
+
+  @media (max-width: 960px) {
+    .top { gap: 14px; }
+    nav, .lang { display: none; }
+    .burger { display: block; margin-left: auto; }
+    .top:global(.open) { flex-wrap: wrap; }
+    .top:global(.open) nav { display: flex; flex-direction: column; gap: 4px; order: 9; flex-basis: 100%; padding: 12px 0 0; }
+    .top:global(.open) .lang { display: block; order: 10; flex-basis: 100%; padding: 10px 0 8px; font-size: 18px; }
+    .top:global(.open) nav a { font-size: 18px; padding: 10px 0; }
+  }
+</style>

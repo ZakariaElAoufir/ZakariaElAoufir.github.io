@@ -1,0 +1,1 @@
+Développement, au sein d'une équipe Agile Scrum, d'une application web full stack (Java, Spring Boot, Angular, MySQL) pour la gestion centralisée des incidents et le suivi des engagements de niveau de service (SLA).

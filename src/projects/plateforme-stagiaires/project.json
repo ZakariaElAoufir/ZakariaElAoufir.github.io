@@ -1,0 +1,29 @@
+{
+  "order": 1,
+  "published": true,
+  "type": "stage",
+  "company": "DXC Technology",
+  "period": {
+    "fr": "Février – juillet 2026",
+    "en": "February – July 2026"
+  },
+  "title": {
+    "fr": "Plateforme intelligente de suivi des stagiaires",
+    "en": "Intelligent intern tracking platform"
+  },
+  "shortTitle": {
+    "fr": "Plateforme des stagiaires",
+    "en": "Intern platform"
+  },
+  "repo": null,
+  "stack": [
+    "Java",
+    "Spring Boot",
+    "Angular",
+    "Kafka",
+    "PostgreSQL",
+    "Docker",
+    "Python"
+  ],
+  "hasDemo": false
+}

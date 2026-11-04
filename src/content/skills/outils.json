@@ -1,0 +1,26 @@
+{
+  "order": 8,
+  "position": "br",
+  "name": {
+    "fr": "Outils",
+    "en": "Tools"
+  },
+  "items": [
+    {
+      "name": "Git",
+      "logo": "git"
+    },
+    {
+      "name": "GitHub",
+      "logo": "github"
+    },
+    {
+      "name": "IntelliJ IDEA",
+      "logo": "intellij"
+    },
+    {
+      "name": "VS Code",
+      "logo": "vscode"
+    }
+  ]
+}

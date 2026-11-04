@@ -1,0 +1,99 @@
+/* Shared foundation of the "Nuit pixel" design: tokens, background, pixel frames, buttons, reveal. */
+@import "tailwindcss";
+@import "@fontsource/pixelify-sans/400.css";
+@import "@fontsource/pixelify-sans/500.css";
+@import "@fontsource/pixelify-sans/600.css";
+@import "@fontsource/pixelify-sans/700.css";
+@import "@fontsource/archivo/400.css";
+@import "@fontsource/archivo/500.css";
+@import "@fontsource/archivo/600.css";
+@import "@fontsource/archivo/800.css";
+
+:root {
+  /* taken from the background picture: night sky, blue towers, lit clouds */
+  --night: #12122f;
+  --deep: #1a1a4d;
+  --raise: #262673;
+  --line: #34349a;
+  --ivory: #e8e8fa;
+  --ash: #a9abe0;
+  --accent: #3b3ac4;
+  --accent-dark: #1f1e7a;
+  --accent-text: #9fa3f5;
+  --display: "Pixelify Sans", "Courier New", monospace;
+  --text: "Archivo", "Helvetica Neue", sans-serif;
+  --name: "Archivo", "Helvetica Neue", sans-serif;
+  --margin: clamp(20px, 5vw, 72px);
+  --ease: cubic-bezier(.2, .7, .2, 1);
+  /* a filled shape with stair-stepped corners, two 4px pixels deep */
+  --pix: polygon(0 8px, 4px 8px, 4px 4px, 8px 4px, 8px 0, calc(100% - 8px) 0, calc(100% - 8px) 4px, calc(100% - 4px) 4px, calc(100% - 4px) 8px, 100% 8px,
+    100% calc(100% - 8px), calc(100% - 4px) calc(100% - 8px), calc(100% - 4px) calc(100% - 4px), calc(100% - 8px) calc(100% - 4px), calc(100% - 8px) 100%,
+    8px 100%, 8px calc(100% - 4px), 4px calc(100% - 4px), 4px calc(100% - 8px), 0 calc(100% - 8px));
+}
+
+/* the same tokens as Tailwind utilities (bg-night, text-ash, font-display...) */
+@theme inline {
+  --color-night: var(--night);
+  --color-deep: var(--deep);
+  --color-raise: var(--raise);
+  --color-line: var(--line);
+  --color-ivory: var(--ivory);
+  --color-ash: var(--ash);
+  --color-accent: var(--accent);
+  --color-accent-dark: var(--accent-dark);
+  --color-accent-text: var(--accent-text);
+  --font-display: var(--display);
+  --font-text: var(--text);
+}
+
+@layer base {
+  html { scroll-behavior: smooth; }
+  body { background: var(--night); color: var(--ivory); font: 400 17px/1.6 var(--text); -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+  a { color: inherit; text-decoration: none; }
+  img { display: block; max-width: 100%; }
+  h1, h2, h3 { font-weight: inherit; font-size: inherit; }
+  :focus-visible { outline: 4px solid var(--accent-text); outline-offset: 6px; }
+  ::selection { background: var(--accent); color: var(--ivory); }
+}
+
+svg.i { width: 1.1em; height: 1.1em; fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: square; stroke-linejoin: miter; flex: none; }
+
+/* pixel frame: a 4px border drawn outside the box with its four corner pixels missing */
+.px-frame {
+  --frame: var(--line);
+  box-shadow: 0 -4px 0 0 var(--frame), 0 4px 0 0 var(--frame), -4px 0 0 0 var(--frame), 4px 0 0 0 var(--frame);
+  transition: background .25s, transform .4s var(--ease);
+}
+
+/* buttons: stair-stepped corners and a darker bottom edge, pressed in on click */
+.btn { display: inline-flex; align-items: center; gap: 10px; padding: 14px 22px 18px; font: 700 16px/1 var(--display); letter-spacing: .04em; text-transform: uppercase; background: var(--accent); color: var(--ivory); border: 0; cursor: pointer;
+  clip-path: var(--pix); box-shadow: inset 0 -4px 0 var(--accent-dark); transition: background .2s, color .2s, transform .25s var(--ease); }
+.btn:hover { background: var(--ivory); color: var(--night); transform: translateY(-4px); box-shadow: inset 0 -4px 0 var(--ash); }
+.btn:active { transform: translateY(0); padding-block: 16px; box-shadow: none; }
+.btn.ghost { background: var(--raise); }
+.btn.ghost:hover { background: var(--ash); color: var(--night); }
+.btn.small { padding: 10px 16px 14px; font-size: 15px; }
+.private { display: inline-flex; align-items: center; gap: 7px; font-size: 15px; color: var(--ash); }
+
+section.block { padding: clamp(100px, 14vw, 190px) var(--margin) 0; max-width: 1320px; margin: 0 auto; }
+.big { font: 700 clamp(38px, 5.5vw, 80px)/1 var(--display); text-transform: uppercase; margin-bottom: clamp(40px, 6vw, 72px); display: flex; align-items: flex-end; gap: 24px; text-shadow: 4px 4px 0 var(--accent-dark); }
+.big::after { content: ""; flex: 1; height: 8px; margin-bottom: .2em; background: repeating-linear-gradient(90deg, var(--accent-text) 0 8px, transparent 8px 16px); opacity: .55; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 20px; }
+.chips span { font-size: 14px; padding: 6px 12px; background: var(--raise); clip-path: var(--pix); transition: background .2s; }
+.chips span:hover { background: var(--accent); }
+.links { display: flex; flex-wrap: wrap; align-items: center; gap: 18px; font-size: 15px; }
+.links a { display: inline-flex; align-items: center; gap: 7px; transition: color .2s; }
+.links a:hover { color: var(--accent-text); }
+
+/* reveal on scroll: opacity and transform only, so it stays on the GPU; content stays visible without script */
+.js .reveal { opacity: 0; transform: translateY(32px); transition: opacity .7s var(--ease), transform .7s var(--ease); transition-delay: var(--d, 0ms); }
+.js .reveal.from-left { transform: translateX(-48px); }
+.js .reveal.from-right { transform: translateX(48px); }
+.js .reveal.is-in { opacity: 1; transform: none; }
+.js .instant .reveal { animation: rise .9s var(--ease) forwards; animation-delay: var(--d, 0ms); }
+@keyframes rise { to { opacity: 1; transform: none; } }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+  .js .reveal { opacity: 1; transform: none; }
+}

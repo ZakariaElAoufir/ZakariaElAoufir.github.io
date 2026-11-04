@@ -1,0 +1,35 @@
+---
+import { getCollection } from 'astro:content';
+import Icon from '../Icon.astro';
+import { pick, useTranslations, type Lang } from '../../i18n/utils';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+const schools = (await getCollection('education')).sort((a, b) => a.data.order - b.data.order);
+---
+<section class="block" id="formation">
+  <h2 class="big reveal">{t('home.education')}</h2>
+  <div class="floors">
+    {schools.map(({ data }, i) => (
+      <article class="floor px-frame reveal" style={`--d:${i * 120}ms`}>
+        <p class="years">{data.years}</p>
+        <h3>{pick(data.school, lang)}</h3>
+        <p>{pick(data.degree, lang)}</p>
+        <p class="meta"><Icon name="pin" />{data.city}</p>
+      </article>
+    ))}
+  </div>
+</section>
+
+<style>
+  .floors { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; }
+  .floor { background: var(--deep); padding: 40px 36px 36px; }
+  .floor:hover { background: var(--raise); --frame: var(--accent-text); }
+  .years { font: 700 36px/1 var(--display); color: var(--accent-text); }
+  h3 { font: 600 22px/1.25 var(--text); margin: 16px 0 8px; }
+  p { color: var(--ash); }
+  .years { color: var(--accent-text); }
+  .meta { display: inline-flex; align-items: center; gap: 6px; margin-top: 12px; font-size: 15px; }
+  @media (max-width: 960px) { .floors { grid-template-columns: 1fr; } }
+</style>

@@ -1,0 +1,18 @@
+{
+  "order": 7,
+  "position": "bc",
+  "name": {
+    "fr": "Mobile",
+    "en": "Mobile"
+  },
+  "items": [
+    {
+      "name": "Android Room",
+      "logo": "android"
+    },
+    {
+      "name": "Flutter",
+      "logo": "flutter"
+    }
+  ]
+}

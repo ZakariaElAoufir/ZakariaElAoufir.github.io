@@ -1,0 +1,23 @@
+{
+  "order": 4,
+  "year": 2023,
+  "period": {
+    "fr": "Septembre 2023",
+    "en": "September 2023"
+  },
+  "company": "DXC Technology",
+  "post": {
+    "fr": "Stagiaire réseaux",
+    "en": "Network Intern"
+  },
+  "place": "Technopolis, Sala Al Jadida",
+  "bullets": [
+    {
+      "fr": "Étude et comparaison des protocoles de routage RIP, OSPF et EIGRP à l'aide de simulations Cisco Packet Tracer.",
+      "en": "Studied and compared the RIP, OSPF and EIGRP routing protocols using Cisco Packet Tracer simulations."
+    }
+  ],
+  "stack": [
+    "Cisco Packet Tracer"
+  ]
+}

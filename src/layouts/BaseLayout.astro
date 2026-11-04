@@ -1,0 +1,49 @@
+---
+import { Image } from 'astro:assets';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import city from '../assets/ville-nuit.jpg';
+import { alternatePath, type Lang } from '../i18n/utils';
+import '../styles/global.css';
+
+interface Props { lang: Lang; title: string; description: string }
+const { lang, title, description } = Astro.props;
+const other = alternatePath(Astro.url.pathname);
+const canonical = new URL(Astro.url.pathname, Astro.site);
+---
+<!doctype html>
+<html lang={lang}>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{title}</title>
+  <meta name="description" content={description}>
+  <link rel="canonical" href={canonical}>
+  <link rel="alternate" hreflang={lang} href={canonical}>
+  <link rel="alternate" hreflang={other.lang} href={new URL(other.path, Astro.site)}>
+  <meta property="og:title" content={title}>
+  <meta property="og:description" content={description}>
+  <meta property="og:type" content="website">
+  <meta name="theme-color" content="#12122f">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <script is:inline>document.documentElement.classList.add('js')</script>
+</head>
+<body>
+  <div class="city" aria-hidden="true">
+    <Image src={city} alt="" widths={[960, 1920]} sizes="100vw" loading="eager" />
+    <canvas></canvas>
+  </div>
+  <Header lang={lang} />
+  <main><slot /></main>
+  <Footer lang={lang} />
+  <script>import '../scripts/site.ts';</script>
+</body>
+</html>
+
+<style>
+  /* the city at night behind every page, darkened enough to read on; rain falls on it on desktop only */
+  .city { position: fixed; inset: 0; z-index: -1; overflow: hidden; pointer-events: none; background: var(--night); }
+  .city img { width: 100%; height: 100%; object-fit: cover; object-position: center 62%; }
+  .city canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .city::after { content: ""; position: absolute; inset: 0; background: linear-gradient(rgba(18,18,47,.5), rgba(18,18,47,.55) 50%, rgba(18,18,47,.75)); }
+</style>

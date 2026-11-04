@@ -1,0 +1,1 @@
+Assistant conversationnel agricole qui tourne en local. Il répond à partir d'un corpus de documents PDF (FAO, INRA, ONSSA) grâce au RAG, affiche les sources retenues et conserve l'historique des échanges, exportable en PDF.

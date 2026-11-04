@@ -1,0 +1,34 @@
+{
+  "order": 6,
+  "position": "bl",
+  "name": {
+    "fr": "DevOps et Cloud",
+    "en": "DevOps and Cloud"
+  },
+  "items": [
+    {
+      "name": "Docker",
+      "logo": "docker"
+    },
+    {
+      "name": "Kafka",
+      "logo": "kafka"
+    },
+    {
+      "name": "Prometheus",
+      "logo": "prometheus"
+    },
+    {
+      "name": "Grafana",
+      "logo": "grafana"
+    },
+    {
+      "name": "Azure",
+      "logo": "azure"
+    },
+    {
+      "name": "Linux",
+      "logo": "linux"
+    }
+  ]
+}

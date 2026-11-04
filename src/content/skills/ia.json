@@ -1,0 +1,26 @@
+{
+  "order": 5,
+  "position": "mr",
+  "name": {
+    "fr": "IA",
+    "en": "AI"
+  },
+  "items": [
+    {
+      "name": "RAG",
+      "logo": "rag"
+    },
+    {
+      "name": "Ollama",
+      "logo": "ollama"
+    },
+    {
+      "name": "FAISS",
+      "logo": "vectors"
+    },
+    {
+      "name": "Spring AI",
+      "logo": "spring"
+    }
+  ]
+}

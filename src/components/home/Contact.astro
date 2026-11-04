@@ -1,0 +1,48 @@
+---
+import { getEntry } from 'astro:content';
+import Icon from '../Icon.astro';
+import { pick, useTranslations, type Lang } from '../../i18n/utils';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+const p = (await getEntry('profile', 'profile'))!.data;
+const words = p.marquee.map(m => pick(m, lang));
+---
+<div class="marquee-wrap" aria-hidden="true">
+  <div class="marquee">{[...words, ...words].map(w => <span>{w}</span>)}</div>
+</div>
+
+<section class="block contact" id="contact">
+  <div class="reveal">
+    <h2 class="big">{t('home.contact')}</h2>
+    <p>{t('home.contactText')}</p>
+  </div>
+  <div class="contact-list reveal" style="--d:120ms">
+    <a class="px-frame" href={`mailto:${p.email}`}><Icon name="mail" />{p.email}<Icon name="arrow" /></a>
+    <a class="px-frame" href={p.linkedin}><Icon name="linkedin" />LinkedIn<Icon name="arrow" /></a>
+    <a class="px-frame" href={p.github}><Icon name="github" />GitHub<Icon name="arrow" /></a>
+    <a class="px-frame" href={t('cv.file')} download><Icon name="download" />{t('cv.pdf')}<Icon name="arrow" /></a>
+  </div>
+</section>
+
+<style>
+  .marquee-wrap { margin-top: clamp(100px, 14vw, 190px); background: var(--accent); overflow: hidden; padding: 18px 0; }
+  .marquee { display: flex; width: max-content; animation: run 28s linear infinite; }
+  .marquee span { font: 700 clamp(30px, 4.4vw, 60px)/1 var(--display); text-transform: uppercase; padding-right: .6em; white-space: nowrap; }
+  .marquee span::after { content: "■"; font-size: .35em; vertical-align: middle; margin-left: .6em; }
+  @keyframes run { to { transform: translateX(-50%); } }
+  .contact { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: end; }
+  .contact .big { margin-bottom: 20px; }
+  .contact .big::after { display: none; }
+  .contact p { color: var(--ash); max-width: 46ch; }
+  .contact-list { display: grid; gap: 14px; }
+  .contact-list a { display: flex; align-items: center; gap: 16px; padding: 22px 26px; background: var(--deep); font-size: 18px; }
+  .contact-list a:hover { background: var(--raise); --frame: var(--accent-text); transform: translateX(8px); }
+  .contact-list a :global(.i:last-child) { margin-left: auto; color: var(--accent-text); }
+  @media (max-width: 960px) {
+    .contact { grid-template-columns: 1fr; }
+    .contact > * { min-width: 0; }
+    .contact-list a { padding: 18px 16px; font-size: 16px; overflow-wrap: anywhere; }
+  }
+</style>

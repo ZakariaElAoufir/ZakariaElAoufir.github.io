@@ -1,0 +1,22 @@
+{
+  "order": 3,
+  "position": "tr",
+  "name": {
+    "fr": "Frontend",
+    "en": "Frontend"
+  },
+  "items": [
+    {
+      "name": "Angular",
+      "logo": "angular"
+    },
+    {
+      "name": "React",
+      "logo": "react"
+    },
+    {
+      "name": "Java Swing",
+      "logo": "window"
+    }
+  ]
+}

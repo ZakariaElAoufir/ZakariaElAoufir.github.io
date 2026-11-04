@@ -1,0 +1,45 @@
+{
+  "order": 3,
+  "published": true,
+  "featured": true,
+  "type": "personnel",
+  "period": {
+    "fr": "2026",
+    "en": "2026"
+  },
+  "title": {
+    "fr": "Home Energy Tracker",
+    "en": "Home Energy Tracker"
+  },
+  "shortTitle": {
+    "fr": "Home Energy Tracker",
+    "en": "Home Energy Tracker"
+  },
+  "card": {
+    "title": {
+      "fr": "Suivi énergétique en microservices",
+      "en": "Energy tracking in microservices"
+    },
+    "summary": {
+      "fr": "Relevés d'appareils connectés transportés par Kafka, stockés dans InfluxDB, alertes e-mail et conseils d'une IA locale.",
+      "en": "Readings from connected devices carried by Kafka, stored in InfluxDB, with e-mail alerts and advice from a local AI."
+    },
+    "stack": [
+      "Spring Boot",
+      "Kafka",
+      "InfluxDB",
+      "Keycloak"
+    ]
+  },
+  "repo": "https://github.com/ZakariaElAoufir/Microservice-Home-Energy-Tracker",
+  "stack": [
+    "Java 21",
+    "Spring Boot",
+    "Kafka",
+    "InfluxDB",
+    "Keycloak",
+    "Ollama",
+    "Grafana"
+  ],
+  "hasDemo": false
+}

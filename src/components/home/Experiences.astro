@@ -1,0 +1,103 @@
+---
+import { getCollection } from 'astro:content';
+import Icon from '../Icon.astro';
+import { localePath, pick, useTranslations, type Lang } from '../../i18n/utils';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+const jobs = (await getCollection('experiences')).sort((a, b) => a.data.order - b.data.order);
+
+// The elevator dial: one floor per experience, from the newest (right) to the oldest (left).
+const CX = 160, CY = 160;
+const angleOf = (i: number) => (jobs.length === 1 ? 0 : 80 - (160 / (jobs.length - 1)) * i);
+const polar = (angle: number, r: number) => {
+  const rad = (angle * Math.PI) / 180;
+  return { x: CX + r * Math.sin(rad), y: CY - r * Math.cos(rad) };
+};
+---
+<section class="block" id="experiences">
+  <h2 class="big reveal">{t('home.experiences')}</h2>
+  <div class="lift">
+    <div class="dial" aria-hidden="true">
+      <svg viewBox="0 0 320 180">
+        <path class="arc" d="M20 160a140 140 0 0 1 280 0" />
+        {jobs.map((_, i) => {
+          const a = polar(angleOf(i), 108), b = polar(angleOf(i), 124), label = polar(angleOf(i), 148);
+          return <>
+            <line class="tick" x1={a.x} y1={a.y} x2={b.x} y2={b.y} />
+            <text x={label.x} y={label.y + 6} text-anchor="middle" data-i={i}>{jobs[i].data.year}</text>
+          </>;
+        })}
+        <g class="needle" style={`transform:rotate(${angleOf(0)}deg)`}><line x1="160" y1="160" x2="160" y2="56" /></g>
+        <rect class="hub" x="150" y="150" width="20" height="20" />
+      </svg>
+      <p class="dial-label">{jobs[0]?.data.company}</p>
+    </div>
+    <div class="jobs">
+      {jobs.map(({ data }, i) => (
+        <article class="job px-frame reveal" data-angle={angleOf(i)} data-i={i}>
+          <p class="when">{pick(data.period, lang)}</p>
+          <h3>{data.company}</h3>
+          <p class="post">{pick(data.post, lang)}</p>
+          <p class="where"><Icon name="pin" />{data.place}</p>
+          <ul>{data.bullets.map(b => <li>{pick(b, lang)}</li>)}</ul>
+          <div class="chips">{data.stack.map(s => <span>{s}</span>)}</div>
+          {data.project && (
+            <div class="to-project">
+              <a class="btn small" href={`${localePath(lang, '/projets/')}#${data.project}`}>{t('home.seeProject')}<Icon name="arrow" /></a>
+              <span class="private"><Icon name="lock" />{t('home.privateDemo')}</span>
+            </div>
+          )}
+        </article>
+      ))}
+    </div>
+  </div>
+</section>
+
+<script>
+  // the elevator needle points at the year of the experience being read
+  const dial = document.querySelector('.dial');
+  const needle = dial?.querySelector<SVGGElement>('.needle');
+  const label = dial?.querySelector('.dial-label');
+  const years = dial?.querySelectorAll('text') ?? [];
+  const jobs = document.querySelectorAll<HTMLElement>('.job');
+  const lift = new IntersectionObserver(entries => entries.forEach(e => {
+    if (!e.isIntersecting || !needle || !label) return;
+    const job = e.target as HTMLElement;
+    jobs.forEach(j => j.classList.toggle('active', j === job));
+    needle.style.transform = `rotate(${job.dataset.angle}deg)`;
+    label.textContent = job.querySelector('h3')!.textContent;
+    years.forEach(y => y.classList.toggle('on', y.dataset.i === job.dataset.i));
+  }), { rootMargin: '-45% 0px -45% 0px' });
+  jobs.forEach(j => lift.observe(j));
+</script>
+
+<style>
+  .lift { display: grid; grid-template-columns: 320px 1fr; gap: clamp(32px, 6vw, 96px); align-items: start; }
+  .dial { position: sticky; top: 120px; text-align: center; }
+  .dial svg { width: 100%; overflow: visible; }
+  .arc { fill: none; stroke: var(--line); stroke-width: 4; stroke-dasharray: 8 6; }
+  .tick { stroke: var(--accent-text); stroke-width: 4; }
+  text { font: 600 17px var(--display); fill: var(--ash); transition: fill .3s; }
+  text:global(.on) { fill: var(--accent-text); }
+  .needle { transform-origin: 160px 160px; transition: transform .9s var(--ease); }
+  .needle line { stroke: var(--ivory); stroke-width: 4; }
+  .hub { fill: var(--accent-text); }
+  .dial-label { margin-top: 14px; font: 600 18px/1.2 var(--display); letter-spacing: .06em; text-transform: uppercase; color: var(--accent-text); }
+  .jobs { display: grid; gap: 28px; }
+  .job { background: var(--deep); padding: 40px; }
+  .job:global(.active) { --frame: var(--accent-text); background: var(--raise); }
+  .when { font: 600 17px/1.2 var(--display); letter-spacing: .06em; text-transform: uppercase; color: var(--accent-text); }
+  h3 { font: 700 30px/1.05 var(--display); text-transform: uppercase; margin: 10px 0 6px; }
+  .post { font-weight: 500; }
+  .where { display: flex; align-items: center; gap: 6px; color: var(--ash); font-size: 15px; margin: 4px 0 16px; }
+  ul { padding-left: 20px; display: grid; gap: 8px; color: var(--ash); max-width: 68ch; list-style: square; }
+  li::marker { color: var(--accent-text); }
+  .to-project { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px; margin-top: 24px; }
+  @media (max-width: 960px) {
+    .lift { grid-template-columns: 1fr; }
+    .dial { display: none; }
+    .job { padding: 28px 22px; }
+  }
+</style>

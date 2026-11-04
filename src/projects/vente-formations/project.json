@@ -1,0 +1,23 @@
+{
+  "order": 9,
+  "published": true,
+  "type": "academique",
+  "period": {
+    "fr": "2023 – 2024",
+    "en": "2023 – 2024"
+  },
+  "title": {
+    "fr": "Plateforme de vente de formations",
+    "en": "Training sales platform"
+  },
+  "shortTitle": {
+    "fr": "Vente de formations",
+    "en": "Training sales"
+  },
+  "repo": null,
+  "stack": [
+    "Python",
+    "Django"
+  ],
+  "hasDemo": false
+}

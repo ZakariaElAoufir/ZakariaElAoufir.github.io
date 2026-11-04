@@ -1,0 +1,44 @@
+{
+  "order": 4,
+  "published": true,
+  "featured": true,
+  "type": "personnel",
+  "period": {
+    "fr": "2026",
+    "en": "2026"
+  },
+  "title": {
+    "fr": "AgriGPT",
+    "en": "AgriGPT"
+  },
+  "shortTitle": {
+    "fr": "AgriGPT",
+    "en": "AgriGPT"
+  },
+  "card": {
+    "title": {
+      "fr": "Assistant agricole avec IA locale",
+      "en": "Farming assistant with local AI"
+    },
+    "summary": {
+      "fr": "Répond aux questions à partir de documents agricoles en PDF (RAG), cite ses sources et garde l'historique.",
+      "en": "Answers questions from farming PDF documents (RAG), cites its sources and keeps the history."
+    },
+    "stack": [
+      "Python",
+      "FastAPI",
+      "Ollama",
+      "FAISS"
+    ]
+  },
+  "repo": "https://github.com/ZakariaElAoufir/AgriGPT",
+  "stack": [
+    "Python",
+    "FastAPI",
+    "Ollama",
+    "FAISS",
+    "SQLite",
+    "Streamlit"
+  ],
+  "hasDemo": false
+}

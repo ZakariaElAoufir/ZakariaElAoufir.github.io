@@ -1,0 +1,42 @@
+{
+  "order": 5,
+  "published": true,
+  "featured": true,
+  "type": "academique",
+  "pair": true,
+  "period": {
+    "fr": "2025 – 2026",
+    "en": "2025 – 2026"
+  },
+  "title": {
+    "fr": "The Wall",
+    "en": "The Wall"
+  },
+  "shortTitle": {
+    "fr": "The Wall",
+    "en": "The Wall"
+  },
+  "card": {
+    "title": {
+      "fr": "Réseau social mobile, en binôme",
+      "en": "Mobile social network, built in a pair"
+    },
+    "summary": {
+      "fr": "Fil en temps réel, amis et messagerie privée avec images. Ma part : la messagerie et la gestion des amis.",
+      "en": "Real-time feed, friends and private messaging with images. My part: messaging and friend management."
+    },
+    "stack": [
+      "Flutter",
+      "Dart",
+      "Supabase"
+    ]
+  },
+  "repo": "https://github.com/ZakariaElAoufir/TheWall_Flutter",
+  "stack": [
+    "Flutter",
+    "Dart",
+    "Supabase",
+    "PostgreSQL"
+  ],
+  "hasDemo": false
+}
