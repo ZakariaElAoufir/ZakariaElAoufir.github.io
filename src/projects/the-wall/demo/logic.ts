@@ -186,7 +186,7 @@ export function loadAddFriends(e: Engine, me: string): Candidate[] {
 export function follow(e: Engine, me: string, to: string): boolean {
   log(e, me, 'from(', q('follow_requests'), ').select().eq(', { d: 'sender, receiver' }, ').maybeSingle()');
   if (e.db.follow_requests.some(r => r.sender_id === me && r.receiver_id === to)) return false;
-  const row = { id: uuid(), sender_id: me, receiver_id: to, status: 'pending', created_at: new Date(e.now()).toISOString().slice(0, 23) };
+  const row = { id: uuid(), sender_id: me, receiver_id: to, status: 'pending', created_at: iso(e.now()) };
   e.db.follow_requests.push(row);
   log(e, me, 'from(', q('follow_requests'), ').insert({', q('receiver_id'), ': ', nameOf(e, to), ', ', q('status'), ': ', q('pending'), '})');
   wrote(e, 'follow_requests', [row.id]);
