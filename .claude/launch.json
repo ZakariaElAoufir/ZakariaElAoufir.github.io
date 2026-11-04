@@ -4,14 +4,11 @@
     {
       "name": "site",
       "runtimeExecutable": "npm",
-      "runtimeArgs": ["run", "dev"],
+      "runtimeArgs": [
+        "run",
+        "dev"
+      ],
       "port": 4321
-    },
-    {
-      "name": "maquettes",
-      "runtimeExecutable": "python",
-      "runtimeArgs": ["-m", "http.server", "4400"],
-      "port": 4400
     }
   ]
 }

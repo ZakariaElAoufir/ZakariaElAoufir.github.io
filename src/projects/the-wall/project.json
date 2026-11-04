@@ -50,8 +50,12 @@
       "en": "A Flutter app plugged into Supabase: accounts, a live feed of posts with likes, profiles with an online status, friend requests and private messaging with pictures."
     },
     "role": {
-      "fr": "Projet en binôme. Ma part : la messagerie privée (conversations, images, messages lus, modification et suppression) et la gestion des amis (recherche, demandes, acceptation et refus). Mon binôme a fait l'authentification et le fil.",
-      "en": "Built in a pair. My part: private messaging (conversations, pictures, read receipts, editing and deleting) and friends (search, requests, accepting and rejecting). My teammate built authentication and the feed."
+      "fr": "Projet en binôme. Ma part : la messagerie privée (conversations, images, messages lus, modification et suppression) et la gestion des amis (recherche, demandes, acceptation et refus). Mon binôme, Othmane Al Amrani, a fait l'authentification et le fil.",
+      "en": "Built in a pair. My part: private messaging (conversations, pictures, read receipts, editing and deleting) and friends (search, requests, accepting and rejecting). My teammate, Othmane Al Amrani, built authentication and the feed."
+    },
+    "teammate": {
+      "name": "Othmane Al Amrani",
+      "url": "https://github.com/othmanealpro-crypto"
     },
     "gallery": [
       {

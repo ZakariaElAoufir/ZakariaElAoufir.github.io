@@ -48,7 +48,6 @@ src/projects/the-wall/
 Captures : dev server lancé, `npm i --no-save puppeteer-core@23 && node scripts/capture-thewall.mjs`, puis copier
 `.captures/thewall/*.png` dans `media/`.
 
-## À confirmer par Zakaria
-- Nommer ou non le binôme (Othmane d'après le README).
-- Les limites affichées : messagerie non temps réel, image laissée dans le bucket, pas d'écran de publication ni
-  d'avatar, dépendances Firebase inutilisées.
+## Binôme
+Othmane Al Amrani, nommé dans « Mon rôle » avec un bouton vers son GitHub (https://github.com/othmanealpro-crypto),
+champ `detail.teammate` de `project.json`.

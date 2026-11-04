@@ -1,6 +1,6 @@
 # Spec : Portfolio de Zakaria El Aoufir — pages et fonctionnalités
 
-> Statut : **validée le 2026-10-28**, mise à jour le même jour avec la direction artistique (maquettes HTML dans `maquettes/`).
+> Statut : **validée le 2026-10-28**, mise à jour le même jour avec la direction artistique (les maquettes HTML, supprimées le 2026-11-04, ont servi de référence au site Astro).
 > Chaque projet présenté aura plus tard sa propre spec : `SPEC-project-<slug>.md`.
 > **Reprise du travail : lire d'abord la section « État d'avancement » en bas de ce fichier.**
 
@@ -62,7 +62,7 @@ Sections dans cet ordre, chacune apparaissant progressivement au scroll :
 4. **Projets** : seulement **3 projets mis en avant, hors stage** : Home Energy Tracker, AgriGPT, The Wall (champ `featured: true`).
    - Chaque bloc : titre, période, technologies, description courte, image cliquable qui mène à **la page de ce projet** (`/projets/<slug>`), liens Démo / Code.
    - Un bouton « Voir tous les projets » vers `/projets` termine la section.
-5. **Compétences** : **arbre de compétences** (refait le 2026-11-04, remplace l'ancien tableau). Au centre, Zakaria (photo, nom, rôle, langues parlées : français, arabe, anglais). Autour, 8 branches reliées par des fils pixel à angles droits : Langages, Backend, Frontend (haut), Données, IA (milieu), DevOps et Cloud, Mobile, Outils (bas). Chaque technologie est une feuille avec son **logo** (fichiers SVG locaux dans `maquettes/media/logos/`, issus de devicon (MIT) et Simple Icons (CC0), affichés en monochrome lavande via `mask` ; icônes pixel maison pour Microservices, Java Swing, PL/SQL, RAG, FAISS). **PC** : au survol, la feuille grossit (×1,22) et passe au premier plan, les autres s'estompent, le fil de la branche s'allume et défile. **Mobile** : arbre vertical (tronc à gauche, branches empilées), sans effet de survol.
+5. **Compétences** : **arbre de compétences** (refait le 2026-11-04, remplace l'ancien tableau). Au centre, Zakaria (photo, nom, rôle, langues parlées : français, arabe, anglais). Autour, 8 branches reliées par des fils pixel à angles droits : Langages, Backend, Frontend (haut), Données, IA (milieu), DevOps et Cloud, Mobile, Outils (bas). Chaque technologie est une feuille avec son **logo** (fichiers SVG locaux dans `public/logos/`, issus de devicon (MIT) et Simple Icons (CC0), affichés en monochrome lavande via `mask` ; icônes pixel maison pour Microservices, Java Swing, PL/SQL, RAG, FAISS). **PC** : au survol, la feuille grossit (×1,22) et passe au premier plan, les autres s'estompent, le fil de la branche s'allume et défile. **Mobile** : arbre vertical (tronc à gauche, branches empilées), sans effet de survol.
 6. **Contact** : court appel à l'action + e-mail, LinkedIn, GitHub, CV.
 
 ## Page 2 — Projets (catalogue « produits »)
@@ -186,17 +186,7 @@ Voir l'arborescence validée : `src/projects/<slug>/` (un dossier autonome par p
 
 **Brief de Zakaria** : design pro, pas surchargé, sans emoji (icônes OK), animations légères, contenu qui apparaît au fur et à mesure du scroll ; style **pixel** ; police pixel mais lisible ; couleurs tirées de l'image de fond ; pluie en fond, en biais (vent), **sur PC uniquement**.
 
-**Référence = les maquettes HTML** dans `maquettes/` (c'est elles qu'il faut reproduire dans Astro) :
-
-| Fichier | Contenu |
-|---|---|
-| `maquettes/accueil.html` | Accueil complet (hero, formation, expériences, 3 projets, compétences, contact) |
-| `maquettes/projets.html` | Catalogue : une ligne horizontale par projet, 9 projets |
-| `maquettes/certifications.html` | Certifications (données fictives) |
-| `maquettes/noir.css`, `noir.js`, `icons.svg` | Styles et formes pixel, scroll reveal / menu mobile / pluie, sprite d'icônes partagés (noms de fichiers hérités) |
-| `maquettes/media/ville-nuit.jpg` | Image de fond (illustration fournie par Zakaria, 1920 × 1080 ; droits d'usage à vérifier avant mise en ligne) |
-
-Aperçu : `python -m http.server 4400` à la racine du dépôt (config « maquettes » dans `.claude/launch.json`), puis `http://localhost:4400/maquettes/`. Faire Ctrl+F5 après une modification (cache du navigateur).
+**Référence** : le site Astro lui-même. Les maquettes HTML de `maquettes/` ont servi à valider le style puis ont été supprimées le 2026-11-04 (elles restent dans l'historique Git). Image de fond : `public/images/` (illustration fournie par Zakaria, 1920 × 1080 ; droits d'usage à vérifier avant mise en ligne).
 
 **Palette** (tokens CSS, prise dans l'image) : `--night #12122f` (fond), `--deep #1a1a4d`, `--raise #262673` (surfaces), `--line #34349a` (cadres pixel), `--ivory #e8e8fa` (texte, blanc des nuages), `--ash #a9abe0` (texte secondaire), `--accent #3b3ac4` (bleu-violet des tours, boutons), `--accent-dark #1f1e7a` (bord bas des boutons, ombres de titres), `--accent-text #9fa3f5` (accent lisible sur fond sombre).
 
@@ -235,13 +225,12 @@ Aperçu : `python -m http.server 4400` à la racine du dépôt (config « maquet
 - **Démo n° 3 : The Wall** (2026-11-04), voir `SPEC-project-the-wall.md` : application Flutter + Supabase en binôme ; la démo montre deux téléphones (Nora et Samir) et le panneau Supabase (tables, requêtes). Seule ma partie est mise en avant (amis, messagerie). Le grand diagramme gagne un cadre de groupe et une légende « Ma partie » (champs `group`, `mine`, `mineLabel`, `caption`, `nodeHeight` d'`architecture.json`).
 - Pages génériques pour tout projet avec démo : `src/pages/[...lang]/projets/[slug]/index.astro` et `architecture.astro`, composants `src/components/project/` (ProjectHeader, ArchOverview). Un projet active sa démo avec `hasDemo: true` + `detail` dans `project.json`, un `architecture.json`, `demo/Demo.astro`, `diagrams/*.{fr,en}.svg`.
 
-**Déroulé par projet** (validé par Zakaria) : lire le dépôt (frontend puis architecture) → maquette HTML de la démo et de l'architecture dans `maquettes/` → Zakaria confirme → implémentation dans Astro → projet suivant. Jamais deux projets à la fois.
+**Déroulé par projet** (changé par Zakaria le 2026-11-04) : lire le dépôt (frontend puis architecture) → implémentation directe dans Astro (démo et page architecture, plus de maquette HTML) → Zakaria relit et les corrections se font directement dans Astro → projet suivant. Jamais deux projets à la fois. Les dépôts privés sont clonés par Zakaria dans le dossier du projet pour que le frontend puisse être lu.
 
 **Étapes suivantes** (dans l'ordre)
-1. Zakaria relit les démos AgriGPT, Home Energy Tracker et The Wall ; confirmer le rôle sur Home Energy Tracker (seul ? part du sujet LeetJourney ?) et les points ouverts de `SPEC-project-the-wall.md`.
-2. Les 3 projets mis en avant ont leur démo ; un projet de plus seulement si Zakaria le demande.
-3. Supprimer `maquettes/` quand toutes les démos sont faites.
-4. Fusion dans `main` (= mise en ligne) quand Zakaria le décide.
+1. Zakaria relit les démos AgriGPT, Home Energy Tracker et The Wall.
+2. Démos des autres projets, un par un : d'abord la plateforme e-commerce microservices (dépôt public), puis les dépôts privés que Zakaria clonera ici.
+3. Fusion dans `main` (= mise en ligne) quand Zakaria le décide.
 
 **Outils** : les skills `frontend-design` et `taste-skill` sont installés au niveau utilisateur (`~/.claude/skills/`), **pas dans ce dépôt**. Le dossier `.taste-skill/` (ignoré par Git) ne contient que des fichiers de travail du skill.
 

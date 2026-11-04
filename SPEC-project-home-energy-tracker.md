@@ -47,6 +47,8 @@ src/projects/home-energy-tracker/
 ```
 Captures : dev server lancé, `npm i --no-save puppeteer-core@23 && node scripts/capture-het.mjs`, puis copier `.captures/het/*.png` dans `media/`.
 
-## À confirmer par Zakaria
-- « Mon rôle » : texte actuel « Conception et développement des 7 microservices… à partir d'un sujet présenté par LeetJourney ». Préciser si réalisé seul et ce qui vient du sujet.
+## Rôle
+Confirmé par Zakaria : toute l'application réalisée seul, à partir d'une problématique inspirée de LeetJourney.
+
+## Remarque
 - L'onglet API présente toutes les routes ; dans le vrai projet, le Swagger de la gateway ne documente que user-service (indiqué dans les limites).

@@ -53,8 +53,8 @@
       "en": "7 Spring Boot microservices: readings go through Kafka, are stored in InfluxDB and summed every 10 seconds; going over the threshold triggers an e-mail, and a local AI suggests ways to save energy. All of it behind a gateway secured by Keycloak, monitored with Prometheus and Grafana."
     },
     "role": {
-      "fr": "Conception et développement des 7 microservices, du pipeline Kafka et InfluxDB, des alertes, de l'IA locale, de la sécurité et de la supervision, à partir d'un sujet présenté par LeetJourney.",
-      "en": "Designed and built the 7 microservices, the Kafka and InfluxDB pipeline, the alerts, the local AI, security and monitoring, from a problem presented by LeetJourney."
+      "fr": "J'ai conçu et développé toute l'application, seul : les 7 microservices, le pipeline Kafka et InfluxDB, les alertes, l'IA locale, la sécurité et la supervision. Le sujet s'inspire d'une problématique présentée par LeetJourney.",
+      "en": "I designed and built the whole application on my own: the 7 microservices, the Kafka and InfluxDB pipeline, the alerts, the local AI, security and monitoring. The subject is inspired by a problem presented by LeetJourney."
     },
     "gallery": [
       {

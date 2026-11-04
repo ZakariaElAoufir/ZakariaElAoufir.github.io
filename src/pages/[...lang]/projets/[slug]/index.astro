@@ -28,7 +28,10 @@ const name = pick(project.data.shortTitle, lang);
     <div class="about">
       <article class="px-frame reveal"><h2>{t('project.problem')}</h2><p>{pick(detail.problem, lang)}</p></article>
       <article class="px-frame reveal" style="--d:100ms"><h2>{t('project.does')}</h2><p>{pick(detail.does, lang)}</p></article>
-      <article class="px-frame reveal" style="--d:200ms"><h2>{t('project.role')}</h2><p>{pick(detail.role, lang)}</p></article>
+      <article class="px-frame reveal" style="--d:200ms">
+        <h2>{t('project.role')}</h2><p>{pick(detail.role, lang)}</p>
+        {detail.teammate && <a class="btn small ghost mate" href={detail.teammate.url} target="_blank" rel="noopener"><Icon name="github" /><span>{detail.teammate.name}</span></a>}
+      </article>
     </div>
 
     <!-- desktop: the interactive demo (its code is only downloaded on wide screens) -->
@@ -69,6 +72,7 @@ const name = pick(project.data.shortTitle, lang);
   .about article { background: var(--deep); padding: 26px 26px 28px; }
   .about h2 { font: 600 18px/1.2 var(--display); text-transform: uppercase; letter-spacing: .04em; color: var(--accent-text); margin-bottom: 10px; }
   .about p { color: var(--ash); }
+  .mate { margin-top: 18px; }
 
   .sim { display: flex; align-items: center; gap: 12px; margin: 72px 0 26px; padding: 12px 18px; background: var(--raise); font-size: 15px; }
   .sim i { width: 10px; height: 10px; flex: none; background: var(--accent-text); animation: blink 1.6s steps(2) infinite; }
