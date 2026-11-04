@@ -6,7 +6,7 @@
 <title>Projets · Zakaria El Aoufir</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@500;700;800&family=Archivo:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400;500;600;700&family=Archivo:wght@400;500;600;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="noir.css">
 <script>document.documentElement.classList.add('js')</script>
 <style>
@@ -15,20 +15,19 @@
 .legend { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 28px; }
 
 /* one project per row: the picture on the left, everything to read on the right */
-.list { display: grid; gap: 28px; margin-top: 64px; overflow-x: clip; }
-.row { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); background: var(--deep); scroll-margin-top: 100px; transition: background .4s; }
-.row:hover, .row:target { background: #1d2024; }
-.row:target { box-shadow: inset 4px 0 0 var(--red-text); }
+.list { display: grid; gap: 36px; margin-top: 64px; overflow-x: clip; }
+.row { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); background: var(--deep); scroll-margin-top: 100px; }
+.row:hover, .row:target { background: var(--raise); --frame: var(--accent-text); }
 
 .shot { position: relative; display: block; min-height: 300px; overflow: hidden; background: var(--night); }
 .shot .art { position: absolute; inset: 0; transition: transform 1.1s var(--ease), filter .6s;
   background:
     linear-gradient(90deg, transparent 0 47%, var(--deep) 47% 53%, transparent 53%),
-    repeating-linear-gradient(90deg, rgba(179,38,47,.16) 0 8%, transparent 8% 12%),
+    repeating-linear-gradient(90deg, rgba(80,80,220,.16) 0 8%, transparent 8% 12%),
     repeating-linear-gradient(0deg, var(--night) 0 5%, transparent 5% 12%); }
-.shot strong { position: absolute; left: 28px; right: 28px; bottom: 26px; font: 800 clamp(34px, 3.4vw, 52px)/.92 var(--display); text-transform: uppercase; transition: transform .6s var(--ease); }
+.shot strong { position: absolute; left: 28px; right: 28px; bottom: 26px; font: 700 clamp(26px, 2.6vw, 38px)/1 var(--display); text-transform: uppercase; transition: transform .6s var(--ease); }
 .shot::before { content: ""; position: absolute; inset: 0; z-index: 1; background: linear-gradient(105deg, transparent 35%, rgba(239,233,220,.16) 50%, transparent 65%); transform: translateX(-110%); transition: transform 1s var(--ease); }
-.shot .cue { position: absolute; z-index: 2; top: 50%; left: 50%; display: inline-flex; align-items: center; gap: 10px; padding: 12px 18px; background: var(--red); font: 700 16px/1 var(--display); letter-spacing: .12em; text-transform: uppercase; opacity: 0; transform: translate(-50%, -30%); transition: opacity .4s, transform .5s var(--ease); }
+.shot .cue { position: absolute; z-index: 2; top: 50%; left: 50%; display: inline-flex; align-items: center; gap: 10px; padding: 12px 18px; background: var(--accent); clip-path: var(--pix); font: 700 16px/1 var(--display); letter-spacing: .04em; text-transform: uppercase; opacity: 0; transform: translate(-50%, -30%); transition: opacity .4s, transform .5s var(--ease); }
 .shot:hover .art, .shot:focus-visible .art { transform: scale(1.08); filter: brightness(.6); }
 .shot:hover::before, .shot:focus-visible::before { transform: translateX(110%); }
 .shot:hover strong, .shot:focus-visible strong { transform: translateY(-6px); }
@@ -36,12 +35,12 @@
 
 .info { padding: 40px 44px; display: flex; flex-direction: column; }
 .tags { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px; }
-.type { display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px; font: 700 15px/1 var(--display); letter-spacing: .1em; text-transform: uppercase; }
-.type.stage { background: var(--red); }
+.type { display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px; font: 600 15px/1 var(--display); letter-spacing: .04em; clip-path: var(--pix); text-transform: uppercase; }
+.type.stage { background: var(--accent); }
 .type.perso { background: var(--ivory); color: var(--night); }
-.type.acad { background: var(--raise); box-shadow: inset 0 0 0 1px var(--ash); }
+.type.acad { background: var(--raise); box-shadow: inset 0 0 0 4px var(--line); }
 .date { display: inline-flex; align-items: center; gap: 7px; font-size: 15px; color: var(--ash); }
-.info h2 { font: 800 clamp(30px, 3vw, 42px)/1 var(--display); text-transform: uppercase; margin: 18px 0 14px; }
+.info h2 { font: 700 clamp(24px, 2.4vw, 32px)/1.1 var(--display); text-transform: uppercase; margin: 18px 0 14px; }
 .info p { color: var(--ash); max-width: 64ch; }
 .info p + p { margin-top: 10px; }
 .info p strong { color: var(--ivory); font-weight: 500; }
@@ -59,7 +58,7 @@
 </style>
 </head>
 <body>
-<div class="city" aria-hidden="true"><img src="media/ville-1933.jpg" alt=""></div>
+<div class="city" aria-hidden="true"><img src="media/ville-nuit.jpg" alt=""><canvas></canvas></div>
 
 <header class="top" id="top">
   <a class="wordmark" href="accueil.html">Zakaria <b>El Aoufir</b></a>
@@ -190,7 +189,6 @@
 <footer>
   <span>Zakaria El Aoufir, 2026</span>
   <nav><a href="mailto:zakaria.elaoufir@gmail.com">E-mail</a><a href="https://www.linkedin.com/in/zakaria-el-aoufir-329627282">LinkedIn</a><a href="https://github.com/ZakariaElAoufir">GitHub</a><a href="https://github.com/ZakariaElAoufir/ZakariaElAoufir.github.io">Code du site</a></nav>
-  <p class="credit">Photo de fond : <a href="https://commons.wikimedia.org/wiki/File:Rockefeller_Center,_December_1933.jpg">Rockefeller Center, décembre 1933</a>, Samuel H. Gottscho, domaine public.</p>
 </footer>
 
 <script src="noir.js"></script>

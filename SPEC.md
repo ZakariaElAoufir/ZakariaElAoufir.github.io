@@ -62,7 +62,7 @@ Sections dans cet ordre, chacune apparaissant progressivement au scroll :
 4. **Projets** : seulement **3 projets mis en avant, hors stage** : Home Energy Tracker, AgriGPT, The Wall (champ `featured: true`).
    - Chaque bloc : titre, période, technologies, description courte, image cliquable qui mène à **la page de ce projet** (`/projets/<slug>`), liens Démo / Code.
    - Un bouton « Voir tous les projets » vers `/projets` termine la section.
-5. **Compétences** : regroupées par catégorie (Langages, Backend, Frontend, Mobile, Données, DevOps & Cloud, Outils), plus les langues parlées (français, arabe, anglais).
+5. **Compétences** : **arbre de compétences** (refait le 2026-11-04, remplace l'ancien tableau). Au centre, Zakaria (photo, nom, rôle, langues parlées : français, arabe, anglais). Autour, 8 branches reliées par des fils pixel à angles droits : Langages, Backend, Frontend (haut), Données, IA (milieu), DevOps et Cloud, Mobile, Outils (bas). Chaque technologie est une feuille avec son **logo** (fichiers SVG locaux dans `maquettes/media/logos/`, issus de devicon (MIT) et Simple Icons (CC0), affichés en monochrome lavande via `mask` ; icônes pixel maison pour Microservices, Java Swing, PL/SQL, RAG, FAISS). **PC** : au survol, la feuille grossit (×1,22) et passe au premier plan, les autres s'estompent, le fil de la branche s'allume et défile. **Mobile** : arbre vertical (tronc à gauche, branches empilées), sans effet de survol.
 6. **Contact** : court appel à l'action + e-mail, LinkedIn, GitHub, CV.
 
 ## Page 2 — Projets (catalogue « produits »)
@@ -180,9 +180,11 @@ Voir l'arborescence validée : `src/projects/<slug>/` (un dossier autonome par p
 - [ ] Lighthouse mobile sur l'accueil : Performance ≥ 90, Accessibilité ≥ 95.
 - [ ] Un push sur `main` déploie automatiquement sur `https://zakariaelaoufir.github.io`.
 
-## Direction artistique : « Metropolis noir » (choisie le 2026-10-28)
+## Direction artistique : « Nuit pixel » (choisie le 2026-11-04)
 
-**Brief de Zakaria** : design pro, pas surchargé, sans emoji (icônes OK), animations (survol, arrière-plan), contenu qui apparaît au fur et à mesure du scroll, ambiance **Neo-Noir Art Déco des années 1930** : sombre, mystérieuse, contrastée, identité « film noir ».
+**Historique** : le 2026-10-28, direction « Metropolis noir » (Neo-Noir Art Déco des années 30, rouge puis mauve). **Abandonnée le 2026-11-04** au profit d'un style pixel, à partir d'une illustration de ville la nuit fournie par Zakaria. Les pages et leur principe (sections, cartes, cadran, lignes de projets) restent les mêmes ; seules les formes, couleurs, polices et animations changent.
+
+**Brief de Zakaria** : design pro, pas surchargé, sans emoji (icônes OK), animations légères, contenu qui apparaît au fur et à mesure du scroll ; style **pixel** ; police pixel mais lisible ; couleurs tirées de l'image de fond ; pluie en fond, en biais (vent), **sur PC uniquement**.
 
 **Référence = les maquettes HTML** dans `maquettes/` (c'est elles qu'il faut reproduire dans Astro) :
 
@@ -191,28 +193,32 @@ Voir l'arborescence validée : `src/projects/<slug>/` (un dossier autonome par p
 | `maquettes/accueil.html` | Accueil complet (hero, formation, expériences, 3 projets, compétences, contact) |
 | `maquettes/projets.html` | Catalogue : une ligne horizontale par projet, 9 projets |
 | `maquettes/certifications.html` | Certifications (données fictives) |
-| `maquettes/noir.css`, `noir.js`, `icons.svg` | Styles, scroll reveal / menu mobile, sprite d'icônes partagés |
-| `maquettes/media/ville-1933.jpg` + `credits.json` | Photo de fond et sa licence |
+| `maquettes/noir.css`, `noir.js`, `icons.svg` | Styles et formes pixel, scroll reveal / menu mobile / pluie, sprite d'icônes partagés (noms de fichiers hérités) |
+| `maquettes/media/ville-nuit.jpg` | Image de fond (illustration fournie par Zakaria, 1920 × 1080 ; droits d'usage à vérifier avant mise en ligne) |
 
-Aperçu : `python -m http.server 4400` à la racine du dépôt (config « maquettes » dans `.claude/launch.json`), puis `http://localhost:4400/maquettes/`.
+Aperçu : `python -m http.server 4400` à la racine du dépôt (config « maquettes » dans `.claude/launch.json`), puis `http://localhost:4400/maquettes/`. Faire Ctrl+F5 après une modification (cache du navigateur).
 
-**Palette** (tokens CSS) : `--night #0d0e10` (fond), `--deep #17191d`, `--raise #24272d` (surfaces), `--ivory #efe9dc` (texte), `--ash #a9adb5` (texte secondaire), `--red #b3262f` (accent), `--red-dark #6e161c`, `--red-text #e0565e` (rouge lisible sur fond sombre).
+**Palette** (tokens CSS, prise dans l'image) : `--night #12122f` (fond), `--deep #1a1a4d`, `--raise #262673` (surfaces), `--line #34349a` (cadres pixel), `--ivory #e8e8fa` (texte, blanc des nuages), `--ash #a9abe0` (texte secondaire), `--accent #3b3ac4` (bleu-violet des tours, boutons), `--accent-dark #1f1e7a` (bord bas des boutons, ombres de titres), `--accent-text #9fa3f5` (accent lisible sur fond sombre).
 
-**Typographie** : Big Shoulders Display (titres, 500/700/800, capitales condensées) + Archivo (texte, 400/500/600), Google Fonts (à auto-héberger dans Astro).
+**Typographie** : **Pixelify Sans** (titres de section, navigation, boutons, étiquettes ; 400 à 700) + **Archivo** (400 à 800) pour le texte courant et pour le nom, pour rester lisible. Google Fonts (à auto-héberger dans Astro). Titres plus petits qu'avant car la police pixel est plus large.
 
-**Éléments de signature**
-- **Fond** : photo réelle « Rockefeller Center, December 1933 » de Samuel H. Gottscho (domaine public, Wikimedia Commons) : ville des années 30 de nuit, vue d'en haut, avec ses lumières (pas de néon). Fixe, floutée (`blur(3px) brightness(.62) sepia(.18)`), lente dérive de 60 s, voile radial sombre. Crédit en petit dans le pied de page.
-- **Hero** : nom sur deux lignes (« El Aoufir » en lettres détourées), statut « Ouvert à un CDI », portrait carré simple avec liseré qui s'écarte au survol.
-- **Formation** en « étages » ; **Expériences** avec un **cadran d'ascenseur** sticky dont l'aiguille suit le stage lu.
-- **Cartes** à coins en gradins (`clip-path` Art Déco) ; boutons octogonaux ; titres de section avec filet pointillé rouge ; bandeau défilant rouge avant le contact.
-- **Scroll reveal** par IntersectionObserver ; classe `.js` sur `<html>` pour que tout reste visible sans JS ; `prefers-reduced-motion` respecté.
+**Formes pixel**
+- **Cadre pixel** (cartes formation/projets/certifs, expériences, compétences, contact, portrait, lignes de projets) : bordure de 4 px dessinée en `box-shadow` à l'extérieur, coins manquants (effet arrondi pixel). Au survol, le cadre passe en `--accent-text`.
+- **Boutons, puces, badges** : coins en escalier (`clip-path: var(--pix)`, deux crans de 4 px), bord bas plus sombre ; le bouton s'enfonce au clic.
+- Titres de section avec ombre pixel décalée et filet de carrés ; nom (hero et en-tête) en **Archivo 800**, police normale et lisible ; 2e ligne en `--accent-text`, ombre pixel.
+- Transitions **fluides** (courbe `--ease`), uniquement sur `transform`, `opacity` et `background` : pas de `steps()` ni d'animation de `box-shadow`, jugés saccadés par Zakaria le 2026-11-04.
+
+**Fond et animation**
+- Image fixe en `object-fit: cover`, voile dégradé sombre pour la lisibilité ; pas de flou.
+- **Pluie** (`noir.js`) : un `<canvas>`, environ 1 goutte pour 16 px de large, traits inclinés d'environ 18° (vent), 30 images/s. Active **seulement** si écran ≥ 1024 px, souris (`hover: hover` + `pointer: fine`) et pas de `prefers-reduced-motion`. Rien sur mobile ni tablette.
+- Scroll reveal par IntersectionObserver ; classe `.js` sur `<html>` pour que tout reste visible sans JS.
 - Responsive vérifié : aucun défilement horizontal à 360 px.
 
-## État d'avancement (2026-10-28)
+## État d'avancement (2026-11-04)
 
 **Fait**
 - Spec fonctionnelle validée (ce fichier).
-- Direction artistique choisie et déclinée en 3 maquettes HTML (voir ci-dessus). Les anciennes maquettes A/B/C/D ont été supprimées.
+- Direction artistique « Nuit pixel » déclinée sur les 3 maquettes HTML (voir ci-dessus). Les anciennes maquettes A/B/C/D et la direction « Metropolis noir » sont abandonnées.
 - Infos des projets GitHub récupérées depuis leurs README (AgriGPT, TheWall_Flutter, Microservice-Home-Energy-Tracker).
 
 **En attente de confirmation de Zakaria** (dernière question posée)
