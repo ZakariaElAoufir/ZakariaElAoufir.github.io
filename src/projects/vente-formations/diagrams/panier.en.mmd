@@ -1,0 +1,15 @@
+sequenceDiagram
+  actor V as Visitor
+  participant J as jQuery
+  participant C as cart_add (view)
+  participant S as Session
+  participant P as store_profile
+  V->>J: Add to cart (course page)
+  J->>C: POST /cart/add/ {formation_id, csrf}
+  C->>C: get_object_or_404(Formation)
+  C->>S: session["session_key"][id] = price (once)
+  alt user signed in
+    C->>P: UPDATE old_cart = cart as JSON
+  end
+  C-->>J: {"qty": number of courses}
+  J->>V: location.reload(): counter and message

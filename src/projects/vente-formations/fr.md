@@ -1,1 +1,1 @@
-Développement d'une plateforme web Python/Django pour la vente et la réservation de formations en ligne.
+Développement de Koursero, une plateforme web Python/Django de vente de formations en ligne : catalogue et recherche, comptes, panier en AJAX gardé d'une connexion à l'autre et administration du catalogue.

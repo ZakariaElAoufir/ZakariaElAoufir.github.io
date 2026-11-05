@@ -7,17 +7,71 @@
     "en": "2023 – 2024"
   },
   "title": {
-    "fr": "Plateforme de vente de formations",
-    "en": "Training sales platform"
+    "fr": "Koursero, plateforme de vente de formations",
+    "en": "Koursero, training sales platform"
   },
   "shortTitle": {
-    "fr": "Vente de formations",
-    "en": "Training sales"
+    "fr": "Koursero",
+    "en": "Koursero"
   },
-  "repo": null,
+  "repo": "https://github.com/ZakariaElAoufir/Koursero",
   "stack": [
     "Python",
-    "Django"
+    "Django",
+    "SQLite",
+    "Bootstrap",
+    "JavaScript (AJAX)"
   ],
-  "hasDemo": false
+  "hasDemo": true,
+  "thumbnail": "./media/thumbnail.png",
+  "detail": {
+    "problem": {
+      "fr": "Vendre des formations en ligne : un catalogue que l'on parcourt et où l'on cherche, un panier qui ne se perd pas d'une connexion à l'autre, et une gestion simple du catalogue.",
+      "en": "Selling online courses: a catalogue to browse and search, a cart that is not lost from one sign-in to the next, and simple catalogue management."
+    },
+    "does": {
+      "fr": "Koursero, un site Django : catalogue avec recherche, fiche de chaque formation, comptes avec profil, panier en AJAX gardé en session puis enregistré dans le profil, et gestion des formations dans l'administration Django.",
+      "en": "Koursero, a Django site: a catalogue with search, a page per course, accounts with a profile, an AJAX cart kept in the session then saved in the profile, and course management in the Django admin."
+    },
+    "role": {
+      "fr": "Projet de fin d'année (PFA) en binôme. Conception et développement du site : modèles et vues Django, comptes et profils, panier en session avec sa sauvegarde, gabarits Bootstrap.",
+      "en": "End-of-year project (PFA) built in a pair. Designed and built the site: Django models and views, accounts and profiles, the session cart and how it is saved, Bootstrap templates."
+    },
+    "gallery": [
+      {
+        "image": "./media/shot-shop.png",
+        "title": {
+          "fr": "Le catalogue.",
+          "en": "The catalogue."
+        },
+        "text": {
+          "fr": "Les formations de la base du projet, avec leur image et leur prix.",
+          "en": "The courses from the project's database, with their picture and price."
+        }
+      },
+      {
+        "image": "./media/shot-cart.png",
+        "title": {
+          "fr": "Le panier.",
+          "en": "The cart."
+        },
+        "text": {
+          "fr": "Gardé en session, puis enregistré dans le profil et retrouvé à la connexion.",
+          "en": "Kept in the session, then saved in the profile and restored at sign-in."
+        }
+      },
+      {
+        "image": "./media/shot-admin.png",
+        "title": {
+          "fr": "L'administration.",
+          "en": "The admin."
+        },
+        "text": {
+          "fr": "Les formations se gèrent dans l'administration de Django.",
+          "en": "Courses are managed in Django's admin."
+        }
+      }
+    ]
+  },
+  "pair": true
 }

@@ -1,0 +1,512 @@
+{
+  "overview": {
+    "width": 1370,
+    "height": 690,
+    "nodeHeight": 96,
+    "nodeWidth": 220,
+    "nodes": [
+      {
+        "id": "browser",
+        "x": 10,
+        "y": 260,
+        "logo": "window",
+        "title": {
+          "fr": "Navigateur",
+          "en": "Browser"
+        },
+        "subtitle": {
+          "fr": "Bootstrap, jQuery AJAX",
+          "en": "Bootstrap, jQuery AJAX"
+        }
+      },
+      {
+        "id": "mw",
+        "x": 340,
+        "y": 260,
+        "logo": "filter",
+        "title": {
+          "fr": "Middlewares",
+          "en": "Middlewares"
+        },
+        "subtitle": {
+          "fr": "session, auth, CSRF",
+          "en": "session, auth, CSRF"
+        }
+      },
+      {
+        "id": "tpl",
+        "x": 340,
+        "y": 60,
+        "logo": "html",
+        "title": {
+          "fr": "Templates",
+          "en": "Templates"
+        },
+        "subtitle": {
+          "fr": "base.html, navbar",
+          "en": "base.html, navbar"
+        }
+      },
+      {
+        "id": "media",
+        "x": 340,
+        "y": 460,
+        "logo": "document",
+        "title": {
+          "fr": "Médias",
+          "en": "Media"
+        },
+        "subtitle": {
+          "fr": "media/uploads",
+          "en": "media/uploads"
+        }
+      },
+      {
+        "id": "store",
+        "x": 720,
+        "y": 60,
+        "logo": "python",
+        "title": {
+          "fr": "Vues store",
+          "en": "store views"
+        },
+        "subtitle": {
+          "fr": "catalogue, comptes",
+          "en": "catalogue, accounts"
+        }
+      },
+      {
+        "id": "cart",
+        "x": 720,
+        "y": 260,
+        "logo": "python",
+        "title": {
+          "fr": "Vues cart",
+          "en": "cart views"
+        },
+        "subtitle": {
+          "fr": "classe Cart, JSON",
+          "en": "Cart class, JSON"
+        }
+      },
+      {
+        "id": "admin",
+        "x": 720,
+        "y": 460,
+        "logo": "django",
+        "title": {
+          "fr": "Admin Django",
+          "en": "Django admin"
+        },
+        "subtitle": {
+          "fr": "formations, profils",
+          "en": "courses, profiles"
+        }
+      },
+      {
+        "id": "orm",
+        "x": 1100,
+        "y": 260,
+        "logo": "django",
+        "title": {
+          "fr": "ORM Django",
+          "en": "Django ORM"
+        },
+        "subtitle": {
+          "fr": "5 modèles, post_save",
+          "en": "5 models, post_save"
+        }
+      },
+      {
+        "id": "sqlite",
+        "x": 1100,
+        "y": 460,
+        "logo": "sqlite",
+        "title": {
+          "fr": "SQLite",
+          "en": "SQLite"
+        },
+        "subtitle": {
+          "fr": "db.sqlite3",
+          "en": "db.sqlite3"
+        }
+      }
+    ],
+    "wires": [
+      {
+        "from": "browser",
+        "to": "mw",
+        "path": "M230 308H340",
+        "label": {
+          "fr": "HTTP, AJAX",
+          "en": "HTTP, AJAX"
+        },
+        "labelX": 285,
+        "labelY": 308,
+        "once": false
+      },
+      {
+        "from": "mw",
+        "to": "store",
+        "path": "M560 290H630V108H720",
+        "label": {
+          "fr": "store",
+          "en": "store"
+        },
+        "labelX": 630,
+        "labelY": 200,
+        "once": false
+      },
+      {
+        "from": "mw",
+        "to": "cart",
+        "path": "M560 308H720",
+        "label": {
+          "fr": "cart",
+          "en": "cart"
+        },
+        "labelX": 675,
+        "labelY": 308,
+        "once": false
+      },
+      {
+        "from": "mw",
+        "to": "admin",
+        "path": "M560 326H630V508H720",
+        "label": {
+          "fr": "admin/",
+          "en": "admin/"
+        },
+        "labelX": 630,
+        "labelY": 420,
+        "once": false
+      },
+      {
+        "from": "store",
+        "to": "tpl",
+        "path": "M720 84H560",
+        "label": {
+          "fr": "render()",
+          "en": "render()"
+        },
+        "labelX": 660,
+        "labelY": 84,
+        "once": false
+      },
+      {
+        "from": "admin",
+        "to": "media",
+        "path": "M720 532H560",
+        "label": {
+          "fr": "upload",
+          "en": "upload"
+        },
+        "labelX": 660,
+        "labelY": 532,
+        "once": false
+      },
+      {
+        "from": "store",
+        "to": "orm",
+        "path": "M940 108H1020V290H1100",
+        "label": {
+          "fr": "modèles",
+          "en": "models"
+        },
+        "labelX": 1020,
+        "labelY": 200,
+        "once": false
+      },
+      {
+        "from": "cart",
+        "to": "orm",
+        "path": "M940 308H1100",
+        "label": {
+          "fr": "old_cart",
+          "en": "old_cart"
+        },
+        "labelX": 1020,
+        "labelY": 308,
+        "once": false
+      },
+      {
+        "from": "admin",
+        "to": "orm",
+        "path": "M940 508H1020V326H1100",
+        "label": {
+          "fr": "admin.site",
+          "en": "admin.site"
+        },
+        "labelX": 1020,
+        "labelY": 420,
+        "once": false
+      },
+      {
+        "from": "orm",
+        "to": "sqlite",
+        "path": "M1210 356V460",
+        "label": {
+          "fr": "SQL",
+          "en": "SQL"
+        },
+        "labelX": 1210,
+        "labelY": 408,
+        "once": false
+      },
+      {
+        "from": "mw",
+        "to": "sqlite",
+        "path": "M340 340H316V610H1210V556",
+        "label": {
+          "fr": "django_session",
+          "en": "django_session"
+        },
+        "labelX": 830,
+        "labelY": 610,
+        "once": false
+      }
+    ],
+    "group": {
+      "x": 300,
+      "y": 20,
+      "w": 1050,
+      "h": 660,
+      "logo": "django",
+      "label": {
+        "fr": "Serveur Django, :8000",
+        "en": "Django server, :8000"
+      }
+    },
+    "caption": {
+      "fr": "Une seule application Django : chaque requête passe par les middlewares (session, utilisateur, CSRF), puis par une vue qui lit ou écrit la base SQLite avec l'ORM. Le panier vit dans la session et se recopie dans le profil de l'utilisateur connecté.",
+      "en": "A single Django app: each request goes through the middlewares (session, user, CSRF), then a view that reads or writes the SQLite database through the ORM. The cart lives in the session and is copied into the signed-in user's profile."
+    }
+  },
+  "stack": [
+    {
+      "name": {
+        "fr": "Backend",
+        "en": "Backend"
+      },
+      "items": [
+        {
+          "name": "Python",
+          "logo": "python",
+          "note": {
+            "fr": "3.12",
+            "en": "3.12"
+          }
+        },
+        {
+          "name": "Django",
+          "logo": "django",
+          "note": {
+            "fr": "5.0 : vues, ORM, admin, auth",
+            "en": "5.0: views, ORM, admin, auth"
+          }
+        },
+        {
+          "name": "Pillow",
+          "logo": "python",
+          "note": {
+            "fr": "images des formations",
+            "en": "course pictures"
+          }
+        }
+      ]
+    },
+    {
+      "name": {
+        "fr": "Frontend",
+        "en": "Frontend"
+      },
+      "items": [
+        {
+          "name": "Templates Django",
+          "logo": "html",
+          "note": {
+            "fr": "héritage de base.html",
+            "en": "base.html inheritance"
+          }
+        },
+        {
+          "name": "Bootstrap",
+          "logo": "css",
+          "note": {
+            "fr": "5.2, Bootstrap Icons",
+            "en": "5.2, Bootstrap Icons"
+          }
+        },
+        {
+          "name": "jQuery",
+          "logo": "javascript",
+          "note": {
+            "fr": "appels AJAX du panier",
+            "en": "cart AJAX calls"
+          }
+        }
+      ]
+    },
+    {
+      "name": {
+        "fr": "Données",
+        "en": "Data"
+      },
+      "items": [
+        {
+          "name": "SQLite",
+          "logo": "sqlite",
+          "note": {
+            "fr": "db.sqlite3",
+            "en": "db.sqlite3"
+          }
+        },
+        {
+          "name": "Sessions Django",
+          "logo": "database",
+          "note": {
+            "fr": "table django_session",
+            "en": "django_session table"
+          }
+        }
+      ]
+    }
+  ],
+  "diagrams": [
+    {
+      "id": "panier",
+      "title": {
+        "fr": "Ajouter au panier",
+        "en": "Adding to the cart"
+      },
+      "caption": {
+        "fr": "Le bouton envoie une requête AJAX ; la vue ajoute l'identifiant et le prix dans la session, une seule fois par formation, puis recopie tout le panier dans le profil si l'utilisateur est connecté.",
+        "en": "The button sends an AJAX request; the view adds the id and the price to the session, once per course, then copies the whole cart into the profile when the user is signed in."
+      }
+    },
+    {
+      "id": "connexion",
+      "title": {
+        "fr": "Retrouver son panier",
+        "en": "Getting the cart back"
+      },
+      "caption": {
+        "fr": "À la connexion, Django change la clé de session sans perdre son contenu ; la vue relit le panier enregistré dans le profil et le fusionne avec celui de la session.",
+        "en": "At sign-in, Django changes the session key without losing its content; the view reads the cart saved in the profile and merges it with the session's one."
+      }
+    },
+    {
+      "id": "donnees",
+      "title": {
+        "fr": "Modèle de données",
+        "en": "Data model"
+      },
+      "caption": {
+        "fr": "Le profil complète l'utilisateur de Django et garde le panier enregistré. Chaque formation appartient à un formateur ; les réservations sont prêtes dans le modèle.",
+        "en": "The profile extends Django's user and keeps the saved cart. Each course belongs to a trainer; bookings are ready in the model."
+      }
+    }
+  ],
+  "choices": [
+    {
+      "title": {
+        "fr": "Panier en session",
+        "en": "Cart in the session"
+      },
+      "why": {
+        "fr": "Un visiteur peut remplir son panier sans compte ; rien n'est écrit en base tant qu'il n'est pas connecté.",
+        "en": "Visitors can fill a cart without an account; nothing is written to the database until they sign in."
+      },
+      "alternative": {
+        "fr": "Une table Panier liée à l’utilisateur.",
+        "en": "A Cart table linked to the user."
+      },
+      "tradeoff": {
+        "fr": "Une copie du panier à tenir à jour dans le profil.",
+        "en": "A copy of the cart to keep up to date in the profile."
+      }
+    },
+    {
+      "title": {
+        "fr": "Profil créé par un signal",
+        "en": "Profile created by a signal"
+      },
+      "why": {
+        "fr": "Chaque utilisateur a son profil dès l'inscription, sans toucher au modèle User de Django.",
+        "en": "Every user gets a profile at sign-up, without touching Django's User model."
+      },
+      "alternative": {
+        "fr": "Un modèle utilisateur personnalisé.",
+        "en": "A custom user model."
+      },
+      "tradeoff": {
+        "fr": "Une requête de plus pour lire le profil.",
+        "en": "One more query to read the profile."
+      }
+    },
+    {
+      "title": {
+        "fr": "Administration de Django",
+        "en": "Django admin"
+      },
+      "why": {
+        "fr": "Le catalogue, les formateurs et les profils se gèrent sans écrire d'écran d'administration.",
+        "en": "The catalogue, trainers and profiles are managed without writing admin screens."
+      },
+      "alternative": {
+        "fr": "Un back-office fait main.",
+        "en": "A hand-made back office."
+      },
+      "tradeoff": {
+        "fr": "Une interface générique, pensée pour l'équipe et pas pour le public.",
+        "en": "A generic interface, meant for the team rather than the public."
+      }
+    },
+    {
+      "title": {
+        "fr": "AJAX pour le panier",
+        "en": "AJAX for the cart"
+      },
+      "why": {
+        "fr": "L'ajout se fait sans quitter la fiche de la formation ; le compteur du panier suit.",
+        "en": "Adding happens without leaving the course page; the cart counter follows."
+      },
+      "alternative": {
+        "fr": "Un formulaire classique avec redirection.",
+        "en": "A classic form with a redirect."
+      },
+      "tradeoff": {
+        "fr": "Le jeton CSRF à joindre à chaque appel.",
+        "en": "The CSRF token to send with each call."
+      }
+    }
+  ],
+  "limits": {
+    "fr": [
+      "Pas encore de paiement : le panier s'arrête au récapitulatif et au total.",
+      "Les réservations existent dans le modèle mais ne se créent pas encore depuis le site.",
+      "Le prix barré « $50.00 » et le badge « Sale » sont des textes d'exemple du gabarit.",
+      "La page « À propos » garde un texte de remplissage."
+    ],
+    "en": [
+      "No payment yet: the cart ends with the summary and the total.",
+      "Bookings exist in the model but cannot be created from the site yet.",
+      "The struck-out \"$50.00\" price and the \"Sale\" badge are template sample text.",
+      "The About page still has placeholder text."
+    ]
+  },
+  "next": {
+    "fr": [
+      "Un paiement en ligne en mode test, qui crée les réservations.",
+      "Une page par formateur avec ses formations.",
+      "Une base PostgreSQL et un déploiement avec Gunicorn.",
+      "Des avis et des notes sur les formations."
+    ],
+    "en": [
+      "Online payment in test mode, creating the bookings.",
+      "A page per trainer with their courses.",
+      "A PostgreSQL database and a Gunicorn deployment.",
+      "Reviews and ratings on courses."
+    ]
+  }
+}

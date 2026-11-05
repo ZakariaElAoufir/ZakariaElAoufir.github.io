@@ -1,0 +1,45 @@
+erDiagram
+  AUTH_USER ||--|| STORE_PROFILE : "has a profile"
+  STORE_FORMATEUR ||--o{ STORE_FORMATION : "teaches"
+  STORE_CLIENT ||--o{ STORE_RESERVATION : "books"
+  STORE_FORMATION ||--o{ STORE_RESERVATION : "booked in"
+  AUTH_USER {
+    int id PK
+    string username UK
+    string password "pbkdf2_sha256"
+    bool is_staff
+  }
+  STORE_PROFILE {
+    int id PK
+    int user_id FK
+    string phone
+    string city
+    string country
+    string old_cart "cart as JSON"
+  }
+  STORE_FORMATEUR {
+    int id PK
+    string username UK
+    string email UK
+  }
+  STORE_FORMATION {
+    int id PK
+    string titre
+    string descriptif
+    decimal prix
+    datetime date_formation
+    string image
+    int formateur_id FK
+  }
+  STORE_CLIENT {
+    int id PK
+    string username UK
+    string email UK
+  }
+  STORE_RESERVATION {
+    int id PK
+    int client_id FK
+    int formation_id FK
+    int formateur_id FK
+    datetime date_reservation
+  }

@@ -1,0 +1,18 @@
+sequenceDiagram
+  actor U as User
+  participant L as login_user (view)
+  participant A as django.contrib.auth
+  participant P as store_profile
+  participant S as Session
+  U->>L: POST /login/ (username, password)
+  L->>A: authenticate()
+  alt wrong credentials
+    L-->>U: redirect /login/ and error message
+  else
+    L->>A: login(): new session key, content kept
+    L->>P: reads old_cart
+    loop each saved course
+      L->>S: db_add(id, price) if missing
+    end
+    L-->>U: redirect / "You have been logged in!"
+  end

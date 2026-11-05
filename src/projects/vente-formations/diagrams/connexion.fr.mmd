@@ -1,0 +1,18 @@
+sequenceDiagram
+  actor U as Utilisateur
+  participant L as login_user (vue)
+  participant A as django.contrib.auth
+  participant P as store_profile
+  participant S as Session
+  U->>L: POST /login/ (nom, mot de passe)
+  L->>A: authenticate()
+  alt identifiants faux
+    L-->>U: redirection /login/ et message d'erreur
+  else
+    L->>A: login() : nouvelle clé de session, contenu gardé
+    L->>P: lit old_cart
+    loop chaque formation enregistrée
+      L->>S: db_add(id, prix) si absente
+    end
+    L-->>U: redirection / « You have been logged in! »
+  end
