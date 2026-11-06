@@ -1,0 +1,152 @@
+{
+  "overview": {
+    "width": 1040,
+    "height": 300,
+    "nodes": [
+      {
+        "id": "front",
+        "x": 20,
+        "y": 100,
+        "logo": "angular",
+        "title": {
+          "fr": "Application Angular",
+          "en": "Angular app"
+        },
+        "subtitle": {
+          "fr": "Les écrans",
+          "en": "The screens"
+        }
+      },
+      {
+        "id": "gateway",
+        "x": 300,
+        "y": 100,
+        "logo": "gateway",
+        "title": {
+          "fr": "API Gateway",
+          "en": "API Gateway"
+        },
+        "subtitle": {
+          "fr": "Vérifie le JWT",
+          "en": "Checks the JWT"
+        }
+      },
+      {
+        "id": "auth",
+        "x": 560,
+        "y": 20,
+        "logo": "springsecurity",
+        "title": {
+          "fr": "auth-service",
+          "en": "auth-service"
+        },
+        "subtitle": {
+          "fr": "Comptes et profils",
+          "en": "Accounts and profiles"
+        },
+        "mine": true
+      },
+      {
+        "id": "internship",
+        "x": 560,
+        "y": 180,
+        "logo": "springboot",
+        "title": {
+          "fr": "intership-service",
+          "en": "intership-service"
+        },
+        "subtitle": {
+          "fr": "Sujets, équipes, GitHub",
+          "en": "Subjects, teams, GitHub"
+        },
+        "mine": true
+      },
+      {
+        "id": "db",
+        "x": 820,
+        "y": 100,
+        "logo": "postgresql",
+        "title": {
+          "fr": "PostgreSQL",
+          "en": "PostgreSQL"
+        },
+        "subtitle": {
+          "fr": "Une base par service",
+          "en": "One database per service"
+        }
+      }
+    ],
+    "wires": [
+      {
+        "from": "front",
+        "to": "gateway",
+        "path": "M220 150H300",
+        "label": {
+          "fr": "HTTP",
+          "en": "HTTP"
+        },
+        "labelX": 260,
+        "labelY": 140
+      },
+      {
+        "from": "gateway",
+        "to": "auth",
+        "path": "M500 130L560 80",
+        "label": {
+          "fr": "JWT",
+          "en": "JWT"
+        },
+        "labelX": 530,
+        "labelY": 96
+      },
+      {
+        "from": "gateway",
+        "to": "internship",
+        "path": "M500 170L560 220",
+        "label": {
+          "fr": "REST",
+          "en": "REST"
+        },
+        "labelX": 530,
+        "labelY": 204
+      },
+      {
+        "from": "auth",
+        "to": "db",
+        "path": "M760 80L820 130",
+        "label": {
+          "fr": "JPA",
+          "en": "JPA"
+        },
+        "labelX": 790,
+        "labelY": 96
+      },
+      {
+        "from": "internship",
+        "to": "db",
+        "path": "M760 220L820 170",
+        "label": {
+          "fr": "JPA",
+          "en": "JPA"
+        },
+        "labelX": 790,
+        "labelY": 204
+      }
+    ],
+    "mineLabel": {
+      "fr": "Ma partie",
+      "en": "My part"
+    }
+  },
+  "stack": [],
+  "diagrams": [],
+  "choices": [],
+  "limits": {
+    "fr": [],
+    "en": []
+  },
+  "next": {
+    "fr": [],
+    "en": []
+  }
+}

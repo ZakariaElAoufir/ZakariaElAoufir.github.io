@@ -25,5 +25,41 @@
     "Docker",
     "Python"
   ],
-  "hasDemo": false
+  "hasDemo": true,
+  "thumbnail": "./media/thumbnail.png",
+  "detail": {
+    "problem": {
+      "fr": "Suivre des stagiaires demande de répartir les sujets, de former les équipes et de vérifier le travail rendu. Sans outil commun, ces informations restent dispersées et l'encadrant passe du temps à les rassembler.",
+      "en": "Tracking interns means sharing out subjects, forming teams and checking the work handed in. Without a common tool, this information stays scattered and supervisors spend time gathering it."
+    },
+    "does": {
+      "fr": "Le stagiaire choisit un sujet, rejoint une équipe, suit ses missions et relie le dépôt GitHub de son équipe. Un assistant IA répond sur les missions et aide à planifier, et l'encadrant suit ses équipes et vérifie les livrables avec l'aide de l'IA.",
+      "en": "Interns choose a subject, join a team, follow their missions and link their team's GitHub repository. An AI assistant answers questions about missions and helps plan them, and supervisors follow their teams and check deliverables with AI help."
+    },
+    "role": {
+      "fr": "Projet réalisé à trois. Ma partie : l'authentification et les profils, le service des stages (sujets, équipes, missions, GitHub) et l'intégration de l'IA (assistant de mission, vérification des livrables, planification des missions). Redouane Boulhimez a réalisé la messagerie, le fil social, la boutique, le DevOps et la connexion faciale ; Aya Amayou les dossiers des stagiaires, l'IA de vérification des documents et la gamification.",
+      "en": "Built by a team of three. My part: authentication and profiles, the internship service (subjects, teams, missions, GitHub) and the AI integration (mission assistant, deliverable checks, mission planning). Redouane Boulhimez built messaging, the social feed, the store, DevOps and face login; Aya Amayou built intern files, the document-checking AI and gamification."
+    },
+    "teammates": [
+      { "name": "Redouane Boulhimez", "url": "https://github.com/redouaneboulhimez" },
+      { "name": "Aya Amayou", "url": "https://github.com/ayaamayou" }
+    ],
+    "gallery": [
+      {
+        "image": "./media/shot-subjects.png",
+        "title": { "fr": "Choisir un sujet", "en": "Choosing a subject" },
+        "text": { "fr": "Le stagiaire parcourt les sujets par encadrant, puis rejoint une équipe et un poste en quatre étapes.", "en": "Interns browse subjects by supervisor, then join a team and a position in four steps." }
+      },
+      {
+        "image": "./media/shot-team.png",
+        "title": { "fr": "Mon équipe", "en": "My team" },
+        "text": { "fr": "L'affectation, les membres, les postes et les compétences acquises sont réunis au même endroit.", "en": "The assignment, members, positions and acquired skills sit in one place." }
+      },
+      {
+        "image": "./media/shot-github.png",
+        "title": { "fr": "Le dépôt de l'équipe", "en": "The team's repository" },
+        "text": { "fr": "Branches, commits, fichiers et identités Git du dépôt relié, ici entièrement simulé.", "en": "Branches, commits, files and Git identities of the linked repository, entirely simulated here." }
+      }
+    ]
+  }
 }

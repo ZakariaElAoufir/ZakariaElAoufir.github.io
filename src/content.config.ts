@@ -95,8 +95,8 @@ const projects = defineCollection({
       problem: localized,
       does: localized,
       role: localized,
-      /** The teammate of a pair project, shown as a button under "My role". */
-      teammate: z.object({ name: z.string(), url: z.string().url() }).optional(),
+      /** The teammates of a group project, each shown as a button under "My role". */
+      teammates: z.array(z.object({ name: z.string(), url: z.string().url() })).default([]),
       gallery: z.array(z.object({ image: image(), title: localized, text: localized })).min(1)
     }).optional()
   }).refine(p => !p.hasDemo || p.detail, { message: 'A project with a demo needs its "detail" block' })

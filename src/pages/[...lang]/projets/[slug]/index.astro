@@ -30,7 +30,7 @@ const name = pick(project.data.shortTitle, lang);
       <article class="px-frame reveal" style="--d:100ms"><h2>{t('project.does')}</h2><p>{pick(detail.does, lang)}</p></article>
       <article class="px-frame reveal" style="--d:200ms">
         <h2>{t('project.role')}</h2><p>{pick(detail.role, lang)}</p>
-        {detail.teammate && <a class="btn small ghost mate" href={detail.teammate.url} target="_blank" rel="noopener"><Icon name="github" /><span>{detail.teammate.name}</span></a>}
+        {detail.teammates.map(mate => <a class="btn small ghost mate" href={mate.url} target="_blank" rel="noopener"><Icon name="github" /><span>{mate.name}</span></a>)}
       </article>
     </div>
 
