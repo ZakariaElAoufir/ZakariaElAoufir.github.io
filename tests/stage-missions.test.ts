@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { answerQuestion, chunkPages, retrieve, SPEC_PDF, workPlan, CHUNK_OVERLAP, CHUNK_SIZE } from '../src/projects/plateforme-stagiaires/demo/ai';
-import { call, createEngine, DEMO_PASSWORD, type ChatAnswer, type ChatHistory, type Engine, type MissionCardDto, type MissionDetailDto, type WorkPlanDto } from '../src/projects/plateforme-stagiaires/demo/logic';
+import { call, createEngine, DEMO_PASSWORD, type AvailableRepo, type CommitDetails, type ChatAnswer, type ChatHistory, type Engine, type MissionCardDto, type MissionDetailDto, type WorkPlanDto } from '../src/projects/plateforme-stagiaires/demo/logic';
 
 const login = (e: Engine, email: string) => call<{ accessToken: string }>(e, 't', 'POST', '/api/auth/login', null, { email, password: DEMO_PASSWORD }).body.accessToken;
 const YASSINE = 'yassine.idrissi@estage.demo', SARA = 'sara.alaoui@estage.demo';
@@ -51,15 +51,53 @@ describe('intern platform demo, missions', () => {
     expect(call(e, 't', 'DELETE', '/api/stagiaire/missions/2/deliverables/3', omar).status).toBe(404);
   });
 
-  it('accepts one commit per repository and only from the team’s repositories', () => {
+  it('offers only the commits of my linked Git identity, not yet submitted', () => {
     const { e, token } = setup();
-    const commit = (commitTraceId: number) => call(e, 't', 'POST', '/api/stagiaire/missions/1/commit-submissions', token, { commitTraceId });
-    expect(commit(1).status).toBe(201);
-    expect(commit(2).status).toBe(409);
-    expect(commit(10).status).toBe(400); // a commit of Team-ROOMS-2's repository
+    const repos = () => call<AvailableRepo[]>(e, 't', 'GET', '/api/stagiaire/missions/1/available-commits', token).body;
+    const [repo] = repos();
+    expect(repo.commitsCount).toBe(9);
+    expect(repo.commits.every(k => k.author_login === 'yassine-idrissi')).toBe(true);
+    expect(repo.commits).toHaveLength(4);
+    const sara = login(e, SARA);
+    call(e, 't', 'POST', '/api/stagiaire/subjects/1/select', sara, { teamId: 1, subjectPositionId: 1 });
+    expect(call<AvailableRepo[]>(e, 't', 'GET', '/api/stagiaire/missions/1/available-commits', sara).body[0].commits).toHaveLength(0); // identity not linked yet
+  });
+
+  it('a submission holds one commit per repository, waits for review, and a commit cannot be submitted twice', () => {
+    const { e, token } = setup();
+    const submit = (commitTraceIds: number[]) => call(e, 't', 'POST', '/api/stagiaire/missions/1/commit-submissions', token, { commitTraceIds, note: 'API et tests' });
+    expect(submit([]).status).toBe(400);
+    expect(submit([1, 2]).status).toBe(400); // two commits of the same repository
+    expect(submit([10]).status).toBe(400); // a commit of Team-ROOMS-2's repository
+    expect(submit([4]).status).toBe(409); // Omar's commit, not my identity
+    expect(submit([1]).status).toBe(201);
+    expect(submit([1]).status).toBe(409); // already submitted
     const [sub] = detail(e, token, 1).body.commitSubmissions;
+    expect(sub).toMatchObject({ status: 'PENDING_REVIEW', note: 'API et tests' });
+    expect(sub.commits[0].message).toBe('fix(reservation): refuse une fin avant le début');
     expect(call(e, 't', 'DELETE', `/api/stagiaire/missions/1/commit-submissions/${sub.id}`, token).status).toBe(204);
-    expect(commit(2).status).toBe(201);
+    expect(submit([1]).status).toBe(201);
+    expect(call(e, 't', 'POST', '/api/stagiaire/missions/2/commit-submissions', token, { commitTraceIds: [2] }).status).toBe(409); // finished mission
+  });
+
+  it('opens a commit with its changed files, counted from the patches', () => {
+    const { e, token } = setup();
+    const open = () => call<CommitDetails>(e, 't', 'POST', '/api/github/commits/1/sync-details', token).body;
+    const d = open();
+    expect(d.files.map(f => f.filename)).toContain('backend/src/main/java/demo/rooms/InvalidSlotException.java');
+    expect(d.additions).toBe(d.files.reduce((n, f) => n + f.patch.filter(l => l.startsWith('+')).length, 0));
+    expect(d.files[0].patch[0]).toMatch(/^@@ /);
+    const stored = e.db.internship_db.commit_changed_files.length;
+    open();
+    expect(e.db.internship_db.commit_changed_files.length).toBe(stored); // fetched from GitHub once, then read back
+    expect(call(e, 't', 'POST', '/api/github/commits/10/sync-details', token).status).toBe(403);
+  });
+
+  it('a deliverable lists its contributors, the submitter always first, all from the team', () => {
+    const { e, token } = setup();
+    expect(call(e, 't', 'POST', '/api/stagiaire/missions/1/deliverables', token, { fileName: 'x.pdf', contributorIds: [7] }).status).toBe(400); // Hind is in Team-ROOMS-2
+    expect(call(e, 't', 'POST', '/api/stagiaire/missions/1/deliverables', token, { fileName: 'x.pdf', contributorIds: [5, 4] }).status).toBe(201);
+    expect(detail(e, token, 1).body.deliverables[0].contributorList.map(p => p.name)).toEqual(['Yassine Idrissi', 'Omar Tazi']);
   });
 
   it('posts comments and help requests, refusing empty ones', () => {

@@ -47,6 +47,8 @@ const PATHS: Record<string, ReactNode> = {
   download: <path d="M12 4v11M7 11l5 5 5-5M4 20h16" />,
   link: <><path d="M10 14a4 4 0 0 0 6 0l3-3a4 4 0 0 0-6-6l-1 1" /><path d="M14 10a4 4 0 0 0-6 0l-3 3a4 4 0 0 0 6 6l1-1" /></>,
   plus: <path d="M12 5v14M5 12h14" />,
+  upload: <><path d="M12 16V5M7 9l5-5 5 5M4 20h16" /></>,
+  trash: <><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13" /></>,
   minus: <path d="M5 12h14" />,
   spark: <path d="m12 3 1.8 6.2L20 11l-6.2 1.8L12 19l-1.8-6.2L4 11l6.2-1.8z" />,
   git: <><circle cx="6" cy="6" r="2.2" /><circle cx="18" cy="18" r="2.2" /><path d="M8 6h6a4 4 0 0 1 4 4v6" /></>

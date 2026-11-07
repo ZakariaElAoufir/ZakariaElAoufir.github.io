@@ -1,6 +1,7 @@
 // The intern platform replayed in the browser. The rules of intership-service and auth-service are rewritten here from how they behave;
 // all the data is invented and nothing leaves the page: every "HTTP call" is a function call that records the journey it would take.
 import { REPO_FILES, type RepoFile } from './repo';
+import { COMMIT_FILES, type ChangedFile } from './commits';
 import { answerQuestion, chunkPages, retrieve, SPEC_PDF, workPlan, CHUNK_OVERLAP, CHUNK_SIZE, TOP_K, type Match, type Scope } from './ai';
 
 export type Lang = 'fr' | 'en';
@@ -26,8 +27,11 @@ export type Mission = {
 };
 export type DeliverableStatus = 'SOUMIS' | 'EN_REVUE' | 'CORRECTIONS' | 'ACCEPTE' | 'REFUSE';
 export type Attachment = { id: number; mission_id: number; file_name: string; size_kb: number; uploaded_at: string };
-export type Deliverable = { id: number; mission_id: number; stagiaire_id: number; file_name: string; version: number; status: DeliverableStatus; submitted_at: string; review_comment: string | null };
-export type CommitSubmission = { id: number; mission_id: number; stagiaire_id: number; commit_id: number; repository_id: number; submitted_at: string };
+export type Deliverable = { id: number; mission_id: number; stagiaire_id: number; file_name: string; size_kb: number; version: number; status: DeliverableStatus; submitted_at: string; review_comment: string | null; contributors: number[] };
+export type SubmissionStatus = 'PENDING_REVIEW' | 'CHANGES_REQUESTED' | 'ACCEPTED' | 'REJECTED';
+export type CommitSubmission = { id: number; mission_id: number; stagiaire_id: number; note: string; status: SubmissionStatus; submitted_at: string; review_comment: string | null };
+export type CommitLink = { id: number; submission_id: number; commit_id: number; repository_id: number };
+export type ChangedFileRow = { id: number; commit_id: number; filename: string; status: string; additions: number; deletions: number; patch: string[] };
 export type Comment = { id: number; mission_id: number; author_id: number; content: string; created_at: string };
 export type HelpRequest = { id: number; mission_id: number; author_id: number; content: string; status: 'OUVERTE' | 'RESOLUE'; responses: number; created_at: string };
 export type AiConversation = { id: number; mission_id: number; student_id: number; mission_title: string; created_at: string };
@@ -36,7 +40,7 @@ export type AiDocument = { id: number; mission_id: number; attachment_id: number
 export type AiChunk = { id: number; document_id: number; chunk_index: number; page_number: number; content: string; embedding: string };
 export type Repository = { id: number; team_id: number; full_name: string; visibility: string; active: boolean; default_branch: string; last_sync_at: string };
 export type Branch = { id: number; repository_id: number; name: string; head_sha: string; is_default: boolean };
-export type CommitRow = { id: number; repository_id: number; sha: string; message: string; author_login: string; author_name: string; committed_at: string; additions: number; deletions: number; branches: string };
+export type CommitRow = { id: number; repository_id: number; sha: string; message: string; author_login: string; author_name: string; committed_at: string; additions: number; deletions: number; changed_files: number; branches: string };
 export type GitIdentity = { id: number; team_id: number; login: string; email: string; commits: number; linked_user_id: number | null };
 
 /** One database per service, as in docker-compose. */
@@ -46,7 +50,7 @@ export type Db = {
     subjects: Subject[]; subject_positions: Position[]; teams: Team[]; team_position_slots: Slot[]; team_memberships: Membership[];
     subject_selections: Selection[]; team_histories: History[]; missions: Mission[];
     project_repositories: Repository[]; repository_branches: Branch[]; commit_traces: CommitRow[]; detected_git_identities: GitIdentity[];
-    mission_attachments: Attachment[]; deliverables: Deliverable[]; mission_commit_submissions: CommitSubmission[]; comments: Comment[]; help_requests: HelpRequest[];
+    mission_attachments: Attachment[]; deliverables: Deliverable[]; mission_commit_submissions: CommitSubmission[]; mission_commit_links: CommitLink[]; commit_changed_files: ChangedFileRow[]; comments: Comment[]; help_requests: HelpRequest[];
   };
   chabot_assistant_db: { ai_conversations: AiConversation[]; ai_messages: AiMessage[]; ai_document_indexes: AiDocument[]; ai_document_chunks: AiChunk[] };
 };
@@ -68,8 +72,10 @@ export const TABLES: { db: DbName; table: string; cols: [string, ColType][] }[] 
   { db: 'internship_db', table: 'commit_traces', cols: [['id', 'int'], ['repository_id', 'int'], ['sha', 'text'], ['message', 'text'], ['author_login', 'text'], ['additions', 'int'], ['deletions', 'int']] },
   { db: 'internship_db', table: 'detected_git_identities', cols: [['id', 'int'], ['team_id', 'int'], ['login', 'text'], ['email', 'text'], ['commits', 'int'], ['linked_user_id', 'int']] },
   { db: 'internship_db', table: 'mission_attachments', cols: [['id', 'int'], ['mission_id', 'int'], ['file_name', 'text'], ['size_kb', 'int'], ['uploaded_at', 'timestamp']] },
-  { db: 'internship_db', table: 'deliverables', cols: [['id', 'int'], ['mission_id', 'int'], ['stagiaire_id', 'int'], ['file_name', 'text'], ['version', 'int'], ['status', 'text'], ['submitted_at', 'timestamp']] },
-  { db: 'internship_db', table: 'mission_commit_submissions', cols: [['id', 'int'], ['mission_id', 'int'], ['stagiaire_id', 'int'], ['commit_id', 'int'], ['repository_id', 'int'], ['submitted_at', 'timestamp']] },
+  { db: 'internship_db', table: 'deliverables', cols: [['id', 'int'], ['mission_id', 'int'], ['stagiaire_id', 'int'], ['file_name', 'text'], ['version', 'int'], ['status', 'text'], ['contributors', 'text'], ['submitted_at', 'timestamp']] },
+  { db: 'internship_db', table: 'mission_commit_submissions', cols: [['id', 'int'], ['mission_id', 'int'], ['stagiaire_id', 'int'], ['note', 'text'], ['status', 'text'], ['submitted_at', 'timestamp']] },
+  { db: 'internship_db', table: 'mission_commit_links', cols: [['id', 'int'], ['submission_id', 'int'], ['commit_id', 'int'], ['repository_id', 'int']] },
+  { db: 'internship_db', table: 'commit_changed_files', cols: [['id', 'int'], ['commit_id', 'int'], ['filename', 'text'], ['status', 'text'], ['additions', 'int'], ['deletions', 'int']] },
   { db: 'internship_db', table: 'comments', cols: [['id', 'int'], ['mission_id', 'int'], ['author_id', 'int'], ['content', 'text'], ['created_at', 'timestamp']] },
   { db: 'internship_db', table: 'help_requests', cols: [['id', 'int'], ['mission_id', 'int'], ['author_id', 'int'], ['content', 'text'], ['status', 'text'], ['created_at', 'timestamp']] },
   { db: 'chabot_assistant_db', table: 'ai_conversations', cols: [['id', 'int'], ['mission_id', 'int'], ['student_id', 'int'], ['mission_title', 'text'], ['created_at', 'timestamp']] },
@@ -159,9 +165,9 @@ export function createEngine(lang: Lang, now: () => number = Date.now): Engine {
   ];
   const attachments: Attachment[] = [1, 7].map((mission_id, i) => ({ id: i + 1, mission_id, file_name: SPEC_PDF.name, size_kb: 184, uploaded_at: iso(t0 - 9 * D + 3 * H) }));
   const deliverables: Deliverable[] = [
-    { id: 1, mission_id: 1, stagiaire_id: 4, file_name: 'rapport-api-reservation.pdf', version: 1, status: 'SOUMIS', submitted_at: iso(t0 - 1 * D - 4 * H), review_comment: null },
-    { id: 2, mission_id: 2, stagiaire_id: 5, file_name: 'captures-ecran-reservation.pdf', version: 2, status: 'EN_REVUE', submitted_at: iso(t0 - 2 * D), review_comment: null },
-    { id: 3, mission_id: 4, stagiaire_id: 6, file_name: 'conteneurisation.pdf', version: 1, status: 'ACCEPTE', submitted_at: iso(t0 - 3 * D), review_comment: 'Images légères et compose clair, validé.' }
+    { id: 1, mission_id: 1, stagiaire_id: 4, file_name: 'rapport-api-reservation.pdf', size_kb: 212, version: 1, status: 'SOUMIS', submitted_at: iso(t0 - 1 * D - 4 * H), review_comment: null, contributors: [4] },
+    { id: 2, mission_id: 2, stagiaire_id: 5, file_name: 'captures-ecran-reservation.pdf', size_kb: 1480, version: 2, status: 'EN_REVUE', submitted_at: iso(t0 - 2 * D), review_comment: null, contributors: [5] },
+    { id: 3, mission_id: 4, stagiaire_id: 6, file_name: 'conteneurisation.pdf', size_kb: 340, version: 1, status: 'ACCEPTE', submitted_at: iso(t0 - 3 * D), review_comment: 'Images légères et compose clair, validé.', contributors: [6] }
   ];
   const comments: Comment[] = [
     { id: 1, mission_id: 1, author_id: 4, content: 'J’ai poussé une première version de l’API sur feature/reservations-api, le rapport est dans les livrables.', created_at: iso(t0 - 1 * D - 3 * H) },
@@ -189,10 +195,12 @@ export function createEngine(lang: Lang, now: () => number = Date.now): Engine {
   const repositories = [seedRepo(1, 1, 'estage-demo/team-rooms-1', 3), seedRepo(2, 2, 'estage-demo/team-rooms-2', 9)];
   for (const r of repositories) {
     const start = commits.length;
-    log.forEach(([message, author_login, author_name, additions, deletions, from, age], i) => {
+    log.forEach(([message, author_login, author_name, , , from, age], i) => {
+      const files = COMMIT_FILES[i];
+      const additions = files.reduce((n, f) => n + f.additions, 0), deletions = files.reduce((n, f) => n + f.deletions, 0);
       // a commit reaches its own branch and every branch built on top of it
       const reach = ORDER.slice(ORDER.indexOf(from)).join(',');
-      commits.push({ id: commits.length + 1, repository_id: r.id, sha: sha(r.id, i), message, author_login, author_name, additions, deletions, committed_at: iso(t0 - age * H), branches: reach });
+      commits.push({ id: commits.length + 1, repository_id: r.id, sha: sha(r.id, i), message, author_login, author_name, additions, deletions, changed_files: files.length, committed_at: iso(t0 - age * H), branches: reach });
     });
     ORDER.forEach((name, i) => {
       const head = commits.slice(start).find(c => c.branches.split(',').includes(name))!;
@@ -214,7 +222,7 @@ export function createEngine(lang: Lang, now: () => number = Date.now): Engine {
       internship_db: {
         subjects, subject_positions: positions, teams, team_position_slots: slots, team_memberships: memberships, subject_selections: selections, team_histories: histories,
         missions, project_repositories: repositories, repository_branches: branches, commit_traces: commits, detected_git_identities: identities,
-        mission_attachments: attachments, deliverables, mission_commit_submissions: [], comments, help_requests: helps
+        mission_attachments: attachments, deliverables, mission_commit_submissions: [], mission_commit_links: [], commit_changed_files: [], comments, help_requests: helps
       },
       chabot_assistant_db: { ai_conversations: [], ai_messages: [], ai_document_indexes: [], ai_document_chunks: [] }
     },
@@ -356,11 +364,14 @@ function gateway(c: Ctx, method: Method, route: string, query: URLSearchParams, 
   if (method === 'GET' && route === '/api/stagiaire/missions') return listMissions(c);
   if (method === 'GET' && (m = route.match(/^\/api\/stagiaire\/missions\/(\d+)\/full-detail$/))) return missionDetail(c, +m[1]);
   if (method === 'GET' && (m = route.match(/^\/api\/stagiaire\/missions\/attachments\/(\d+)\/file$/))) return attachmentFile(c, +m[1]);
-  if (method === 'POST' && (m = route.match(/^\/api\/stagiaire\/missions\/(\d+)\/deliverables$/))) return submitDeliverable(c, +m[1], body as { fileName: string });
-  if (method === 'PUT' && (m = route.match(/^\/api\/stagiaire\/missions\/(\d+)\/deliverables\/(\d+)$/))) return changeDeliverable(c, +m[1], +m[2], body as { fileName: string });
+  if (method === 'POST' && (m = route.match(/^\/api\/stagiaire\/missions\/(\d+)\/deliverables$/))) return submitDeliverable(c, +m[1], body as DeliverableBody);
+  if (method === 'PUT' && (m = route.match(/^\/api\/stagiaire\/missions\/(\d+)\/deliverables\/(\d+)$/))) return changeDeliverable(c, +m[1], +m[2], body as DeliverableBody);
   if (method === 'DELETE' && (m = route.match(/^\/api\/stagiaire\/missions\/(\d+)\/deliverables\/(\d+)$/))) return changeDeliverable(c, +m[1], +m[2], null);
   if (method === 'GET' && (m = route.match(/^\/api\/stagiaire\/missions\/(\d+)\/available-commits$/))) return availableCommits(c, +m[1]);
-  if (method === 'POST' && (m = route.match(/^\/api\/stagiaire\/missions\/(\d+)\/commit-submissions$/))) return submitCommit(c, +m[1], body as { commitTraceId: number });
+  if (method === 'GET' && (m = route.match(/^\/api\/stagiaire\/missions\/(\d+)\/deliverable-contributor-options$/))) return contributorOptions(c, +m[1]);
+  if (method === 'GET' && (m = route.match(/^\/api\/stagiaire\/missions\/deliverables\/(\d+)\/file$/))) return deliverableFile(c, +m[1]);
+  if (method === 'POST' && (m = route.match(/^\/api\/github\/commits\/(\d+)\/sync-details$/))) return commitDetails(c, +m[1]);
+  if (method === 'POST' && (m = route.match(/^\/api\/stagiaire\/missions\/(\d+)\/commit-submissions$/))) return submitCommits(c, +m[1], body as { commitTraceIds: number[]; note?: string });
   if (method === 'DELETE' && (m = route.match(/^\/api\/stagiaire\/missions\/(\d+)\/commit-submissions\/(\d+)$/))) return removeCommit(c, +m[1], +m[2]);
   if (method === 'POST' && (m = route.match(/^\/api\/stagiaire\/missions\/(\d+)\/comments$/))) return postComment(c, +m[1], body as { content: string });
   if (method === 'POST' && (m = route.match(/^\/api\/stagiaire\/missions\/(\d+)\/help-requests$/))) return postHelp(c, +m[1], body as { content: string });
@@ -607,8 +618,9 @@ export type MissionCardDto = {
   id: number; title: string; description: string; difficulty: Difficulty; status: MissionStatus; points: number; coins: number; dueDate: string; createdAt: string;
   subjectCode: string; subjectTitle: string; teamName: string; teamNumber: number; myEngagement: number; teamEngagement: number; teamReward: number;
 };
-export type DeliverableDto = Deliverable & { author: PersonDto };
-export type CommitSubmissionDto = { id: number; sha: string; message: string; repository: string; submittedAt: string; author: PersonDto };
+export type DeliverableDto = Deliverable & { author: PersonDto; contributorList: PersonDto[] };
+export type SubmittedCommit = { commitTraceId: number; sha: string; message: string; repository: string; additions: number; deletions: number };
+export type CommitSubmissionDto = { id: number; note: string; status: SubmissionStatus; submittedAt: string; reviewComment: string | null; author: PersonDto; commits: SubmittedCommit[] };
 export type MissionDetailDto = MissionCardDto & {
   supervisor: PersonDto; expected: string[]; attachments: Attachment[];
   members: (MemberDto & { engagement: number; submitted: number; accepted: number })[];
@@ -659,11 +671,14 @@ function missionDetail(c: Ctx, id: number): Res {
       submitted: db.deliverables.filter(d => d.mission_id === id && d.stagiaire_id === x.id).length,
       accepted: db.deliverables.filter(d => d.mission_id === id && d.stagiaire_id === x.id && d.status === 'ACCEPTE').length
     })),
-    deliverables: db.deliverables.filter(d => d.mission_id === id && d.stagiaire_id === me).sort((a, b) => b.version - a.version).map(d => ({ ...d, author: personDto(account(e, d.stagiaire_id)) })),
-    commitSubmissions: db.mission_commit_submissions.filter(x => x.mission_id === id).map(x => {
-      const commit = db.commit_traces.find(k => k.id === x.commit_id)!;
-      return { id: x.id, sha: commit.sha, message: commit.message, repository: repo(x.repository_id), submittedAt: x.submitted_at, author: personDto(account(e, x.stagiaire_id)) };
-    }),
+    deliverables: db.deliverables.filter(d => d.mission_id === id && d.stagiaire_id === me).sort((a, b) => b.version - a.version).map(d => ({ ...d, author: personDto(account(e, d.stagiaire_id)), contributorList: d.contributors.map(cid => personDto(account(e, cid))) })),
+    commitSubmissions: db.mission_commit_submissions.filter(x => x.mission_id === id).map(x => ({
+      id: x.id, note: x.note, status: x.status, submittedAt: x.submitted_at, reviewComment: x.review_comment, author: personDto(account(e, x.stagiaire_id)),
+      commits: db.mission_commit_links.filter(l => l.submission_id === x.id).map(l => {
+        const k = db.commit_traces.find(t => t.id === l.commit_id)!;
+        return { commitTraceId: k.id, sha: k.sha, message: k.message, repository: repo(l.repository_id), additions: k.additions, deletions: k.deletions };
+      })
+    })),
     comments: db.comments.filter(x => x.mission_id === id).map(x => ({ ...x, author: personDto(account(e, x.author_id)) })),
     helpRequests: db.help_requests.filter(x => x.mission_id === id).map(x => ({ ...x, author: personDto(account(e, x.author_id)) }))
   };
@@ -678,7 +693,33 @@ function attachmentFile(c: Ctx, id: number): Res {
   return { status: 200, body: SPEC_PDF };
 }
 /** submitDeliverable: refused on a finished mission; the version follows the stagiaire's last one; the first one starts the mission. */
-function submitDeliverable(c: Ctx, id: number, b: { fileName: string }): Res {
+type DeliverableBody = { fileName: string; sizeKb?: number; contributorIds?: number[] };
+/** resolveContributorIds: the submitter is always in, every other contributor must belong to the mission's team. */
+const contributorsOf = (c: Ctx, m: Mission, ids: number[] = []): number[] | Res => {
+  const me = c.claims!.userId;
+  const team = I(c.e).team_memberships.filter(x => x.team_id === m.team_id).map(x => x.stagiaire_id);
+  const stranger = ids.find(x => !team.includes(x));
+  if (stranger !== undefined) {
+    bad(c, 'internship', INT_AT, L(c.e, 'contributeur hors de l’équipe → ', 'contributor outside the team → '), { v: '400' });
+    return fail(400, 'Un contributeur doit appartenir à l’équipe de la mission.');
+  }
+  return [me, ...new Set(ids.filter(x => x !== me))];
+};
+function contributorOptions(c: Ctx, id: number): Res {
+  const m = missionOf(c, id);
+  if (!isMission(m)) return m;
+  const me = c.claims!.userId;
+  return { status: 200, body: teamDto(c.e, I(c.e).teams.find(t => t.id === m.team_id)!).members.map(x => ({ ...x, isSubmitter: x.id === me })) };
+}
+function deliverableFile(c: Ctx, did: number): Res {
+  const d = I(c.e).deliverables.find(x => x.id === did);
+  if (!d) { bad(c, 'internship', INT_AT, { v: '404' }); return fail(404, 'Livrable introuvable.'); }
+  const m = missionOf(c, d.mission_id);
+  if (!isMission(m)) return m;
+  hop(c, 'internship', INT_AT, L(c.e, 'fichier lu depuis le stockage des livrables', 'file read from the deliverables storage'));
+  return { status: 200, body: { fileName: d.file_name, sizeKb: d.size_kb } };
+}
+function submitDeliverable(c: Ctx, id: number, b: DeliverableBody): Res {
   const m = missionOf(c, id);
   if (!isMission(m)) return m;
   const { e } = c, db = I(e), me = c.claims!.userId;
@@ -687,9 +728,11 @@ function submitDeliverable(c: Ctx, id: number, b: { fileName: string }): Res {
     return fail(409, 'Impossible de soumettre un livrable sur une mission terminée.');
   }
   if (!b?.fileName) { bad(c, 'internship', INT_AT, { v: '400' }); return fail(400, 'Le fichier est obligatoire.'); }
+  const contributors = contributorsOf(c, m, b.contributorIds);
+  if (!Array.isArray(contributors)) return contributors;
   const version = Math.max(0, ...db.deliverables.filter(d => d.mission_id === id && d.stagiaire_id === me).map(d => d.version)) + 1;
   const did = nextId(e, 'deliverables');
-  db.deliverables.push({ id: did, mission_id: id, stagiaire_id: me, file_name: b.fileName, version, status: 'SOUMIS', submitted_at: iso(e.now()), review_comment: null });
+  db.deliverables.push({ id: did, mission_id: id, stagiaire_id: me, file_name: b.fileName, size_kb: b.sizeKb ?? 120, version, status: 'SOUMIS', submitted_at: iso(e.now()), review_comment: null, contributors });
   hop(c, 'internship', INT_AT, L(e, 'fichier rangé dans le stockage des livrables, ', 'file stored with the deliverables, '), { v: `version ${version}` });
   sql(c, 'internship_db', `INSERT INTO deliverables (mission_id, stagiaire_id, file_name, version, status) VALUES (${id}, ${me}, '${b.fileName}', ${version}, 'SOUMIS')`);
   if (m.status === 'A_FAIRE') {
@@ -701,7 +744,7 @@ function submitDeliverable(c: Ctx, id: number, b: { fileName: string }): Res {
   return { status: 201, body: { id: did, version } };
 }
 /** Replace (fileName) or delete (null) a deliverable: only one's own, and only while nobody has reviewed it. */
-function changeDeliverable(c: Ctx, id: number, did: number, b: { fileName: string } | null): Res {
+function changeDeliverable(c: Ctx, id: number, did: number, b: DeliverableBody | null): Res {
   const m = missionOf(c, id);
   if (!isMission(m)) return m;
   const { e } = c, db = I(e), me = c.claims!.userId;
@@ -712,7 +755,10 @@ function changeDeliverable(c: Ctx, id: number, did: number, b: { fileName: strin
     return fail(409, b ? 'Ce livrable ne peut pas être remplacé.' : 'Ce livrable ne peut plus être supprimé.');
   }
   if (b) {
-    d.file_name = b.fileName; d.submitted_at = iso(e.now());
+    if (!b.fileName) { bad(c, 'internship', INT_AT, { v: '400' }); return fail(400, 'Le fichier est obligatoire.'); }
+    const contributors = contributorsOf(c, m, b.contributorIds ?? d.contributors);
+    if (!Array.isArray(contributors)) return contributors;
+    d.file_name = b.fileName; d.size_kb = b.sizeKb ?? d.size_kb; d.contributors = contributors; d.submitted_at = iso(e.now());
     touch(e, 'internship_db', 'deliverables', d.id);
     sql(c, 'internship_db', `UPDATE deliverables SET file_name = '${b.fileName}' WHERE id = ${d.id}`);
     return { status: 200, body: d };
@@ -723,34 +769,69 @@ function changeDeliverable(c: Ctx, id: number, did: number, b: { fileName: strin
   sql(c, 'internship_db', `DELETE FROM deliverables WHERE id = ${d.id}`);
   return { status: 204, body: null };
 }
+export type AvailableRepo = { repositoryId: number; repository: string; defaultBranch: string; commitsCount: number; commits: (CommitRow & { branch: string })[] };
+const proofsLocked = (c: Ctx, m: Mission): Res | null => {
+  if (m.status !== 'COMPLETEE' && m.status !== 'VALIDEE') return null;
+  bad(c, 'internship', INT_AT, L(c.e, `mission ${m.status} → `, `mission ${m.status} → `), { v: '409' });
+  return fail(409, 'Les preuves de cette mission ne peuvent plus changer.');
+};
+/** Commits a stagiaire may offer: from a repository of the team, written under a Git identity linked to them, and not already submitted on this mission. */
+const eligible = (e: Engine, m: Mission, me: number) => {
+  const db = I(e);
+  const mine = new Set(db.detected_git_identities.filter(g => g.team_id === m.team_id && g.linked_user_id === me).map(g => g.login));
+  const used = new Set(db.mission_commit_links.filter(l => db.mission_commit_submissions.some(x => x.id === l.submission_id && x.mission_id === m.id)).map(l => l.commit_id));
+  return (k: CommitRow) => mine.has(k.author_login) && !used.has(k.id);
+};
 function availableCommits(c: Ctx, id: number): Res {
   const m = missionOf(c, id);
   if (!isMission(m)) return m;
-  const repos = I(c.e).project_repositories.filter(r => r.team_id === m.team_id);
-  sql(c, 'internship_db', `SELECT * FROM commit_traces WHERE repository_id IN (${repos.map(r => r.id).join(', ') || 'NULL'})`);
-  return { status: 200, body: repos.map(r => ({ repository: r.full_name, repositoryId: r.id, commits: I(c.e).commit_traces.filter(k => k.repository_id === r.id) })) };
+  const { e } = c, me = c.claims!.userId;
+  const repos = I(e).project_repositories.filter(r => r.team_id === m.team_id);
+  sql(c, 'internship_db', `SELECT commit_traces JOIN detected_git_identities WHERE linked_user_id = ${me} AND repository_id IN (${repos.map(r => r.id).join(', ') || 'NULL'})`);
+  hop(c, 'internship', INT_AT, { d: L(e, 'seuls les commits de ton identité Git, pas encore soumis sur cette mission', 'only commits of your Git identity, not yet submitted on this mission') });
+  const ok = eligible(e, m, me);
+  const body: AvailableRepo[] = repos.map(r => {
+    const all = I(e).commit_traces.filter(k => k.repository_id === r.id);
+    return { repositoryId: r.id, repository: r.full_name, defaultBranch: r.default_branch, commitsCount: all.length, commits: all.filter(ok).map(k => ({ ...k, branch: k.branches.split(',')[0] })) };
+  });
+  return { status: 200, body };
 }
-/** A commit as proof: at most one per repository and per mission, never on a finished mission. */
-function submitCommit(c: Ctx, id: number, b: { commitTraceId: number }): Res {
+/** One submission holds at most one commit per repository; every commit must be eligible. */
+function submitCommits(c: Ctx, id: number, b: { commitTraceIds: number[]; note?: string }): Res {
   const m = missionOf(c, id);
   if (!isMission(m)) return m;
+  const locked = proofsLocked(c, m);
+  if (locked) return locked;
   const { e } = c, db = I(e), me = c.claims!.userId;
-  if (m.status === 'COMPLETEE' || m.status === 'VALIDEE') {
-    bad(c, 'internship', INT_AT, L(e, `mission ${m.status} → `, `mission ${m.status} → `), { v: '409' });
-    return fail(409, 'Les preuves de cette mission ne peuvent plus changer.');
+  const ids = b?.commitTraceIds ?? [];
+  if (!ids.length) { bad(c, 'internship', INT_AT, { v: '400' }); return fail(400, 'Sélectionne au moins un commit.'); }
+  const commits = ids.map(x => db.commit_traces.find(k => k.id === x));
+  if (commits.some(k => !k || !db.project_repositories.some(r => r.id === k.repository_id && r.team_id === m.team_id))) {
+    bad(c, 'internship', INT_AT, L(e, 'commit hors des dépôts de l’équipe → ', 'commit outside the team repositories → '), { v: '400' });
+    return fail(400, 'Ce commit n’appartient pas à un dépôt de ton équipe.');
   }
-  const commit = db.commit_traces.find(k => k.id === b?.commitTraceId);
-  const repo = commit && db.project_repositories.find(r => r.id === commit.repository_id && r.team_id === m.team_id);
-  if (!commit || !repo) { bad(c, 'internship', INT_AT, L(e, 'commit hors des dépôts de l’équipe → ', 'commit outside the team repositories → '), { v: '400' }); return fail(400, 'Ce commit n’appartient pas à un dépôt de ton équipe.'); }
-  if (db.mission_commit_submissions.some(x => x.mission_id === id && x.repository_id === repo.id)) {
-    bad(c, 'internship', INT_AT, L(e, 'un commit est déjà soumis pour ce dépôt → ', 'a commit is already submitted for this repository → '), { v: '409' });
-    return fail(409, 'Un seul commit par repository : retire le précédent avant d’en choisir un autre.');
+  const list = commits as CommitRow[];
+  if (new Set(list.map(k => k.repository_id)).size !== list.length) {
+    bad(c, 'internship', INT_AT, L(e, 'deux commits du même dépôt → ', 'two commits of the same repository → '), { v: '400' });
+    return fail(400, 'Un seul commit par repository.');
+  }
+  const ok = eligible(e, m, me);
+  if (!list.every(ok)) {
+    bad(c, 'internship', INT_AT, L(e, 'commit déjà soumis ou d’une autre identité Git → ', 'commit already submitted or from another Git identity → '), { v: '409' });
+    return fail(409, 'Ce commit n’est pas disponible : il est déjà soumis ou n’est pas lié à ton identité Git.');
   }
   const sid = nextId(e, 'mission_commit_submissions');
-  db.mission_commit_submissions.push({ id: sid, mission_id: id, stagiaire_id: me, commit_id: commit.id, repository_id: repo.id, submitted_at: iso(e.now()) });
+  db.mission_commit_submissions.push({ id: sid, mission_id: id, stagiaire_id: me, note: (b.note ?? '').trim(), status: 'PENDING_REVIEW', submitted_at: iso(e.now()), review_comment: null });
   touch(e, 'internship_db', 'mission_commit_submissions', sid);
-  sql(c, 'internship_db', `INSERT INTO mission_commit_submissions (mission_id, commit_id, repository_id) VALUES (${id}, ${commit.id}, ${repo.id})`);
+  sql(c, 'internship_db', `INSERT INTO mission_commit_submissions (mission_id, stagiaire_id, status) VALUES (${id}, ${me}, 'PENDING_REVIEW')`);
+  for (const k of list) {
+    const lid = nextId(e, 'mission_commit_links');
+    db.mission_commit_links.push({ id: lid, submission_id: sid, commit_id: k.id, repository_id: k.repository_id });
+    touch(e, 'internship_db', 'mission_commit_links', lid);
+  }
+  sql(c, 'internship_db', `INSERT INTO mission_commit_links … (${list.length} ligne${list.length > 1 ? 's' : ''})`);
   if (m.status === 'A_FAIRE') { m.status = 'EN_COURS'; touch(e, 'internship_db', 'missions', m.id); }
+  e.lastTable = { db: 'internship_db', table: 'mission_commit_submissions' };
   return { status: 201, body: { id: sid } };
 }
 function removeCommit(c: Ctx, id: number, sid: number): Res {
@@ -759,11 +840,35 @@ function removeCommit(c: Ctx, id: number, sid: number): Res {
   const db = I(c.e);
   const x = db.mission_commit_submissions.find(k => k.id === sid && k.mission_id === id && k.stagiaire_id === c.claims!.userId);
   if (!x) { bad(c, 'internship', INT_AT, { v: '404' }); return fail(404, 'Soumission introuvable.'); }
+  if (x.status !== 'PENDING_REVIEW') { bad(c, 'internship', INT_AT, L(c.e, 'soumission déjà relue → ', 'submission already reviewed → '), { v: '409' }); return fail(409, 'Cette soumission a déjà été relue.'); }
   db.mission_commit_submissions.splice(db.mission_commit_submissions.indexOf(x), 1);
+  db.mission_commit_links = db.mission_commit_links.filter(l => l.submission_id !== x.id);
   c.e.gone.push({ ref: { db: 'internship_db', table: 'mission_commit_submissions' }, row: { ...x }, t: c.e.now() });
   c.e.lastTable = { db: 'internship_db', table: 'mission_commit_submissions' };
   sql(c, 'internship_db', `DELETE FROM mission_commit_submissions WHERE id = ${sid}`);
   return { status: 204, body: null };
+}
+export type CommitDetails = { commitTraceId: number; sha: string; message: string; authorLogin: string; authorName: string; committedAt: string; additions: number; deletions: number; files: ChangedFile[] };
+/** sync-details: the first opening fetches the files of the commit from GitHub and keeps them; the next ones read them back. */
+function commitDetails(c: Ctx, cid: number): Res {
+  const { e } = c, db = I(e), me = c.claims!.userId;
+  const k = db.commit_traces.find(x => x.id === cid);
+  if (!k) { bad(c, 'internship', INT_AT, { v: '404' }); return fail(404, 'Commit introuvable.'); }
+  const repo = db.project_repositories.find(r => r.id === k.repository_id)!;
+  if (myMembership(e, me)?.team_id !== repo.team_id) return refuseOutsider(c);
+  const index = db.commit_traces.filter(x => x.repository_id === k.repository_id).indexOf(k);
+  const files = COMMIT_FILES[index];
+  if (!db.commit_changed_files.some(f => f.commit_id === k.id)) {
+    hop(c, 'github', 'GitHub App', { d: L(e, 'appel simulé', 'simulated call') }, ' GET ', { v: `/repos/${repo.full_name}/commits/${k.sha}` });
+    for (const f of files) {
+      const fid = nextId(e, 'commit_changed_files');
+      db.commit_changed_files.push({ id: fid, commit_id: k.id, filename: f.filename, status: f.status, additions: f.additions, deletions: f.deletions, patch: f.patch });
+      touch(e, 'internship_db', 'commit_changed_files', fid);
+    }
+    sql(c, 'internship_db', `INSERT INTO commit_changed_files … (${files.length} fichier${files.length > 1 ? 's' : ''})`);
+  } else sql(c, 'internship_db', `SELECT * FROM commit_changed_files WHERE commit_id = ${k.id}`);
+  const body: CommitDetails = { commitTraceId: k.id, sha: k.sha, message: k.message, authorLogin: k.author_login, authorName: k.author_name, committedAt: k.committed_at, additions: k.additions, deletions: k.deletions, files };
+  return { status: 200, body };
 }
 function postComment(c: Ctx, id: number, b: { content: string }): Res {
   const m = missionOf(c, id);

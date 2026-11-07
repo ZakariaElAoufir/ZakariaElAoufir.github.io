@@ -1,7 +1,8 @@
 // The detail of a mission: overview, team, deliverables (file or commit), expected skills, comments, help requests, and the AI assistant.
 import { useState } from 'react';
 import { createPortal } from 'react-dom';
-import type { CommitRow, MissionDetailDto } from './logic';
+import type { MissionDetailDto } from './logic';
+import Deliverables from './Deliverables';
 import MissionChat from './MissionChat';
 import { Meter } from './Missions';
 import { dateFr, dateTimeFr, DIFFICULTY, STATUS, Sv, type Ctx } from './shared';
@@ -11,10 +12,7 @@ const SECTIONS = [
   ['skills', 'Compétences', 'Compétences attendues', 'target'], ['comments', 'Commentaires', 'Discussion mission', 'commit'], ['help', 'Aide', 'Demandes ouvertes', 'spark']
 ] as const;
 type Section = typeof SECTIONS[number][0];
-const DELIVERABLE = { SOUMIS: 'Soumis', EN_REVUE: 'En revue', CORRECTIONS: 'Corrections demandées', ACCEPTE: 'Accepté', REFUSE: 'Refusé' } as const;
-/** Files the visitor can "attach": nothing is read from their computer. */
-const FILES = ['rapport-api-reservation-v2.pdf', 'tests-regles-reservation.zip', 'documentation-endpoints.pdf'];
-type Repos = { repository: string; repositoryId: number; commits: CommitRow[] }[];
+
 
 export default function MissionDetail({ ctx, id }: { ctx: Ctx; id: number }) {
   const load = () => ctx.api<MissionDetailDto & { message?: string }>('GET', `/api/stagiaire/missions/${id}/full-detail`);
@@ -137,88 +135,6 @@ function TeamSection({ m }: { m: MissionDetailDto }) {
           </div>
         ))}
       </div>
-    </section>
-  );
-}
-
-function Deliverables({ ctx, m, reload }: { ctx: Ctx; m: MissionDetailDto; reload: () => void }) {
-  const [file, setFile] = useState<string | null>(null);
-  const [replace, setReplace] = useState<number | null>(null);
-  const [repos, setRepos] = useState<Repos | null>(null);
-  const [error, setError] = useState('');
-  const done = (status: number, body: { message?: string } | null, ok: string) => {
-    if (status >= 300) { const msg = body?.message ?? 'Action impossible.'; setError(msg); ctx.toast(msg); return false; }
-    setError(''); ctx.toast(ok); reload(); return true;
-  };
-  const send = () => {
-    if (!file) { setError('Choisis un fichier à envoyer.'); return; }
-    const res = replace
-      ? ctx.api<{ message?: string }>('PUT', `/api/stagiaire/missions/${m.id}/deliverables/${replace}`, { fileName: file })
-      : ctx.api<{ message?: string }>('POST', `/api/stagiaire/missions/${m.id}/deliverables`, { fileName: file });
-    if (done(res.status, res.body, replace ? 'Livrable remplacé.' : 'Livrable envoyé.')) { setFile(null); setReplace(null); ctx.step('deliver'); }
-  };
-  const remove = (did: number) => {
-    ctx.app.dialog = { title: 'Supprimer ce livrable ?', text: 'Il disparaîtra de la mission avant toute revue.', ok: 'Supprimer', run: () => {
-      const res = ctx.api<{ message?: string }>('DELETE', `/api/stagiaire/missions/${m.id}/deliverables/${did}`);
-      done(res.status, res.body, 'Livrable supprimé.');
-    } };
-    ctx.refresh();
-  };
-  const pickCommit = (commitId: number) => {
-    const res = ctx.api<{ message?: string }>('POST', `/api/stagiaire/missions/${m.id}/commit-submissions`, { commitTraceId: commitId });
-    if (done(res.status, res.body, 'Commit soumis comme résolution.')) { setRepos(null); ctx.step('deliver'); }
-  };
-  const finished = m.status === 'COMPLETEE' || m.status === 'VALIDEE';
-
-  return (
-    <section className="card">
-      <p className="eye">Mes livrables</p><h2>Dépôts envoyés</h2><p className="sub-lead">Historique de tes livrables, statuts de revue et commentaires de l’encadrant.</p>
-      {finished && <p className="info-line">Cette mission est {STATUS[m.status].toLowerCase()} : le service refusera un nouveau dépôt. Essaie quand même pour voir la réponse.</p>}
-      {error && <p className="wz-err" role="alert">{error}</p>}
-      <div className="dv-grid">
-        <div className="dv-box">
-          <p className="eye">{replace ? 'Remplacer le fichier' : 'Déposer une nouvelle version'}</p>
-          <h4>Joindre un fichier et envoyer</h4>
-          <div className="files-pick" role="radiogroup" aria-label="Fichier">
-            {FILES.map(f => <button key={f} role="radio" aria-checked={file === f} className={file === f ? 'on' : ''} onClick={() => setFile(f)}><Sv n="file" size={14} />{f}</button>)}
-          </div>
-          <small className="hint">{ctx.t.fileNote}</small>
-          <div className="row-acts">
-            {replace && <button className="sec" onClick={() => { setReplace(null); setFile(null); }}>Annuler</button>}
-            <button className="prim" onClick={send}><Sv n="download" />{replace ? 'Remplacer' : 'Envoyer'}</button>
-          </div>
-        </div>
-        <div className="dv-box">
-          <p className="eye">Soumission par commit GitHub</p>
-          <h4>Choisir un commit comme résolution</h4>
-          <p className="sub-lead">Un commit au plus par repository de l’équipe.</p>
-          {repos ? repos.map(rp => (
-            <div key={rp.repositoryId} className="commit-pick">
-              <b>{rp.repository}</b>
-              <ul>{rp.commits.slice(0, 5).map(k => <li key={k.id}><button onClick={() => pickCommit(k.id)}><code>{k.sha}</code><span>{k.message}</span></button></li>)}</ul>
-            </div>
-          )) : <button className="sec" onClick={() => setRepos(ctx.api<Repos>('GET', `/api/stagiaire/missions/${m.id}/available-commits`).body)}><Sv n="git" />Afficher les commits</button>}
-          {!repos && !m.commitSubmissions.length && <p className="sub-lead">Aucun commit soumis pour cette mission.</p>}
-          {m.commitSubmissions.map(x => (
-            <div key={x.id} className="gh-row small-row">
-              <Sv n="commit" /><span className="row-main"><b>{x.message}</b><small>{x.repository}, {x.author.name}, {dateTimeFr(x.submittedAt)}</small></span><code>{x.sha}</code>
-              <button className="round" aria-label="Retirer ce commit" title="Retirer" onClick={() => { const res = ctx.api<{ message?: string }>('DELETE', `/api/stagiaire/missions/${m.id}/commit-submissions/${x.id}`); done(res.status, res.body, 'Commit retiré.'); }}><Sv n="x" size={14} /></button>
-            </div>
-          ))}
-        </div>
-      </div>
-      <ul className="rows">
-        {!m.deliverables.length && <li className="sub-lead">Tu n’as encore rien déposé sur cette mission.</li>}
-        {m.deliverables.map(d => (
-          <li key={d.id}><div className="gh-row dv-row">
-            <span className="ava small">{d.author.initials}</span>
-            <span className="row-main"><b>{d.file_name}</b><small>Version {d.version}, envoyé le {dateTimeFr(d.submitted_at)}</small>{d.review_comment && <small className="review">Encadrant : {d.review_comment}</small>}</span>
-            <span className="chips"><i className={`dv-${d.status}`}>{DELIVERABLE[d.status]}</i></span>
-            <button className="sec small" onClick={() => { setReplace(d.id); setFile(null); setError(''); }}>Remplacer</button>
-            <button className="sec small" onClick={() => remove(d.id)}>Supprimer</button>
-          </div></li>
-        ))}
-      </ul>
     </section>
   );
 }
