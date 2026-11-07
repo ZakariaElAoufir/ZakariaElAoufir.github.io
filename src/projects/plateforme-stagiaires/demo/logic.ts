@@ -1,6 +1,7 @@
 // The intern platform replayed in the browser. The rules of intership-service and auth-service are rewritten here from how they behave;
 // all the data is invented and nothing leaves the page: every "HTTP call" is a function call that records the journey it would take.
 import { REPO_FILES, type RepoFile } from './repo';
+import { answerQuestion, chunkPages, retrieve, SPEC_PDF, workPlan, CHUNK_OVERLAP, CHUNK_SIZE, TOP_K, type Match, type Scope } from './ai';
 
 export type Lang = 'fr' | 'en';
 export type Role = 'STAGIAIRE' | 'ENCADRANT';
@@ -17,7 +18,22 @@ export type Slot = { id: number; team_id: number; position_id: number; capacity:
 export type Membership = { id: number; team_id: number; stagiaire_id: number; slot_id: number; joined_at: string };
 export type Selection = { id: number; subject_id: number; position_id: number; stagiaire_id: number };
 export type History = { id: number; team_id: number; action: string; detail: string; created_at: string };
-export type Mission = { id: number; team_id: number; title: string; description: string; difficulty: Difficulty; status: MissionStatus; points: number; coins: number; assignee_id: number; due_date: string; competences: string[]; validated_at: string | null };
+export type Mission = {
+  id: number; team_id: number; title: string; description: string; difficulty: Difficulty; status: MissionStatus; points: number; coins: number; assignee_id: number; due_date: string;
+  /** skills acquired once validated, and skills expected while it runs */ competences: string[]; expected: string[]; validated_at: string | null; created_at: string;
+  /** engagement of each member on this mission (%), and of the whole team */ progress: Record<number, number>; team_progress: number;
+  /** the concrete next step, used by the work plan */ next: string;
+};
+export type DeliverableStatus = 'SOUMIS' | 'EN_REVUE' | 'CORRECTIONS' | 'ACCEPTE' | 'REFUSE';
+export type Attachment = { id: number; mission_id: number; file_name: string; size_kb: number; uploaded_at: string };
+export type Deliverable = { id: number; mission_id: number; stagiaire_id: number; file_name: string; version: number; status: DeliverableStatus; submitted_at: string; review_comment: string | null };
+export type CommitSubmission = { id: number; mission_id: number; stagiaire_id: number; commit_id: number; repository_id: number; submitted_at: string };
+export type Comment = { id: number; mission_id: number; author_id: number; content: string; created_at: string };
+export type HelpRequest = { id: number; mission_id: number; author_id: number; content: string; status: 'OUVERTE' | 'RESOLUE'; responses: number; created_at: string };
+export type AiConversation = { id: number; mission_id: number; student_id: number; mission_title: string; created_at: string };
+export type AiMessage = { id: number; conversation_id: number; role: 'USER' | 'ASSISTANT'; content: string; scope: Scope | null; model: string | null; created_at: string };
+export type AiDocument = { id: number; mission_id: number; attachment_id: number; file_name: string; status: 'READY'; content_hash: string; chunks_count: number };
+export type AiChunk = { id: number; document_id: number; chunk_index: number; page_number: number; content: string; embedding: string };
 export type Repository = { id: number; team_id: number; full_name: string; visibility: string; active: boolean; default_branch: string; last_sync_at: string };
 export type Branch = { id: number; repository_id: number; name: string; head_sha: string; is_default: boolean };
 export type CommitRow = { id: number; repository_id: number; sha: string; message: string; author_login: string; author_name: string; committed_at: string; additions: number; deletions: number; branches: string };
@@ -30,7 +46,9 @@ export type Db = {
     subjects: Subject[]; subject_positions: Position[]; teams: Team[]; team_position_slots: Slot[]; team_memberships: Membership[];
     subject_selections: Selection[]; team_histories: History[]; missions: Mission[];
     project_repositories: Repository[]; repository_branches: Branch[]; commit_traces: CommitRow[]; detected_git_identities: GitIdentity[];
+    mission_attachments: Attachment[]; deliverables: Deliverable[]; mission_commit_submissions: CommitSubmission[]; comments: Comment[]; help_requests: HelpRequest[];
   };
+  chabot_assistant_db: { ai_conversations: AiConversation[]; ai_messages: AiMessage[]; ai_document_indexes: AiDocument[]; ai_document_chunks: AiChunk[] };
 };
 export type DbName = keyof Db;
 export type TableRef = { db: DbName; table: string };
@@ -48,15 +66,24 @@ export const TABLES: { db: DbName; table: string; cols: [string, ColType][] }[] 
   { db: 'internship_db', table: 'project_repositories', cols: [['id', 'int'], ['team_id', 'int'], ['full_name', 'text'], ['visibility', 'text'], ['active', 'bool'], ['last_sync_at', 'timestamp']] },
   { db: 'internship_db', table: 'repository_branches', cols: [['id', 'int'], ['repository_id', 'int'], ['name', 'text'], ['head_sha', 'text'], ['is_default', 'bool']] },
   { db: 'internship_db', table: 'commit_traces', cols: [['id', 'int'], ['repository_id', 'int'], ['sha', 'text'], ['message', 'text'], ['author_login', 'text'], ['additions', 'int'], ['deletions', 'int']] },
-  { db: 'internship_db', table: 'detected_git_identities', cols: [['id', 'int'], ['team_id', 'int'], ['login', 'text'], ['email', 'text'], ['commits', 'int'], ['linked_user_id', 'int']] }
+  { db: 'internship_db', table: 'detected_git_identities', cols: [['id', 'int'], ['team_id', 'int'], ['login', 'text'], ['email', 'text'], ['commits', 'int'], ['linked_user_id', 'int']] },
+  { db: 'internship_db', table: 'mission_attachments', cols: [['id', 'int'], ['mission_id', 'int'], ['file_name', 'text'], ['size_kb', 'int'], ['uploaded_at', 'timestamp']] },
+  { db: 'internship_db', table: 'deliverables', cols: [['id', 'int'], ['mission_id', 'int'], ['stagiaire_id', 'int'], ['file_name', 'text'], ['version', 'int'], ['status', 'text'], ['submitted_at', 'timestamp']] },
+  { db: 'internship_db', table: 'mission_commit_submissions', cols: [['id', 'int'], ['mission_id', 'int'], ['stagiaire_id', 'int'], ['commit_id', 'int'], ['repository_id', 'int'], ['submitted_at', 'timestamp']] },
+  { db: 'internship_db', table: 'comments', cols: [['id', 'int'], ['mission_id', 'int'], ['author_id', 'int'], ['content', 'text'], ['created_at', 'timestamp']] },
+  { db: 'internship_db', table: 'help_requests', cols: [['id', 'int'], ['mission_id', 'int'], ['author_id', 'int'], ['content', 'text'], ['status', 'text'], ['created_at', 'timestamp']] },
+  { db: 'chabot_assistant_db', table: 'ai_conversations', cols: [['id', 'int'], ['mission_id', 'int'], ['student_id', 'int'], ['mission_title', 'text'], ['created_at', 'timestamp']] },
+  { db: 'chabot_assistant_db', table: 'ai_messages', cols: [['id', 'int'], ['conversation_id', 'int'], ['role', 'text'], ['content', 'text'], ['scope', 'text'], ['model', 'text']] },
+  { db: 'chabot_assistant_db', table: 'ai_document_indexes', cols: [['id', 'int'], ['mission_id', 'int'], ['file_name', 'text'], ['status', 'text'], ['content_hash', 'text'], ['chunks_count', 'int']] },
+  { db: 'chabot_assistant_db', table: 'ai_document_chunks', cols: [['id', 'int'], ['document_id', 'int'], ['chunk_index', 'int'], ['page_number', 'int'], ['content', 'text'], ['embedding', 'text']] }
 ];
 
 /** A piece of a trace line: plain text, a value (highlighted) or a dimmed note. */
 export type Seg = string | { v: string } | { d: string };
-export type Node = 'nginx' | 'gateway' | 'auth' | 'face' | 'internship' | 'github' | 'postgres';
+export type Node = 'nginx' | 'gateway' | 'auth' | 'face' | 'internship' | 'github' | 'ai' | 'ollama' | 'postgres';
 export type Hop = { node: Node; at: string; text: Seg[]; bad?: boolean };
 export type Trace = { id: number; t: number; by: string; method: Method; path: string; status: number; hops: Hop[] };
-export type Step = 'login' | 'face' | 'join' | 'role' | 'github' | 'skills';
+export type Step = 'login' | 'face' | 'join' | 'role' | 'github' | 'skills' | 'deliver' | 'chat' | 'plan' | 'review';
 
 export type Engine = {
   lang: Lang; db: Db; traces: Trace[]; steps: Set<Step>;
@@ -114,15 +141,34 @@ export function createEngine(lang: Lang, now: () => number = Date.now): Engine {
     selections.push({ id: selections.length + 1, subject_id: teams.find(x => x.id === team_id)!.subject_id, position_id, stagiaire_id });
   };
   seat(4, 1, 1, 11); seat(5, 1, 2, 11); seat(6, 1, 3, 10); seat(7, 2, 1, 8); seat(8, 2, 2, 8); seat(9, 3, 4, 5);
-  const mission = (id: number, title: string, description: string, difficulty: Difficulty, status: MissionStatus, points: number, coins: number, assignee_id: number, due: number, competences: string[] = [], validated = 0): Mission =>
-    ({ id, team_id: 1, title, description, difficulty, status, points, coins, assignee_id, due_date: iso(t0 + due * D), competences, validated_at: validated ? iso(t0 - validated * D) : null });
+  const mission = (id: number, team_id: number, title: string, description: string, difficulty: Difficulty, status: MissionStatus, points: number, coins: number, assignee_id: number, due: number,
+    expected: string[], next: string, progress: Record<number, number> = {}, team_progress = 0, validated = 0): Mission =>
+    ({ id, team_id, title, description, difficulty, status, points, coins, assignee_id, due_date: iso(t0 + due * D), expected, competences: validated ? expected : [], validated_at: validated ? iso(t0 - validated * D) : null,
+      created_at: iso(t0 - 9 * D), progress, team_progress, next });
+  const API_NEXT = 'écrire les tests des règles R1 à R6, puis terminer la détection de chevauchement et soumettre le commit.';
+  const CI_NEXT = 'ajouter le job de tests au workflow, puis la construction des images à chaque push.';
   const missions = [
-    mission(1, 'API de réservation des salles', 'Exposer la création, la consultation et l’annulation des réservations, sans chevauchement sur une même salle.', 'HARD', 'EN_COURS', 40, 20, 4, 6),
-    mission(2, 'Écran de réservation Angular', 'Formulaire de réservation et planning de la semaine, branchés sur l’API.', 'MEDIUM', 'COMPLETEE', 25, 12, 5, 3),
-    mission(3, 'Pipeline d’intégration continue', 'Lancer les tests et construire les images à chaque push.', 'MEDIUM', 'A_FAIRE', 25, 8, 6, 12),
-    mission(4, 'Conteneuriser l’application', 'Dockerfile pour chaque partie et lancement complet avec Docker Compose.', 'EASY', 'VALIDEE', 15, 5, 6, -2, ['Dockerfile multi-étapes', 'Docker Compose'], 2),
-    mission(5, 'Modèle de données des réservations', 'Tables des salles et des réservations, avec leurs contraintes.', 'MEDIUM', 'VALIDEE', 20, 8, 4, -5, ['Modélisation relationnelle', 'JPA et PostgreSQL'], 5),
-    mission(6, 'Maquette des écrans', 'Parcours de réservation et états vides, validés avec l’encadrant.', 'EASY', 'VALIDEE', 15, 5, 5, -7, ['Parcours utilisateur', 'Composants Angular'], 7)
+    mission(1, 1, 'API de réservation des salles', 'Exposer les salles et les réservations, sans double réservation.', 'HARD', 'EN_COURS', 40, 20, 4, 5, ['Spring Boot', 'JPA', 'Tests unitaires'], API_NEXT, { 4: 67 }, 50),
+    mission(2, 1, 'Écran de réservation Angular', 'Planning par salle et réservation en deux clics.', 'MEDIUM', 'COMPLETEE', 25, 12, 5, 3, ['Formulaires réactifs', 'Appels HTTP'], 'attendre la revue de l’encadrant et corriger ses remarques.', { 5: 100 }, 60),
+    mission(3, 1, 'Pipeline d’intégration continue', 'Build et tests à chaque push sur GitHub Actions.', 'MEDIUM', 'A_FAIRE', 25, 8, 6, 12, ['GitHub Actions', 'Docker'], CI_NEXT),
+    mission(4, 1, 'Conteneuriser l’application', 'Dockerfile multi-étapes et docker-compose pour l’API et PostgreSQL.', 'EASY', 'VALIDEE', 15, 5, 6, -2, ['Dockerfile multi-étapes', 'Docker Compose'], '', { 6: 100 }, 100, 2),
+    mission(5, 1, 'Modèle de données des réservations', 'Tables des salles et des réservations, avec leurs contraintes.', 'MEDIUM', 'VALIDEE', 20, 8, 4, -5, ['Modélisation relationnelle', 'JPA et PostgreSQL'], '', { 4: 100 }, 100, 5),
+    mission(6, 1, 'Maquette des écrans', 'Parcours de réservation et états vides, validés avec l’encadrant.', 'EASY', 'VALIDEE', 15, 5, 5, -7, ['Parcours utilisateur', 'Composants Angular'], '', { 5: 100 }, 100, 7),
+    mission(7, 2, 'API de réservation des salles', 'Exposer les salles et les réservations, sans double réservation.', 'HARD', 'A_FAIRE', 40, 20, 7, 9, ['Spring Boot', 'JPA', 'Tests unitaires'], API_NEXT),
+    mission(8, 2, 'Pipeline d’intégration continue', 'Build et tests à chaque push sur GitHub Actions.', 'MEDIUM', 'A_FAIRE', 25, 8, 8, 16, ['GitHub Actions', 'Docker'], CI_NEXT)
+  ];
+  const attachments: Attachment[] = [1, 7].map((mission_id, i) => ({ id: i + 1, mission_id, file_name: SPEC_PDF.name, size_kb: 184, uploaded_at: iso(t0 - 9 * D + 3 * H) }));
+  const deliverables: Deliverable[] = [
+    { id: 1, mission_id: 1, stagiaire_id: 4, file_name: 'rapport-api-reservation.pdf', version: 1, status: 'SOUMIS', submitted_at: iso(t0 - 1 * D - 4 * H), review_comment: null },
+    { id: 2, mission_id: 2, stagiaire_id: 5, file_name: 'captures-ecran-reservation.pdf', version: 2, status: 'EN_REVUE', submitted_at: iso(t0 - 2 * D), review_comment: null },
+    { id: 3, mission_id: 4, stagiaire_id: 6, file_name: 'conteneurisation.pdf', version: 1, status: 'ACCEPTE', submitted_at: iso(t0 - 3 * D), review_comment: 'Images légères et compose clair, validé.' }
+  ];
+  const comments: Comment[] = [
+    { id: 1, mission_id: 1, author_id: 4, content: 'J’ai poussé une première version de l’API sur feature/reservations-api, le rapport est dans les livrables.', created_at: iso(t0 - 1 * D - 3 * H) },
+    { id: 2, mission_id: 1, author_id: 1, content: 'Bon début. Pensez à tester le cas des créneaux bout à bout avant vendredi.', created_at: iso(t0 - 1 * D) }
+  ];
+  const helps: HelpRequest[] = [
+    { id: 1, mission_id: 1, author_id: 5, content: 'Quel format de date l’API attend-elle pour le début et la fin ? ISO 8601 avec fuseau ?', status: 'OUVERTE', responses: 0, created_at: iso(t0 - 20 * H) }
   ];
   const seedRepo = (id: number, team_id: number, full_name: string, age: number): Repository => ({ id, team_id, full_name, visibility: 'private', active: true, default_branch: 'main', last_sync_at: iso(t0 - age * H) });
   const branches: Branch[] = [];
@@ -167,10 +213,15 @@ export function createEngine(lang: Lang, now: () => number = Date.now): Engine {
       authdb: { accounts },
       internship_db: {
         subjects, subject_positions: positions, teams, team_position_slots: slots, team_memberships: memberships, subject_selections: selections, team_histories: histories,
-        missions, project_repositories: repositories, repository_branches: branches, commit_traces: commits, detected_git_identities: identities
-      }
+        missions, project_repositories: repositories, repository_branches: branches, commit_traces: commits, detected_git_identities: identities,
+        mission_attachments: attachments, deliverables, mission_commit_submissions: [], comments, help_requests: helps
+      },
+      chabot_assistant_db: { ai_conversations: [], ai_messages: [], ai_document_indexes: [], ai_document_chunks: [] }
     },
-    seq: { team_memberships: memberships.length, subject_selections: selections.length, team_histories: histories.length }
+    seq: {
+      team_memberships: memberships.length, subject_selections: selections.length, team_histories: histories.length, missions: missions.length,
+      deliverables: deliverables.length, comments: comments.length, help_requests: helps.length
+    }
   };
 }
 
@@ -279,10 +330,10 @@ function gateway(c: Ctx, method: Method, route: string, query: URLSearchParams, 
   const claims = readToken(token);
   if (!claims) { bad(c, 'gateway', ':8080', L(e, 'pas de jeton valide → ', 'no valid token → '), { v: '401 Unauthorized' }); return fail(401, 'Session expirée.'); }
   c.claims = claims;
-  const internship = !route.startsWith('/api/auth');
-  hop(c, 'gateway', ':8080', L(e, 'jeton vérifié, ', 'token checked, '), { v: `X-User-Id: ${claims.userId}` }, ' → ', { v: internship ? 'lb://INTERSHIP-SERVICE' : 'lb://AUTH-SERVICE' });
+  const target = route.startsWith('/api/auth') ? 'lb://AUTH-SERVICE' : route.startsWith('/api/ai') ? 'lb://CHABOT-ASSISTANT-SERVICE' : 'lb://INTERSHIP-SERVICE';
+  hop(c, 'gateway', ':8080', L(e, 'jeton vérifié, ', 'token checked, '), { v: `X-User-Id: ${claims.userId}` }, ' → ', { v: target });
   if (route === '/api/auth/logout') { hop(c, 'auth', AUTH_AT, L(e, 'jeton de rafraîchissement révoqué', 'refresh token revoked')); return { status: 204, body: null }; }
-  if (route.startsWith('/api/stagiaire') && !claims.roles.includes('STAGIAIRE')) {
+  if ((route.startsWith('/api/stagiaire') || route.startsWith('/api/ai/missions') || route.startsWith('/api/ai/stagiaire')) && !claims.roles.includes('STAGIAIRE')) {
     bad(c, 'internship', INT_AT, L(e, 'réservé au rôle STAGIAIRE → ', 'STAGIAIRE role only → '), { v: '403 Forbidden' });
     return fail(403, 'Accès réservé aux stagiaires.');
   }
@@ -302,6 +353,21 @@ function gateway(c: Ctx, method: Method, route: string, query: URLSearchParams, 
   if (method === 'GET' && (m = route.match(/^\/api\/github\/repositories\/(\d+)\/files$/))) return readFile(c, +m[1], query.get('branch'), query.get('path') ?? '');
   if (method === 'GET' && (m = route.match(/^\/api\/github\/teams\/(\d+)\/git-identities$/))) return identities(c, +m[1]);
   if (method === 'POST' && (m = route.match(/^\/api\/github\/teams\/(\d+)\/git-identities\/(\d+)\/link$/))) return linkIdentity(c, +m[1], +m[2]);
+  if (method === 'GET' && route === '/api/stagiaire/missions') return listMissions(c);
+  if (method === 'GET' && (m = route.match(/^\/api\/stagiaire\/missions\/(\d+)\/full-detail$/))) return missionDetail(c, +m[1]);
+  if (method === 'GET' && (m = route.match(/^\/api\/stagiaire\/missions\/attachments\/(\d+)\/file$/))) return attachmentFile(c, +m[1]);
+  if (method === 'POST' && (m = route.match(/^\/api\/stagiaire\/missions\/(\d+)\/deliverables$/))) return submitDeliverable(c, +m[1], body as { fileName: string });
+  if (method === 'PUT' && (m = route.match(/^\/api\/stagiaire\/missions\/(\d+)\/deliverables\/(\d+)$/))) return changeDeliverable(c, +m[1], +m[2], body as { fileName: string });
+  if (method === 'DELETE' && (m = route.match(/^\/api\/stagiaire\/missions\/(\d+)\/deliverables\/(\d+)$/))) return changeDeliverable(c, +m[1], +m[2], null);
+  if (method === 'GET' && (m = route.match(/^\/api\/stagiaire\/missions\/(\d+)\/available-commits$/))) return availableCommits(c, +m[1]);
+  if (method === 'POST' && (m = route.match(/^\/api\/stagiaire\/missions\/(\d+)\/commit-submissions$/))) return submitCommit(c, +m[1], body as { commitTraceId: number });
+  if (method === 'DELETE' && (m = route.match(/^\/api\/stagiaire\/missions\/(\d+)\/commit-submissions\/(\d+)$/))) return removeCommit(c, +m[1], +m[2]);
+  if (method === 'POST' && (m = route.match(/^\/api\/stagiaire\/missions\/(\d+)\/comments$/))) return postComment(c, +m[1], body as { content: string });
+  if (method === 'POST' && (m = route.match(/^\/api\/stagiaire\/missions\/(\d+)\/help-requests$/))) return postHelp(c, +m[1], body as { content: string });
+  if (method === 'POST' && (m = route.match(/^\/api\/ai\/missions\/(\d+)\/chat$/))) return missionChat(c, +m[1], body as { question: string });
+  if (method === 'POST' && (m = route.match(/^\/api\/ai\/missions\/(\d+)\/chat\/cancel$/))) return cancelChat(c, +m[1]);
+  if (method === 'GET' && (m = route.match(/^\/api\/ai\/missions\/(\d+)\/chat\/history$/))) return chatHistory(c, +m[1]);
+  if (method === 'POST' && route === '/api/ai/stagiaire/missions/work-plan') return planMissions(c);
   bad(c, 'internship', INT_AT, L(e, 'aucune route', 'no route'));
   return fail(404, 'Introuvable.');
 }
@@ -534,4 +600,301 @@ function linkIdentity(c: Ctx, teamId: number, identityId: number): Res {
   touch(e, 'internship_db', 'detected_git_identities', g.id);
   sql(c, 'internship_db', `UPDATE detected_git_identities SET linked_user_id = ${me.id} WHERE id = ${g.id}`);
   return { status: 200, body: g };
+}
+
+// ---------------------------------------------------------------- intership-service: missions, deliverables, comments, help
+export type MissionCardDto = {
+  id: number; title: string; description: string; difficulty: Difficulty; status: MissionStatus; points: number; coins: number; dueDate: string; createdAt: string;
+  subjectCode: string; subjectTitle: string; teamName: string; teamNumber: number; myEngagement: number; teamEngagement: number; teamReward: number;
+};
+export type DeliverableDto = Deliverable & { author: PersonDto };
+export type CommitSubmissionDto = { id: number; sha: string; message: string; repository: string; submittedAt: string; author: PersonDto };
+export type MissionDetailDto = MissionCardDto & {
+  supervisor: PersonDto; expected: string[]; attachments: Attachment[];
+  members: (MemberDto & { engagement: number; submitted: number; accepted: number })[];
+  deliverables: DeliverableDto[]; commitSubmissions: CommitSubmissionDto[];
+  comments: (Comment & { author: PersonDto })[]; helpRequests: (HelpRequest & { author: PersonDto })[];
+};
+const DAY = 24 * 3600_000;
+const missionOf = (c: Ctx, id: number): Mission | Res => {
+  const e = c.e, me = c.claims!.userId;
+  sql(c, 'internship_db', `SELECT * FROM missions WHERE id = ${id}`);
+  const m = I(e).missions.find(x => x.id === id);
+  if (!m) { bad(c, 'internship', INT_AT, 'MissionNotFoundException → ', { v: '404' }); return fail(404, 'Mission introuvable.'); }
+  if (myMembership(e, me)?.team_id !== m.team_id) {
+    bad(c, 'internship', INT_AT, L(e, 'mission d’une autre équipe → ', 'mission of another team → '), { v: '403' });
+    return fail(403, 'Cette mission ne concerne pas ton équipe.');
+  }
+  return m;
+};
+const isMission = (x: Mission | Res): x is Mission => !('status' in x && 'body' in x);
+const card = (e: Engine, m: Mission, me: number): MissionCardDto => {
+  const team = I(e).teams.find(t => t.id === m.team_id)!;
+  const subject = I(e).subjects.find(s => s.id === team.subject_id)!;
+  return {
+    id: m.id, title: m.title, description: m.description, difficulty: m.difficulty, status: m.status, points: m.points, coins: m.coins, dueDate: m.due_date, createdAt: m.created_at,
+    subjectCode: subject.code, subjectTitle: subject.title, teamName: team.name, teamNumber: team.number, myEngagement: m.progress[me] ?? 0, teamEngagement: m.team_progress, teamReward: m.points * 2
+  };
+};
+function listMissions(c: Ctx): Res {
+  const { e } = c, me = c.claims!.userId;
+  const mine = myMembership(e, me);
+  sql(c, 'internship_db', `SELECT * FROM missions WHERE team_id = ${mine?.team_id ?? 'NULL'} ORDER BY due_date`);
+  if (!mine) return { status: 200, body: [] };
+  return { status: 200, body: I(e).missions.filter(m => m.team_id === mine.team_id).map(m => card(e, m, me)) };
+}
+function missionDetail(c: Ctx, id: number): Res {
+  const m = missionOf(c, id);
+  if (!isMission(m)) return m;
+  const { e } = c, db = I(e), me = c.claims!.userId;
+  sql(c, 'internship_db', `SELECT deliverables, comments, help_requests, mission_attachments WHERE mission_id = ${id}`);
+  const team = teamDto(e, db.teams.find(t => t.id === m.team_id)!);
+  const subject = db.subjects.find(s => s.id === db.teams.find(t => t.id === m.team_id)!.subject_id)!;
+  const repo = (rid: number) => db.project_repositories.find(r => r.id === rid)!.full_name;
+  const body: MissionDetailDto = {
+    ...card(e, m, me), supervisor: personDto(account(e, subject.supervisor_id)), expected: m.expected,
+    attachments: db.mission_attachments.filter(a => a.mission_id === id),
+    members: team.members.map(x => ({
+      ...x, engagement: m.progress[x.id] ?? 0,
+      submitted: db.deliverables.filter(d => d.mission_id === id && d.stagiaire_id === x.id).length,
+      accepted: db.deliverables.filter(d => d.mission_id === id && d.stagiaire_id === x.id && d.status === 'ACCEPTE').length
+    })),
+    deliverables: db.deliverables.filter(d => d.mission_id === id && d.stagiaire_id === me).sort((a, b) => b.version - a.version).map(d => ({ ...d, author: personDto(account(e, d.stagiaire_id)) })),
+    commitSubmissions: db.mission_commit_submissions.filter(x => x.mission_id === id).map(x => {
+      const commit = db.commit_traces.find(k => k.id === x.commit_id)!;
+      return { id: x.id, sha: commit.sha, message: commit.message, repository: repo(x.repository_id), submittedAt: x.submitted_at, author: personDto(account(e, x.stagiaire_id)) };
+    }),
+    comments: db.comments.filter(x => x.mission_id === id).map(x => ({ ...x, author: personDto(account(e, x.author_id)) })),
+    helpRequests: db.help_requests.filter(x => x.mission_id === id).map(x => ({ ...x, author: personDto(account(e, x.author_id)) }))
+  };
+  return { status: 200, body };
+}
+function attachmentFile(c: Ctx, id: number): Res {
+  const a = I(c.e).mission_attachments.find(x => x.id === id);
+  if (!a) { bad(c, 'internship', INT_AT, { v: '404' }); return fail(404, 'Document introuvable.'); }
+  const m = missionOf(c, a.mission_id);
+  if (!isMission(m)) return m;
+  hop(c, 'internship', INT_AT, L(c.e, 'fichier lu depuis le stockage des consignes', 'file read from the instructions storage'));
+  return { status: 200, body: SPEC_PDF };
+}
+/** submitDeliverable: refused on a finished mission; the version follows the stagiaire's last one; the first one starts the mission. */
+function submitDeliverable(c: Ctx, id: number, b: { fileName: string }): Res {
+  const m = missionOf(c, id);
+  if (!isMission(m)) return m;
+  const { e } = c, db = I(e), me = c.claims!.userId;
+  if (m.status === 'COMPLETEE' || m.status === 'VALIDEE') {
+    bad(c, 'internship', INT_AT, L(e, `mission ${m.status} → `, `mission ${m.status} → `), { v: '409' });
+    return fail(409, 'Impossible de soumettre un livrable sur une mission terminée.');
+  }
+  if (!b?.fileName) { bad(c, 'internship', INT_AT, { v: '400' }); return fail(400, 'Le fichier est obligatoire.'); }
+  const version = Math.max(0, ...db.deliverables.filter(d => d.mission_id === id && d.stagiaire_id === me).map(d => d.version)) + 1;
+  const did = nextId(e, 'deliverables');
+  db.deliverables.push({ id: did, mission_id: id, stagiaire_id: me, file_name: b.fileName, version, status: 'SOUMIS', submitted_at: iso(e.now()), review_comment: null });
+  hop(c, 'internship', INT_AT, L(e, 'fichier rangé dans le stockage des livrables, ', 'file stored with the deliverables, '), { v: `version ${version}` });
+  sql(c, 'internship_db', `INSERT INTO deliverables (mission_id, stagiaire_id, file_name, version, status) VALUES (${id}, ${me}, '${b.fileName}', ${version}, 'SOUMIS')`);
+  if (m.status === 'A_FAIRE') {
+    m.status = 'EN_COURS';
+    touch(e, 'internship_db', 'missions', m.id);
+    sql(c, 'internship_db', `UPDATE missions SET status = 'EN_COURS' WHERE id = ${id}`);
+  }
+  touch(e, 'internship_db', 'deliverables', did);
+  return { status: 201, body: { id: did, version } };
+}
+/** Replace (fileName) or delete (null) a deliverable: only one's own, and only while nobody has reviewed it. */
+function changeDeliverable(c: Ctx, id: number, did: number, b: { fileName: string } | null): Res {
+  const m = missionOf(c, id);
+  if (!isMission(m)) return m;
+  const { e } = c, db = I(e), me = c.claims!.userId;
+  const d = db.deliverables.find(x => x.id === did && x.mission_id === id && x.stagiaire_id === me);
+  if (!d) { bad(c, 'internship', INT_AT, 'DeliverableNotFoundException → ', { v: '404' }); return fail(404, 'Livrable introuvable.'); }
+  if (d.status !== 'SOUMIS') {
+    bad(c, 'internship', INT_AT, L(e, `livrable déjà ${d.status} → `, `deliverable already ${d.status} → `), { v: '409' });
+    return fail(409, b ? 'Ce livrable ne peut pas être remplacé.' : 'Ce livrable ne peut plus être supprimé.');
+  }
+  if (b) {
+    d.file_name = b.fileName; d.submitted_at = iso(e.now());
+    touch(e, 'internship_db', 'deliverables', d.id);
+    sql(c, 'internship_db', `UPDATE deliverables SET file_name = '${b.fileName}' WHERE id = ${d.id}`);
+    return { status: 200, body: d };
+  }
+  db.deliverables.splice(db.deliverables.indexOf(d), 1);
+  e.gone.push({ ref: { db: 'internship_db', table: 'deliverables' }, row: { ...d }, t: e.now() });
+  e.lastTable = { db: 'internship_db', table: 'deliverables' };
+  sql(c, 'internship_db', `DELETE FROM deliverables WHERE id = ${d.id}`);
+  return { status: 204, body: null };
+}
+function availableCommits(c: Ctx, id: number): Res {
+  const m = missionOf(c, id);
+  if (!isMission(m)) return m;
+  const repos = I(c.e).project_repositories.filter(r => r.team_id === m.team_id);
+  sql(c, 'internship_db', `SELECT * FROM commit_traces WHERE repository_id IN (${repos.map(r => r.id).join(', ') || 'NULL'})`);
+  return { status: 200, body: repos.map(r => ({ repository: r.full_name, repositoryId: r.id, commits: I(c.e).commit_traces.filter(k => k.repository_id === r.id) })) };
+}
+/** A commit as proof: at most one per repository and per mission, never on a finished mission. */
+function submitCommit(c: Ctx, id: number, b: { commitTraceId: number }): Res {
+  const m = missionOf(c, id);
+  if (!isMission(m)) return m;
+  const { e } = c, db = I(e), me = c.claims!.userId;
+  if (m.status === 'COMPLETEE' || m.status === 'VALIDEE') {
+    bad(c, 'internship', INT_AT, L(e, `mission ${m.status} → `, `mission ${m.status} → `), { v: '409' });
+    return fail(409, 'Les preuves de cette mission ne peuvent plus changer.');
+  }
+  const commit = db.commit_traces.find(k => k.id === b?.commitTraceId);
+  const repo = commit && db.project_repositories.find(r => r.id === commit.repository_id && r.team_id === m.team_id);
+  if (!commit || !repo) { bad(c, 'internship', INT_AT, L(e, 'commit hors des dépôts de l’équipe → ', 'commit outside the team repositories → '), { v: '400' }); return fail(400, 'Ce commit n’appartient pas à un dépôt de ton équipe.'); }
+  if (db.mission_commit_submissions.some(x => x.mission_id === id && x.repository_id === repo.id)) {
+    bad(c, 'internship', INT_AT, L(e, 'un commit est déjà soumis pour ce dépôt → ', 'a commit is already submitted for this repository → '), { v: '409' });
+    return fail(409, 'Un seul commit par repository : retire le précédent avant d’en choisir un autre.');
+  }
+  const sid = nextId(e, 'mission_commit_submissions');
+  db.mission_commit_submissions.push({ id: sid, mission_id: id, stagiaire_id: me, commit_id: commit.id, repository_id: repo.id, submitted_at: iso(e.now()) });
+  touch(e, 'internship_db', 'mission_commit_submissions', sid);
+  sql(c, 'internship_db', `INSERT INTO mission_commit_submissions (mission_id, commit_id, repository_id) VALUES (${id}, ${commit.id}, ${repo.id})`);
+  if (m.status === 'A_FAIRE') { m.status = 'EN_COURS'; touch(e, 'internship_db', 'missions', m.id); }
+  return { status: 201, body: { id: sid } };
+}
+function removeCommit(c: Ctx, id: number, sid: number): Res {
+  const m = missionOf(c, id);
+  if (!isMission(m)) return m;
+  const db = I(c.e);
+  const x = db.mission_commit_submissions.find(k => k.id === sid && k.mission_id === id && k.stagiaire_id === c.claims!.userId);
+  if (!x) { bad(c, 'internship', INT_AT, { v: '404' }); return fail(404, 'Soumission introuvable.'); }
+  db.mission_commit_submissions.splice(db.mission_commit_submissions.indexOf(x), 1);
+  c.e.gone.push({ ref: { db: 'internship_db', table: 'mission_commit_submissions' }, row: { ...x }, t: c.e.now() });
+  c.e.lastTable = { db: 'internship_db', table: 'mission_commit_submissions' };
+  sql(c, 'internship_db', `DELETE FROM mission_commit_submissions WHERE id = ${sid}`);
+  return { status: 204, body: null };
+}
+function postComment(c: Ctx, id: number, b: { content: string }): Res {
+  const m = missionOf(c, id);
+  if (!isMission(m)) return m;
+  const content = b?.content?.trim();
+  if (!content) { bad(c, 'internship', INT_AT, { v: '400' }); return fail(400, 'Le commentaire est vide.'); }
+  const cid = nextId(c.e, 'comments');
+  I(c.e).comments.push({ id: cid, mission_id: id, author_id: c.claims!.userId, content, created_at: iso(c.e.now()) });
+  touch(c.e, 'internship_db', 'comments', cid);
+  sql(c, 'internship_db', `INSERT INTO comments (mission_id, author_id, content) VALUES (${id}, ${c.claims!.userId}, '…')`);
+  return { status: 201, body: null };
+}
+function postHelp(c: Ctx, id: number, b: { content: string }): Res {
+  const m = missionOf(c, id);
+  if (!isMission(m)) return m;
+  const content = b?.content?.trim();
+  if (!content) { bad(c, 'internship', INT_AT, { v: '400' }); return fail(400, 'Décris ton blocage.'); }
+  const hid = nextId(c.e, 'help_requests');
+  I(c.e).help_requests.push({ id: hid, mission_id: id, author_id: c.claims!.userId, content, status: 'OUVERTE', responses: 0, created_at: iso(c.e.now()) });
+  touch(c.e, 'internship_db', 'help_requests', hid);
+  sql(c, 'internship_db', `INSERT INTO help_requests (mission_id, author_id, status) VALUES (${id}, ${c.claims!.userId}, 'OUVERTE')`);
+  return { status: 201, body: null };
+}
+
+// ---------------------------------------------------------------- chabot-assistant-service (FastAPI): mission chat with RAG, work plan
+export const CHAT_MODEL = 'qwen3:0.6b', EMBED_MODEL = 'nomic-embed-text';
+const AI_AT = 'chabot-assistant-service';
+export type ChatAnswer = { answer: string; scope: Scope; model: string; sources: { page: number; score: number; excerpt: string }[] };
+export type ChatHistory = { role: 'USER' | 'ASSISTANT'; content: string; scope: Scope | null }[];
+const A = (e: Engine) => e.db.chabot_assistant_db;
+const facts = (e: Engine, m: Mission) => ({
+  title: m.title, description: m.description, dueDate: m.due_date, difficulty: ({ EASY: 'Facile', MEDIUM: 'Moyenne', HARD: 'Difficile' } as const)[m.difficulty],
+  points: m.points, coins: m.coins, competences: m.expected, hasSpec: I(e).mission_attachments.some(a => a.mission_id === m.id), status: m.status
+});
+const conversationOf = (e: Engine, mission: Mission, me: number) => {
+  let conv = A(e).ai_conversations.find(x => x.mission_id === mission.id && x.student_id === me);
+  if (!conv) {
+    const id = nextId(e, 'ai_conversations');
+    conv = { id, mission_id: mission.id, student_id: me, mission_title: mission.title, created_at: iso(e.now()) };
+    A(e).ai_conversations.push(conv);
+    touch(e, 'chabot_assistant_db', 'ai_conversations', id);
+  }
+  return conv;
+};
+/** The mission context comes from intership-service, which checks that the mission belongs to the caller's team. */
+const aiContext = (c: Ctx, id: number): Mission | Res => {
+  hop(c, 'ai', AI_AT, 'GET ', { v: `http://intership-service/api/stagiaire/missions/${id}/ai-context` });
+  return missionOf(c, id);
+};
+function missionChat(c: Ctx, id: number, b: { question: string }): Res {
+  const { e } = c, me = c.claims!.userId;
+  const question = b?.question?.trim();
+  if (!question) { bad(c, 'ai', AI_AT, { v: '422' }); return fail(422, 'La question est vide.'); }
+  const m = aiContext(c, id);
+  if (!isMission(m)) return m;
+  const att = I(e).mission_attachments.find(a => a.mission_id === id);
+  let matches: Match[] = [];
+  if (att) {
+    let doc = A(e).ai_document_indexes.find(d => d.attachment_id === att.id);
+    if (doc) hop(c, 'ai', AI_AT, { d: L(e, `${att.file_name} déjà indexé (même content_hash), index READY réutilisé`, `${att.file_name} already indexed (same content_hash), READY index reused`) });
+    else {
+      const chunks = chunkPages(SPEC_PDF.pages);
+      hop(c, 'ai', AI_AT, L(e, 'téléchargement de ', 'downloads '), { v: att.file_name }, L(e, `, texte extrait page par page, ${chunks.length} morceaux de ${CHUNK_SIZE} caractères (chevauchement ${CHUNK_OVERLAP})`, `, text extracted page by page, ${chunks.length} chunks of ${CHUNK_SIZE} characters (overlap ${CHUNK_OVERLAP})`));
+      hop(c, 'ollama', ':11434', 'POST /api/embeddings ', { v: `${EMBED_MODEL} × ${chunks.length}` }, { d: L(e, ' (simulé)', ' (simulated)') });
+      const did = nextId(e, 'ai_document_indexes');
+      doc = { id: did, mission_id: id, attachment_id: att.id, file_name: att.file_name, status: 'READY', content_hash: 'sha256:9f2c…41ab', chunks_count: chunks.length };
+      A(e).ai_document_indexes.push(doc);
+      touch(e, 'chabot_assistant_db', 'ai_document_indexes', did);
+      for (const k of chunks) {
+        const kid = nextId(e, 'ai_document_chunks');
+        A(e).ai_document_chunks.push({ id: kid, document_id: did, chunk_index: k.index, page_number: k.page, content: k.content, embedding: '[768 floats]' });
+        touch(e, 'chabot_assistant_db', 'ai_document_chunks', kid);
+      }
+      sql(c, 'chabot_assistant_db', `INSERT INTO ai_document_chunks … (${chunks.length} lignes)`);
+    }
+    const chunks = A(e).ai_document_chunks.filter(k => k.document_id === doc!.id).map(k => ({ index: k.chunk_index, page: k.page_number, content: k.content }));
+    matches = retrieve(chunks, question);
+    hop(c, 'ollama', ':11434', 'POST /api/embeddings ', { v: `${EMBED_MODEL} : la question` }, { d: L(e, ' (simulé)', ' (simulated)') });
+    hop(c, 'ai', AI_AT, L(e, `similarité avec chaque morceau, ${TOP_K} meilleurs gardés : `, `similarity with each chunk, best ${TOP_K} kept: `), { v: matches.slice(0, 3).map(x => `p.${x.page} (${x.score.toFixed(2)})`).join(', ') || L(e, 'aucun', 'none') });
+  } else hop(c, 'ai', AI_AT, { d: L(e, 'aucun document de consigne : contexte limité à la mission', 'no instruction document: context limited to the mission') });
+  const conv = conversationOf(e, m, me);
+  const history = A(e).ai_messages.filter(x => x.conversation_id === conv.id).slice(-10);
+  sql(c, 'chabot_assistant_db', `SELECT role, content FROM ai_messages WHERE conversation_id = ${conv.id} ORDER BY created_at DESC LIMIT 10`);
+  const ans = answerQuestion(question, facts(e, m), matches, s => new Date(s).toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', year: 'numeric' }));
+  hop(c, 'ollama', ':11434', 'POST /api/chat ', { v: CHAT_MODEL }, L(e, `, historique de ${history.length} messages, réponse JSON { answer, scope } → `, `, history of ${history.length} messages, JSON answer { answer, scope } → `), { v: ans.scope }, { d: L(e, ' (réponse rédigée pour la démo)', ' (answer written for the demo)') });
+  for (const [role, content, scope] of [['USER', question, null], ['ASSISTANT', ans.answer, ans.scope]] as const) {
+    const mid = nextId(e, 'ai_messages');
+    A(e).ai_messages.push({ id: mid, conversation_id: conv.id, role, content, scope, model: role === 'ASSISTANT' ? CHAT_MODEL : null, created_at: iso(e.now()) });
+    touch(e, 'chabot_assistant_db', 'ai_messages', mid);
+  }
+  sql(c, 'chabot_assistant_db', 'INSERT INTO ai_messages (question, réponse)');
+  const body: ChatAnswer = { answer: ans.answer, scope: ans.scope, model: CHAT_MODEL, sources: ans.sources.map(x => ({ page: x.page, score: x.score, excerpt: x.content.slice(0, 140) })) };
+  return { status: 200, body };
+}
+/** Stopping a generation: the question goes out of the history, as if it had never been asked. */
+function cancelChat(c: Ctx, id: number): Res {
+  const { e } = c, me = c.claims!.userId;
+  const conv = A(e).ai_conversations.find(x => x.mission_id === id && x.student_id === me);
+  const msgs = conv ? A(e).ai_messages.filter(x => x.conversation_id === conv.id) : [];
+  const last = msgs.slice(-2);
+  if (last.length !== 2 || last[0].role !== 'USER') { hop(c, 'ai', AI_AT, { d: L(e, 'aucune génération en cours', 'no generation running') }); return { status: 200, body: { cancelled: false } }; }
+  for (const x of last) {
+    A(e).ai_messages.splice(A(e).ai_messages.indexOf(x), 1);
+    e.gone.push({ ref: { db: 'chabot_assistant_db', table: 'ai_messages' }, row: { ...x }, t: e.now() });
+  }
+  e.lastTable = { db: 'chabot_assistant_db', table: 'ai_messages' };
+  hop(c, 'ai', AI_AT, L(e, 'génération arrêtée, la question est retirée de l’historique', 'generation stopped, the question is removed from the history'));
+  sql(c, 'chabot_assistant_db', `DELETE FROM ai_messages WHERE id IN (${last.map(x => x.id).join(', ')})`);
+  return { status: 200, body: { cancelled: true } };
+}
+function chatHistory(c: Ctx, id: number): Res {
+  const m = aiContext(c, id);
+  if (!isMission(m)) return m;
+  const conv = A(c.e).ai_conversations.find(x => x.mission_id === id && x.student_id === c.claims!.userId);
+  sql(c, 'chabot_assistant_db', `SELECT * FROM ai_messages WHERE conversation_id = ${conv?.id ?? 'NULL'}`);
+  const body: ChatHistory = conv ? A(c.e).ai_messages.filter(x => x.conversation_id === conv.id).map(x => ({ role: x.role, content: x.content, scope: x.scope })) : [];
+  return { status: 200, body };
+}
+export type WorkPlanDto = { model: string; scope: 'STUDENT_MISSIONS_CONTEXT'; sections: { order: string[]; why: string[]; plan: string[]; watch: string[] } };
+function planMissions(c: Ctx): Res {
+  const { e } = c, me = c.claims!.userId;
+  hop(c, 'ai', AI_AT, 'GET ', { v: 'http://intership-service/api/stagiaire/missions?page=0&size=100' });
+  const mine = myMembership(e, me);
+  sql(c, 'internship_db', `SELECT * FROM missions WHERE team_id = ${mine?.team_id ?? 'NULL'}`);
+  const missions = mine ? I(e).missions.filter(m => m.team_id === mine.team_id) : [];
+  const dateFr = (s: string) => new Date(s).toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', year: 'numeric' });
+  const sections = workPlan(missions.map(m => ({
+    title: m.title, status: m.status, dueDate: m.due_date, difficulty: facts(e, m).difficulty, points: m.points,
+    daysLeft: Math.ceil((Date.parse(m.due_date) - e.now()) / DAY), next: m.next
+  })), dateFr);
+  hop(c, 'ollama', ':11434', 'POST /api/chat ', { v: CHAT_MODEL }, L(e, `, ${missions.length} missions, 4 sections imposées par le prompt`, `, ${missions.length} missions, 4 sections required by the prompt`), { d: L(e, ' (réponse rédigée pour la démo)', ' (answer written for the demo)') });
+  const body: WorkPlanDto = { model: CHAT_MODEL, scope: 'STUDENT_MISSIONS_CONTEXT', sections };
+  return { status: 200, body };
 }

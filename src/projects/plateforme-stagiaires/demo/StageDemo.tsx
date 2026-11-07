@@ -4,14 +4,16 @@ import Login from './Login';
 import { Contact, Credit, Later, type Owner } from './Notices';
 import { Icon, Logo, Sv, type App, type Ctx } from './shared';
 import { strings } from './strings';
+import Missions from './Missions';
+import MissionDetail from './MissionDetail';
 import Subjects from './Subjects';
 import Team from './Team';
 import './demo.css';
 
 type Props = { lang: 'fr' | 'en' };
 const FRESH = 1700;
-const STEPS: Step[] = ['login', 'face', 'join', 'role', 'github', 'skills'];
-const LOGO: Record<Node, string> = { nginx: 'window', gateway: 'gateway', auth: 'springsecurity', face: 'user', internship: 'springboot', github: 'github', postgres: 'postgresql' };
+const STEPS: (Step & keyof typeof strings.fr.steps)[] = ['login', 'join', 'github', 'skills', 'deliver', 'chat', 'plan'];
+const LOGO: Record<Node, string> = { nginx: 'window', gateway: 'gateway', auth: 'springsecurity', face: 'user', internship: 'springboot', github: 'github', ai: 'fastapi', ollama: 'ollama', postgres: 'postgresql' };
 
 /** The pages that are not rebuilt: a teammate's module (credit) or a part of Zakaria's own (contact). */
 const CREDITS: Record<string, [Owner, string]> = {
@@ -21,8 +23,8 @@ const CREDITS: Record<string, [Owner, string]> = {
 const CONTACTS: Record<string, string> = {
   '/accueil': 'Accueil et profil', '/profil': 'Profil', '/stagiaire/aide': 'Aide visible', '/mot-de-passe-oublie': 'Mot de passe oublié'
 };
-const LATER: Record<string, string> = { '/stagiaire/missions': 'Missions', '/encadrant/teams': 'Espace encadrant' };
-const ROUTES = ['/login', '/stagiaire/subjects', '/stagiaire/team', ...Object.keys(CREDITS), ...Object.keys(CONTACTS), ...Object.keys(LATER)];
+const LATER: Record<string, string> = { '/encadrant/teams': 'Espace encadrant' };
+const ROUTES = ['/login', '/stagiaire/subjects', '/stagiaire/team', '/stagiaire/missions', ...Object.keys(CREDITS), ...Object.keys(CONTACTS), ...Object.keys(LATER)];
 const PUBLIC = ['/login', '/mot-de-passe-oublie'];
 const newApp = (): App => ({ route: '/login', past: [], typed: null, token: null, me: null, dialog: null, toast: '', bell: false, menu: null });
 const NOTIFICATIONS = ['Karim Benali a commenté votre livrable.', 'Une nouvelle mission a été affectée à votre équipe.', 'Votre équipe a gagné 15 points.'];
@@ -75,7 +77,7 @@ export default function StageDemo({ lang }: Props) {
     let route = path.trim().replace(/^(https?:\/\/)?localhost:4200/, '').replace(/\/+$/, '') || '/';
     if (!route.startsWith('/')) route = `/${route}`;
     if (route === '/') route = app.me ? '/accueil' : '/login';
-    if (!ROUTES.includes(route)) route = app.me ? home() : '/login';
+    if (!ROUTES.includes(route) && !/^\/stagiaire\/missions\/\d+$/.test(route)) route = app.me ? home() : '/login';
     if (!app.me && !PUBLIC.includes(route)) route = '/login';
     if (app.me && route === '/login') route = home();
     if (app.me?.role === 'ENCADRANT' && route.startsWith('/stagiaire')) route = '/encadrant/teams';
@@ -269,6 +271,8 @@ function Screen({ ctx, prefill }: { ctx: Ctx; prefill: { email: string; nonce: n
   if (route === '/login') return <Login ctx={ctx} prefill={prefill} />;
   if (route === '/stagiaire/subjects') return <Subjects ctx={ctx} />;
   if (route === '/stagiaire/team') return <Team ctx={ctx} />;
+  if (route === '/stagiaire/missions') return <Missions ctx={ctx} />;
+  if (route.startsWith('/stagiaire/missions/')) return <MissionDetail ctx={ctx} id={Number(route.split('/')[3])} />;
   if (CREDITS[route]) return <div className="page"><Credit ctx={ctx} owner={CREDITS[route][0]} module={CREDITS[route][1]} /></div>;
   if (LATER[route]) return <div className="page"><Later ctx={ctx} module={LATER[route]} /></div>;
   if (route === '/mot-de-passe-oublie') return <div className="page outside"><Contact ctx={ctx} module={CONTACTS[route]} /></div>;
@@ -280,6 +284,7 @@ function Navbar({ ctx, logout }: { ctx: Ctx; logout: () => void }) {
   const me = app.me!;
   const link = (route: string, label: string) => <button className={app.route === route ? 'on' : ''} onClick={() => go(route)}>{label}</button>;
   const inInternship = ['/stagiaire/subjects', '/stagiaire/team', '/stagiaire/aide'].includes(app.route);
+  const inMissions = app.route.startsWith('/stagiaire/missions');
   return (
     <header className="nav-bar">
       <button className="brand" onClick={() => go('/accueil')} aria-label="Accueil"><Logo /><span>e-Stage</span></button>
@@ -299,7 +304,7 @@ function Navbar({ ctx, logout }: { ctx: Ctx; logout: () => void }) {
               )}
             </div>
             {link('/gamification', 'Gamification')}
-            {link('/stagiaire/missions', 'Missions')}
+            <button className={inMissions ? 'on' : ''} onClick={() => go('/stagiaire/missions')}>Missions</button>
             {link('/publications', 'Fil d’actualités')}
             {link('/boutique', 'Boutique')}
             {link('/messagerie', 'Messagerie')}

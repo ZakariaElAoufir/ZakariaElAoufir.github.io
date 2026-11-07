@@ -102,7 +102,7 @@ export default function Team({ ctx }: { ctx: Ctx }) {
               <p className="sub-lead">{a.missions.length ? 'Les missions confiées à ton équipe, et à qui elles sont affectées.' : 'Ton encadrant n’a pas encore confié de mission à cette équipe.'}</p>
               <ul className="rows">
                 {a.missions.map(m => (
-                  <li key={m.id}><button onClick={() => ctx.go('/stagiaire/missions')}>
+                  <li key={m.id}><button onClick={() => ctx.go(`/stagiaire/missions/${m.id}`)}>
                     <span className="row-main"><b>{m.title}</b><small>{m.description}</small></span>
                     <span className="chips"><i className={`st-${m.status}`}>{STATUS[m.status]}</i><i>{DIFFICULTY[m.difficulty]}</i><i>{m.points} pts</i><i>{m.assignee.initials}</i></span>
                     <Sv n="right" />

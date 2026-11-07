@@ -49,6 +49,14 @@ await run(() => press('rooms')); await wait(200);
 await run(() => press('ReservationService')); await wait(300);
 await run(() => { vp().querySelector('.view').scrollTop = 250; }); await wait(200);
 await shot('.stg .browser', 'shot-github');
+
+// the mission assistant answers from the specification
+await run(() => [...vp().querySelectorAll('.nav-bar nav button')].find(b => b.textContent.trim() === 'Missions').click()); await wait(300);
+await run(() => press('Voir la mission en détail')); await wait(400);
+await run(() => vp().querySelector('.chat-fab').click()); await wait(300);
+await run(() => press('Quelles règles')); await wait(4500);
+await run(() => { vp().querySelector('.chat-list').scrollTop = 0; }); await wait(200);
+await shot('.stg .browser', 'shot-chat');
 await shot('.stg .stage', 'thumbnail');
 
 await browser.close();

@@ -56,6 +56,11 @@
         "text": { "fr": "L'affectation, les membres, les postes et les compétences acquises sont réunis au même endroit.", "en": "The assignment, members, positions and acquired skills sit in one place." }
       },
       {
+        "image": "./media/shot-chat.png",
+        "title": { "fr": "L'assistant de mission", "en": "The mission assistant" },
+        "text": { "fr": "Il répond à partir du cahier des charges de la mission, découpé et indexé, et refuse ce qui sort du sujet.", "en": "It answers from the mission's specification, cut and indexed, and declines anything off topic." }
+      },
+      {
         "image": "./media/shot-github.png",
         "title": { "fr": "Le dépôt de l'équipe", "en": "The team's repository" },
         "text": { "fr": "Branches, commits, fichiers et identités Git du dépôt relié, ici entièrement simulé.", "en": "Branches, commits, files and Git identities of the linked repository, entirely simulated here." }
