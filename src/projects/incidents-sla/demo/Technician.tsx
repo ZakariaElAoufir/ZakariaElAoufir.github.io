@@ -1,5 +1,5 @@
 // The technician area, drawn from the Angular components: sidebar, header, dashboard, My Tickets and My Group.
-import { useState, type ReactNode } from 'react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
 import type { DashboardDto, MeDto, TicketDto } from './logic';
 import { dateTime, Sv, type Ctx } from './shared';
 
@@ -140,6 +140,114 @@ export function MyTickets({ ctx }: { ctx: Ctx }) {
       <p className="t-sub">Liste des tickets qui me sont assignés</p>
       {filters}
       <Table ctx={ctx} tickets={tickets} subLabel="Subcategory" />
+    </Layout>
+  );
+}
+
+const STATUS_OPTIONS = ['OUVERT', 'EN_COURS', 'RESOLU', 'ANNULE', 'ESCALADE'];
+const PRIORITY_OPTIONS = ['FAIBLE', 'MOYEN', 'HAUTE', 'CRITIQUE'];
+
+/** detail-ticket-technicien: every action asks the backend, then reloads the ticket. */
+export function TicketDetail({ ctx, id }: { ctx: Ctx; id: number }) {
+  const url = `/api/techniciens/team/tickets/${id}`;
+  const [ticket, setTicket] = useState(() => ctx.api<TicketDto>('GET', url).body);
+  const [status, setStatus] = useState(ticket.status as string);
+  const [priority, setPriority] = useState(ticket.priorite as string);
+  const [comment, setComment] = useState('');
+  const [flashMsg, setFlashMsg] = useState<string | null>(null);
+  const [error, setError] = useState('');
+  const timer = useRef(0);
+  useEffect(() => () => clearTimeout(timer.current), []);
+  const flash = (msg: string) => { setFlashMsg(msg); clearTimeout(timer.current); timer.current = window.setTimeout(() => setFlashMsg(null), 2500); };
+  const reload = () => {
+    const t = ctx.api<TicketDto>('GET', url).body;
+    setTicket(t); setStatus(t.status); setPriority(t.priorite); setError('');
+  };
+  /** Runs an action; on success, says so and reloads, as each subscribe() of the component does. */
+  const run = (method: 'PUT' | 'POST' | 'PATCH', path: string, body: unknown, ok: string, ko: string) => {
+    const r = ctx.api(method, `/api/techniciens/my-tickets/${id}${path}`, body);
+    if (r.status !== 200) { flash(ko); return false; }
+    flash(ok); reload();
+    return true;
+  };
+  const assign = () => {
+    const r = ctx.api('PUT', `/api/techniciens/my-tickets/${id}`, {});
+    if (r.status !== 200) { setError('Échec de l’assignation du ticket.'); return; }
+    flash('Ticket assigned to you'); reload();
+  };
+  const download = () => {
+    const r = ctx.api<string>('GET', `${url}/attachment`);
+    if (r.status !== 200) { setError('Impossible de télécharger la pièce jointe'); return; }
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([r.body], { type: 'text/plain' }));
+    a.download = ticket.pieceJointe ?? 'attachment';
+    a.click();
+    URL.revokeObjectURL(a.href);
+  };
+  const act = (kind: 'comment' | 'escalate') => {
+    const done = kind === 'comment' ? run('POST', '/comment', comment, 'Comment submitted', 'Failed to submit comment') : run('POST', '/escalate', comment, 'Ticket escalated', 'Failed to escalate');
+    if (done) setComment('');
+  };
+  const field = (label: string, value: string) => <><label className="d-label">{label}</label><input className="d-input" readOnly value={value} aria-label={label} /></>;
+  return (
+    <Layout ctx={ctx}>
+      {error && <div className="d-error" role="alert">{error}</div>}
+      <div className="d-top">
+        <h1>Ticket #{ticket.id}</h1>
+        <span className={`d-badge ${STATUS_CLASS[ticket.status]}`}>{ticket.status}</span>
+        <span className="d-sla">SLA Remaining: <strong>{ticket.sla.detailsResolution}</strong></span>
+        <span className="d-badge in-progress">SLA Status: {ticket.sla.statutSla}</span>
+      </div>
+      <div className="d-quick">
+        <div>
+          <label htmlFor="statusSel">Status</label>
+          <select id="statusSel" value={status} onChange={ev => setStatus(ev.target.value)}>{STATUS_OPTIONS.map(s => <option key={s}>{s}</option>)}</select>
+          <button disabled={status === ticket.status} onClick={() => run('PATCH', `/status?status=${status}`, null, 'Status updated', 'Failed to update status')}>Update</button>
+        </div>
+        <div>
+          <label htmlFor="prioSel">Priority</label>
+          <select id="prioSel" value={priority} onChange={ev => setPriority(ev.target.value)}>{PRIORITY_OPTIONS.map(p => <option key={p}>{p}</option>)}</select>
+          <button disabled={priority === ticket.priorite} onClick={() => run('PATCH', `/priority?priority=${priority}`, null, 'Priority updated', 'Failed to update priority')}>Update</button>
+        </div>
+        {flashMsg && <span className="d-flash" role="status">{flashMsg}</span>}
+      </div>
+      <div className="d-body">
+        <div>
+          <h2>Details</h2>
+          <h2>Title</h2>
+          <input className="d-input" readOnly value={ticket.titre} aria-label="Title" />
+          <h2>Category’s</h2>
+          {field('Service category', ticket.equipe.nomService)}
+          {field('Subcategory', ticket.sousService.nom)}
+          <h2>Description</h2>
+          <textarea className="d-input" readOnly value={ticket.description} aria-label="Description" />
+          <label className="d-label">Attachments</label>
+          {ticket.pieceJointe && <div className="d-attach"><Sv n="file" /><button onClick={download}><Sv n="clip" size={14} />Télécharger {ticket.pieceJointe}</button></div>}
+        </div>
+        <div>
+          <h2>Priority’s</h2>
+          {field('Impact', ticket.impact)}
+          {field('Urgency', ticket.urgence)}
+          {field('Priority', ticket.priorite)}
+          <h2>Status Change History</h2>
+          <ul className="d-history">
+            {ticket.historiques.map(h => <li key={h.id}><Sv n="clock" size={14} />{h.action}<small>{h.dateAction}</small></li>)}
+          </ul>
+          {ticket.status === 'RESOLU' && <><h2>Client Feedback</h2><textarea className="d-input" readOnly value={ticket.feedBack || 'No feedback yet'} aria-label="Client feedback" /></>}
+        </div>
+      </div>
+      {ticket.status === 'OUVERT' ? (
+        <div className="d-assign"><button onClick={assign}><Sv n="userPlus" />Assign to me</button></div>
+      ) : (
+        <div className="d-action">
+          <h2>Technician action</h2>
+          <textarea value={comment} aria-label="Technician action" placeholder="Write your resolution comment or the reason for escalation..." onChange={ev => setComment(ev.target.value)} />
+          <div>
+            <button className="submit" disabled={!comment.trim()} onClick={() => act('comment')}><Sv n="send" />Submit</button>
+            <button className="escalate" disabled={!comment.trim()} onClick={() => act('escalate')}><Sv n="escalate" />Escalade</button>
+          </div>
+        </div>
+      )}
     </Layout>
   );
 }

@@ -3,7 +3,7 @@
 
 export type Lang = 'fr' | 'en';
 export type Role = 'ADMIN' | 'TECHNICIEN' | 'CLIENT';
-export type Method = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
+export type Method = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE' | 'JOB';
 export type Status = 'OUVERT' | 'EN_COURS' | 'RESOLU' | 'ANNULE' | 'ESCALADE';
 export type Priorite = 'FAIBLE' | 'MOYEN' | 'HAUTE' | 'CRITIQUE';
 export type Impact = 'ORGANISATION' | 'MULTI_USER' | 'SINGLE_USER';
@@ -45,13 +45,15 @@ export type Seg = string | { v: string } | { d: string };
 export type Node = 'proxy' | 'security' | 'controller' | 'service' | 'mysql';
 export type Hop = { node: Node; at: string; text: Seg[]; bad?: boolean };
 export type Trace = { id: number; t: number; by: string; method: Method; path: string; status: number; hops: Hop[] };
-export type Step = 'login' | 'filter' | 'group';
+export type Step = 'login' | 'filter' | 'group' | 'assign' | 'status' | 'resolve' | 'escalate' | 'sla';
 export type Engine = {
   lang: Lang; db: Db; traces: Trace[]; steps: Set<Step>;
   /** rows written by the last calls, by "table#id", with the time they were written */
   changed: Map<string, number>;
   lastTable: TableName | null;
   now: () => number;
+  /** how far the visitor has moved the demo's clock forward, in ms */
+  skew: number;
 };
 export type Res<T = unknown> = { status: number; body: T };
 
@@ -99,7 +101,7 @@ function seed(t0: number): Db {
 }
 
 export function createEngine(lang: Lang, now: () => number = Date.now): Engine {
-  return { lang, db: seed(now()), traces: [], steps: new Set(), changed: new Map(), lastTable: null, now };
+  return { lang, db: seed(now()), traces: [], steps: new Set(), changed: new Map(), lastTable: null, now, skew: 0 };
 }
 export const rowsOf = (e: Engine, table: TableName) => e.db[table] as unknown as Record<string, unknown>[];
 
@@ -167,6 +169,54 @@ export function call<T = unknown>(e: Engine, by: string, method: Method, url: st
   return res as Res<T>;
 }
 
+/** The time the application believes it is, once the visitor has moved the clock. */
+export const clock = (e: Engine) => e.now() + e.skew;
+const mark = (e: Engine, table: TableName, id: number) => { e.changed.set(`${table}#${id}`, e.now()); e.lastTable = table; };
+const nextId = (rows: { id: number }[]) => rows.reduce((n, r) => Math.max(n, r.id), 0) + 1;
+
+/** An unhandled RuntimeException: Spring answers 500 and hides its message, which only the trace shows here. */
+function boom(c: Ctx, message: string): Res {
+  bad(c, 'service', SERV, 'RuntimeException: ', { v: message });
+  return { status: 500, body: { error: 'Internal Server Error' } };
+}
+function history(c: Ctx, t: TicketRow, action: string) {
+  const { e } = c, row: HistoriqueRow = { id: nextId(e.db.historique), action, date_action: stamp(clock(e)), ticket_id: t.id };
+  e.db.historique.push(row);
+  mark(e, 'historique', row.id);
+  hop(c, 'mysql', REPO, { v: 'INSERT INTO historique' }, ` (ticket ${t.id})`);
+}
+function alert(c: Ctx, t: TicketRow, type_alerte: TypeAlerte, message: string, utilisateur_id: number) {
+  const { e } = c, row: AlerteRow = { id: nextId(e.db.alerte), type_alerte, message, date_emission: stamp(clock(e)), ticket_id: t.id, utilisateur_id };
+  e.db.alerte.push(row);
+  mark(e, 'alerte', row.id);
+  hop(c, 'mysql', REPO, { v: `INSERT INTO alerte (${type_alerte})` }, L(e, ` pour l’utilisateur ${utilisateur_id}`, ` for user ${utilisateur_id}`));
+}
+function saved(c: Ctx, t: TicketRow, set: string) {
+  mark(c.e, 'ticket', t.id);
+  hop(c, 'mysql', REPO, { v: `UPDATE ticket SET ${set}` }, ` WHERE id = ${t.id}`);
+}
+const adminOf = (db: Db, me: TechnicienRow) => db.equipe.find(x => x.id === me.equipe_id)!.administrateur_id;
+const findTicket = (e: Engine, id: number) => e.db.ticket.find(t => t.id === id);
+/** The check shared by every action on "my" tickets. */
+function ownTicket(c: Ctx, me: TechnicienRow, id: number): TicketRow | Res {
+  const t = findTicket(c.e, id);
+  if (!t) return boom(c, 'Ticket non trouvé');
+  hop(c, 'mysql', REPO, { d: 'SELECT … FROM ticket ' }, { v: `WHERE id = ${id}` });
+  if (t.technicien_id !== me.id) return boom(c, 'Ce technicien n’est pas assigné à ce ticket');
+  hop(c, 'service', SERV, L(c.e, 'le ticket est bien assigné à ce technicien', 'the ticket is assigned to this technician'));
+  return t;
+}
+const isRes = (x: TicketRow | Res): x is Res => 'status' in x && 'body' in x;
+/** In the demo, resolving a ticket closes its SLA; reopening it runs the deadline again. */
+function settleSla(c: Ctx, t: TicketRow) {
+  const { e } = c, sla = e.db.sla.find(x => x.id === t.sla_id)!;
+  const next: StatutSla | null = t.status === 'RESOLU' && sla.statut_sla === 'EN_COURS' ? 'RESPECTE' : t.status !== 'RESOLU' && sla.statut_sla === 'RESPECTE' ? 'EN_COURS' : null;
+  if (!next) return;
+  sla.statut_sla = next;
+  mark(e, 'sla', sla.id);
+  hop(c, 'mysql', REPO, { v: `UPDATE sla SET statut_sla = '${next}'` }, ` WHERE id = ${sla.id}`);
+}
+
 const FILTER_AT = 'JwtAuthFilter';
 function dispatch(c: Ctx, method: Method, route: string, query: URLSearchParams, token: string | null, body: unknown): Res {
   const { e } = c;
@@ -191,6 +241,15 @@ function dispatch(c: Ctx, method: Method, route: string, query: URLSearchParams,
   if (method === 'GET' && route === '/api/techniciens/team/tickets') return teamTickets(c, me);
   if (method === 'GET' && route === '/api/techniciens/team/tickets/filter') return filtered(c, 'team', me, query);
   if (method === 'GET' && route === '/api/techniciens/team/tickets/search') return search(c, 'team', me, query.get('titre') ?? '');
+  let m: RegExpMatchArray | null;
+  const who = claims.sub;
+  if (method === 'GET' && (m = route.match(/\/team\/tickets\/(\d+)$/))) return ticketDetail(c, me, +m[1]);
+  if (method === 'GET' && (m = route.match(/\/team\/tickets\/(\d+)\/attachment$/))) return attachment(c, me, +m[1]);
+  if (method === 'PUT' && (m = route.match(/\/my-tickets\/(\d+)$/))) return assign(c, me, who, +m[1]);
+  if (method === 'POST' && (m = route.match(/\/my-tickets\/(\d+)\/comment$/))) return resolve(c, me, who, +m[1], body as string);
+  if (method === 'POST' && (m = route.match(/\/my-tickets\/(\d+)\/escalate$/))) return escalate(c, me, who, +m[1], body as string);
+  if (method === 'PATCH' && (m = route.match(/\/my-tickets\/(\d+)\/status$/))) return changeStatus(c, me, +m[1], query.get('status') as Status);
+  if (method === 'PATCH' && (m = route.match(/\/my-tickets\/(\d+)\/priority$/))) return changePriority(c, me, +m[1], query.get('priority') as Priorite);
   bad(c, 'controller', CTRL, L(e, 'route inconnue → ', 'unknown route → '), { v: '404' });
   return fail(404, 'Not found');
 }
@@ -264,4 +323,128 @@ function search(c: Ctx, scope: 'mine' | 'team', me: TechnicienRow, titre: string
   hop(c, 'mysql', REPO, { d: 'SELECT … FROM ticket ' }, { v: `WHERE ${scope === 'mine' ? `technicien_id = ${me.id}` : `equipe_id = ${me.equipe_id}`} AND LOWER(titre) LIKE '%${needle}%'` }, L(e, ` → ${list.length} lignes`, ` → ${list.length} rows`));
   e.steps.add('filter');
   return { status: 200, body: list.map(t => toDto(e.db, t)) };
+}
+
+function ticketDetail(c: Ctx, me: TechnicienRow, id: number): Res {
+  const { e } = c, t = findTicket(e, id);
+  hop(c, 'controller', CTRL, { v: `getTeamTicketDetailById(me, ${id})` });
+  if (!t) return boom(c, `Ticket non trouvé avec l’ID: ${id}`);
+  hop(c, 'mysql', REPO, { d: 'SELECT … FROM ticket ' }, { v: `WHERE id = ${id}` });
+  if (t.equipe_id !== me.equipe_id) return boom(c, 'Accès refusé : le ticket n’est pas assigné à ce technicien ni à son équipe.');
+  hop(c, 'service', SERV, L(e, 'le ticket appartient à l’équipe du technicien', 'the ticket belongs to the technician’s team'));
+  return { status: 200, body: toDto(e.db, t) };
+}
+
+function attachment(c: Ctx, me: TechnicienRow, id: number): Res {
+  const { e } = c, t = findTicket(e, id);
+  hop(c, 'controller', CTRL, { v: 'downloadAttachmentForTechnician' });
+  if (!t || t.equipe_id !== me.equipe_id) return boom(c, 'Accès refusé');
+  if (!t.piece_jointe) { bad(c, 'controller', CTRL, { v: '404 No attachment' }); return fail(404, 'No attachment'); }
+  hop(c, 'service', 'uploads/', L(e, 'fichier lu sur le disque : ', 'file read from disk: '), { v: t.piece_jointe });
+  return { status: 200, body: 'Journal inventé pour la démo.\n08:12 tunnel VPN : échec de la négociation\n08:13 nouvelle tentative\n08:14 échec de la négociation\n' };
+}
+
+function assign(c: Ctx, me: TechnicienRow, who: string, id: number): Res {
+  const { e } = c, t = findTicket(e, id);
+  hop(c, 'controller', CTRL, { v: `assignTicket(me, ${id})` });
+  if (!t) return boom(c, `Ticket non trouvé avec l’ID: ${id}`);
+  hop(c, 'mysql', REPO, { d: 'SELECT … FROM ticket ' }, { v: `WHERE id = ${id}` });
+  if (t.equipe_id !== me.equipe_id) return boom(c, 'Le ticket n’appartient pas à l’équipe du technicien.');
+  hop(c, 'service', SERV, L(e, 'même équipe que le technicien', 'same team as the technician'));
+  if (t.technicien_id !== null) {
+    const owner = e.db.utilisateur.find(u => u.id === t.technicien_id)!;
+    return boom(c, `Ce ticket est déjà assigné au technicien ID: ${owner.id} Nom: ${owner.username}`);
+  }
+  hop(c, 'service', SERV, L(e, 'pas encore assigné', 'not assigned yet'));
+  const action = `Ticket assigned to technicien (ID: ${me.id}, NOM: ${who})`;
+  t.technicien_id = me.id; t.status = 'EN_COURS';
+  history(c, t, action);
+  alert(c, t, 'CRITIQUE', action, adminOf(e.db, me));
+  saved(c, t, `technicien_id = ${me.id}, status = 'EN_COURS'`);
+  e.steps.add('assign');
+  return { status: 200, body: null };
+}
+
+function resolve(c: Ctx, me: TechnicienRow, who: string, id: number, comment: string): Res {
+  const { e } = c;
+  hop(c, 'controller', CTRL, { v: `addCommentToTicket(me, ${id}, comment)` });
+  const t = ownTicket(c, me, id);
+  if (isRes(t)) return t;
+  t.commentaire = comment; t.status = 'RESOLU'; t.date_resolution = stamp(clock(e));
+  history(c, t, `Ticket est maintenant: RESOLU, avec le commentaire ajouté par le technicien (ID: ${me.id}, NOM: ${who})`);
+  settleSla(c, t);
+  saved(c, t, `commentaire = '…', status = 'RESOLU', date_resolution = NOW()`);
+  e.steps.add('resolve');
+  return { status: 200, body: null };
+}
+
+function escalate(c: Ctx, me: TechnicienRow, who: string, id: number, comment: string): Res {
+  const { e } = c;
+  hop(c, 'controller', CTRL, { v: `escalateTicket(me, ${id}, comment)` });
+  const t = ownTicket(c, me, id);
+  if (isRes(t)) return t;
+  t.status = 'ESCALADE'; t.commentaire = comment;
+  history(c, t, `Ticket has been escalated by ${who} comment: ${comment}`);
+  alert(c, t, 'CRITIQUE', `The ticket ID ${t.id} has been escalated by ${who}`, adminOf(e.db, me));
+  settleSla(c, t);
+  saved(c, t, `status = 'ESCALADE', commentaire = '…'`);
+  e.steps.add('escalate');
+  return { status: 200, body: null };
+}
+
+function changeStatus(c: Ctx, me: TechnicienRow, id: number, status: Status): Res {
+  const { e } = c;
+  hop(c, 'controller', CTRL, { v: `changeTicketStatus(me, ${id}, ${status})` });
+  const t = ownTicket(c, me, id);
+  if (isRes(t)) return t;
+  t.status = status;
+  history(c, t, `Change ticket status to ${status}`);
+  settleSla(c, t);
+  saved(c, t, `status = '${status}'`);
+  e.steps.add('status');
+  return { status: 200, body: null };
+}
+
+function changePriority(c: Ctx, me: TechnicienRow, id: number, priority: Priorite): Res {
+  const { e } = c;
+  hop(c, 'controller', CTRL, { v: `changeTicketPriority(me, ${id}, ${priority})` });
+  const t = ownTicket(c, me, id);
+  if (isRes(t)) return t;
+  t.priorite = priority;
+  history(c, t, `Change ticket priority to ${priority}`);
+  saved(c, t, `priorite = '${priority}'`);
+  e.steps.add('status');
+  return { status: 200, body: null };
+}
+
+// ---------------------------------------------------------------- the SLA check (SlaAlertServiceImpl.verifierEtGenererAlertes)
+/** One pass over the SLAs still running: expired under 0 minutes, critical under 30 minutes, warning under 2 hours. Durations are truncated, as java.time.Duration does. */
+export function runSlaCheck(e: Engine) {
+  const c: Ctx = { e, hops: [] };
+  const AT = 'SlaAlertServiceImpl';
+  hop(c, 'service', AT, { v: 'verifierEtGenererAlertes()' });
+  hop(c, 'mysql', REPO, { d: 'SELECT … FROM sla' }, L(e, ` → ${e.db.sla.length} lignes`, ` → ${e.db.sla.length} rows`));
+  let expired = 0, alerts = 0;
+  for (const sla of e.db.sla) {
+    if (sla.statut_sla !== 'EN_COURS') continue;
+    const t = e.db.ticket.find(x => x.sla_id === sla.id)!;
+    const ms = new Date(sla.details_resolution).getTime() - clock(e);
+    const minutes = Math.trunc(ms / 60_000), hours = Math.trunc(ms / 3_600_000);
+    const tech = t.technicien_id;
+    if (minutes < 0) {
+      sla.statut_sla = 'EXPIRE'; expired++;
+      mark(e, 'sla', sla.id);
+      hop(c, 'mysql', REPO, { v: `UPDATE sla SET statut_sla = 'EXPIRE'` }, ` WHERE id = ${sla.id}`);
+      if (tech !== null) { alert(c, t, 'CRITIQUE', `Le SLA du ticket ID ${t.id} a expiré !`, tech); alerts++; }
+    } else if (minutes < 30 && tech !== null) {
+      alert(c, t, 'CRITIQUE', `Le SLA du ticket ID ${t.id} expire bientôt, il reste moins de 30 MINUTES.`, tech); alerts++;
+    } else if (hours < 2 && tech !== null) {
+      alert(c, t, 'WARNING', `Le SLA du ticket ID ${t.id} expire bientôt.`, tech); alerts++;
+    }
+  }
+  if (!expired && !alerts) hop(c, 'service', AT, L(e, 'aucune échéance proche', 'no deadline is close'));
+  e.steps.add('sla');
+  e.traces.unshift({ id: (e.traces[0]?.id ?? 0) + 1, t: e.now(), by: 'scheduler', method: 'JOB', path: 'SlaAlertScheduler.run()', status: 200, hops: c.hops });
+  if (e.traces.length > 60) e.traces.pop();
+  return { expired, alerts };
 }

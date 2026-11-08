@@ -1,4 +1,4 @@
-// The screens that stand in for what the demo does not rebuild: a teammate's area, or a screen of a later stage.
+// The screen that stands in for what the demo does not rebuild: a teammate's area.
 import { Icon, Sv, type Ctx } from './shared';
 
 export const OWNERS = {
@@ -19,19 +19,6 @@ export function Credit({ ctx, owner }: { ctx: Ctx; owner: keyof typeof OWNERS })
           <a className="cbtn dark" href={who.url} target="_blank" rel="noopener"><Icon name="github" />{t.credit.github}</a>
           <button className="cbtn" onClick={ctx.logout}><Sv n="logout" />{t.credit.logout}</button>
         </div>
-      </div>
-    </div>
-  );
-}
-
-export function Later({ ctx }: { ctx: Ctx }) {
-  const { t } = ctx;
-  return (
-    <div className="notice">
-      <div className="notice-card">
-        <h2>{t.later.title}</h2>
-        <p>{t.later.text}</p>
-        <div className="notice-acts"><button className="cbtn" onClick={ctx.back}><Sv n="left" />{t.later.back}</button></div>
       </div>
     </div>
   );

@@ -17,6 +17,9 @@ body.demo-locked { overflow: hidden; }
 .inc .ctrl .hint { flex: 1; min-width: 300px; color: var(--ash); }
 .inc .ctrl .hint b { color: var(--ivory); font-weight: 500; }
 .inc .ctrl .accts { display: inline-flex; align-items: center; gap: 8px; color: var(--ash); }
+.inc .clockbar { border-top-width: 2px; padding-top: 10px; }
+.inc .clock-now { color: var(--ivory); font: 600 15px/1 var(--display); white-space: nowrap; }
+.inc .clockbar .hint { min-width: 340px; font-size: 13px; }
 .inc .stage { display: grid; grid-template-columns: minmax(0, 1fr) minmax(360px, 30%); gap: 20px; padding: 20px; background: var(--night); align-items: stretch; }
 
 /* ===== the browser window ===== */
@@ -46,7 +49,7 @@ body.demo-locked { overflow: hidden; }
 .inc .reqs code { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font: 12px "Source Code Pro", ui-monospace, Consolas, monospace; color: #e3e5e8; }
 .inc .reqs small { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: #7b818c; }
 .inc .m { font: 700 11px "Source Code Pro", ui-monospace, Consolas, monospace; }
-.inc .m.GET { color: #61affe; } .inc .m.POST { color: #49cc90; } .inc .m.PUT { color: #fca130; } .inc .m.PATCH { color: #50e3c2; } .inc .m.DELETE { color: #f93e3e; }
+.inc .m.JOB { color: #c792ea; } .inc .m.GET { color: #61affe; } .inc .m.POST { color: #49cc90; } .inc .m.PUT { color: #fca130; } .inc .m.PATCH { color: #50e3c2; } .inc .m.DELETE { color: #f93e3e; }
 .inc .st { font: 700 12px "Source Code Pro", ui-monospace, Consolas, monospace; }
 .inc .s2 { color: #49cc90; } .inc .s4 { color: #fca130; } .inc .s5 { color: #f93e3e; }
 .inc .hops { flex: 1; min-height: 0; overflow: auto; padding: 12px 14px 16px; scrollbar-width: thin; }
@@ -199,6 +202,51 @@ body.demo-locked { overflow: hidden; }
 .inc .t-table:not(.plain) td.t-sla { color: #2563eb; font-weight: 500; }
 .inc .t-view { display: flex; align-items: center; gap: 6px; padding: 0; border: 0; background: none; color: #732c4a; font: 500 14px Poppins, sans-serif; }
 .inc .t-table.plain .t-view { color: #88304e; }
+
+/* detail-ticket-technicien.css */
+.inc .viewport .d-top h1 { margin: 0; color: #353535; font-size: 24px; font-weight: 700; }
+.inc .d-error { margin-bottom: 12px; color: #b3261e; font-weight: 600; }
+.inc .d-top { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); align-items: center; gap: 20px; width: 100%; margin-bottom: 20px; }
+.inc .d-badge { padding: 4px 10px; border-radius: 20px; color: #fff; font-size: 12px; font-weight: 600; text-align: center; }
+.inc .d-badge.open { background: #27ae60; }
+.inc .d-badge.in-progress { background: #3498db; }
+.inc .d-badge.resolved { background: #2ecc71; }
+.inc .d-badge.cancelled { background: #7f8c8d; }
+.inc .d-badge.escalated { background: #e67e22; }
+.inc .d-sla { color: #2563eb; font-size: 14px; font-weight: 500; }
+.inc .d-quick { display: flex; flex-wrap: wrap; align-items: center; gap: 16px; margin: 10px 0 20px; padding: 12px 16px; background: #fff; border: 1px solid #c2c0ff; border-radius: 16px; }
+.inc .d-quick > div { display: flex; align-items: center; gap: 8px; }
+.inc .d-quick label { color: #3c3c3c; font-size: 14px; font-weight: 700; }
+.inc .d-quick select { padding: 8px 14px; background: #f9f9ff; border: 1px solid #c2c0ff; border-radius: 20px; outline: none; color: #333; font: 400 13px Poppins, sans-serif; }
+.inc .d-quick select:focus { border-color: #2563eb; }
+.inc .d-quick button { padding: 8px 18px; background: #2563eb; border: 0; border-radius: 20px; color: #fff; font: 600 13px Poppins, sans-serif; transition: background .2s; }
+.inc .d-quick button:hover:not(:disabled) { background: #1e49b6; }
+.inc .viewport .d-quick button:disabled { cursor: default; }
+.inc .d-flash { margin-left: auto; color: #2563eb; font-weight: 600; }
+.inc .d-body { display: flex; gap: 40px; }
+.inc .d-body > div { flex: 1; min-width: 0; }
+.inc .viewport .d-body h2, .inc .viewport .d-action h2 { margin: 20px 0 10px; padding-bottom: 4px; border-bottom: 1px solid #aaa; color: #3c3c3c; font-size: 16px; font-weight: 600; }
+.inc .d-label { display: block; margin-top: 10px; color: #555; font-size: 14px; font-weight: 500; }
+.inc .d-input { display: block; width: 100%; margin-bottom: 10px; padding: 10px 14px; background: #f9f9ff; border: 1px solid #c2c0ff; border-radius: 20px; outline: none; color: #333; font: 400 12px Poppins, sans-serif; }
+.inc textarea.d-input { min-height: 100px; resize: none; }
+.inc .d-attach { display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: #fff; border: 1px solid #c2c0ff; border-radius: 20px; color: #555; font-size: 14px; }
+.inc .d-attach button { display: inline-flex; align-items: center; gap: 8px; padding: .55rem .9rem; background: #fff; border: 1px solid #e2e8f0; border-radius: 9999px; color: #333; font-size: .9rem; line-height: 1; }
+.inc .d-history { list-style: none; }
+.inc .d-history li { margin-bottom: 10px; color: #555; font-size: 14px; }
+.inc .d-history .sv { display: inline-block; margin-right: 8px; color: #4f46e5; vertical-align: -2px; }
+.inc .d-history small { display: block; color: #999; font-size: 12px; }
+.inc .d-assign { display: flex; justify-content: flex-end; margin-top: 30px; }
+.inc .d-assign button { display: flex; align-items: center; gap: 8px; padding: 12px 24px; background: #732c4a; border: 0; border-radius: 30px; color: #fff; font: 600 14px Poppins, sans-serif; }
+.inc .d-assign button:hover { background: #5e223a; }
+.inc .d-action { margin-top: 24px; padding: 16px; background: #fff; border: 1px solid #c2c0ff; border-radius: 20px; }
+.inc .d-action textarea { display: block; width: 100%; min-height: 110px; padding: 10px 14px; background: #f9f9ff; border: 1px solid #c2c0ff; border-radius: 16px; resize: vertical; color: #333; font: 400 14px Poppins, sans-serif; }
+.inc .d-action > div { display: flex; justify-content: flex-end; gap: 12px; margin-top: 12px; }
+.inc .d-action button { display: inline-flex; align-items: center; gap: 8px; padding: 10px 18px; border: 0; border-radius: 24px; color: #fff; font: 600 14px Poppins, sans-serif; }
+.inc .d-action .submit { background: #2563eb; }
+.inc .d-action .submit:hover:not(:disabled) { background: #1e49b6; }
+.inc .d-action .escalate { background: #e67e22; }
+.inc .d-action .escalate:hover:not(:disabled) { background: #c46214; }
+.inc .viewport .d-action button:disabled { cursor: default; opacity: .6; }
 
 /* notices: a teammate's area */
 .inc .notice { flex: 1; display: grid; place-items: center; padding: 30px 20px; }

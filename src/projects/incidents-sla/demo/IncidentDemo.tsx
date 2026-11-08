@@ -1,15 +1,15 @@
 import { useEffect, useReducer, useRef, useState } from 'react';
-import { call, createEngine, rowsOf, TABLES, type Engine, type Method, type Node, type Seg, type Step, type TableName } from './logic';
+import { call, clock, createEngine, rowsOf, runSlaCheck, stamp, TABLES, type Engine, type Method, type Node, type Seg, type Step, type TableName } from './logic';
 import Login from './Login';
-import { Credit, Later } from './Notices';
-import { Icon, type App, type Ctx } from './shared';
+import { Credit } from './Notices';
+import { dateTime, Icon, type App, type Ctx } from './shared';
 import { strings } from './strings';
-import { Dashboard, Layout, MyGroup, MyTickets } from './Technician';
+import { Dashboard, MyGroup, MyTickets, TicketDetail } from './Technician';
 import './demo.css';
 
 type Props = { lang: 'fr' | 'en' };
 const FRESH = 1700;
-const STEPS: Step[] = ['login', 'filter', 'group'];
+const STEPS: Step[] = ['login', 'filter', 'group', 'assign', 'status', 'resolve', 'escalate', 'sla'];
 const LOGO: Record<Node, string> = { proxy: 'angular', security: 'springsecurity', controller: 'springboot', service: 'spring', mysql: 'mysql' };
 const HOME = { TECHNICIEN: '/technicien/dashboard-technicien', ADMIN: '/admin/dashboard', CLIENT: '/client/dashboard' } as const;
 const ACCOUNTS: [string, string][] = [['Amine', 'amine.tazi'], ['Salma', 'salma.idrissi'], ['Admin', 'admin.demo'], ['Client', 'atlas.client']];
@@ -78,13 +78,23 @@ export default function IncidentDemo({ lang }: Props) {
     world.current = { e: createEngine(lang), app: newApp() };
     setPrefill({ username: '', nonce: 0 }); setPicked(null); setPage(n => n + 1); setTab('trace');
   };
+  const advance = (minutes: number) => { e.skew += minutes * 60_000; refresh(); };
+  const check = () => {
+    const before = e.lastTable;
+    runSlaCheck(e);
+    if (e.lastTable !== before && followW && e.lastTable) setTable(e.lastTable);
+    setPicked(null);
+    setTimeout(refresh, FRESH + 50);
+    go(app.route, false); // the open page reloads, so a ticket shows its new SLA status
+  };
   const fill = (username: string) => {
     if (app.role) ctx.logout();
     setPrefill(p => ({ username, nonce: p.nonce + 1 }));
   };
 
   const now = e.now();
-  const trace = e.traces.find(x => x.id === picked) ?? e.traces[0];
+  // after an action, its reload follows it: the panel opens on the action rather than on that GET
+  const trace = e.traces.find(x => x.id === picked) ?? e.traces.slice(0, 3).find(r => r.method !== 'GET') ?? e.traces[0];
   const meta = TABLES.find(x => x.table === table)!;
   const rows = rowsOf(e, table);
 
@@ -104,6 +114,14 @@ export default function IncidentDemo({ lang }: Props) {
               {ACCOUNTS.map(([label, username]) => <button key={username} className="btn small ghost" onClick={() => fill(username)}>{label}</button>)}
             </span>
             <button className="btn small ghost" onClick={reset}><Icon name="arrow" />{t.reset}</button>
+          </div>
+          <div className="ctrl clockbar">
+            <span className="lab">{t.clock.label}</span>
+            <b className="clock-now">{dateTime(stamp(clock(e)))}</b>
+            <button className="btn small ghost" onClick={() => advance(30)}>+30 min</button>
+            <button className="btn small ghost" onClick={() => advance(120)}>+2 h</button>
+            <button className="btn small" onClick={check}>{t.clock.run}</button>
+            <span className="hint">{t.clock.note}</span>
           </div>
           <div className="stage">
             <section className="browser" aria-label="Predict SLA">
@@ -215,5 +233,5 @@ function Screen({ ctx, prefill }: { ctx: Ctx; prefill: { username: string; nonce
   if (route.endsWith('/dashboard-technicien')) return <Dashboard ctx={ctx} />;
   if (route.endsWith('/my-tickets-technicien')) return <MyTickets ctx={ctx} />;
   if (route.endsWith('/group-tickets-technicien')) return <MyGroup ctx={ctx} />;
-  return <Layout ctx={ctx}><Later ctx={ctx} /></Layout>;
+  return <TicketDetail ctx={ctx} id={Number(route.split('/').pop())} />;
 }
