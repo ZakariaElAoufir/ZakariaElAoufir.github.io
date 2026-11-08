@@ -164,6 +164,8 @@ body.demo-locked { overflow: hidden; }
 .stg .lg-reset { margin-top: 6px; border: 0; background: none; color: var(--mute); font-size: 12.5px; text-decoration: underline; }
 .stg .lg-credit { display: flex; align-items: center; gap: 10px; margin-top: 10px; padding: 9px 10px; border-radius: 12px; background: #f6f2fc; font-size: 11.5px; line-height: 1.35; color: var(--mute); }
 .stg .lg-credit b { color: var(--ink); font-weight: 650; }
+.stg .lg-links { display: flex; flex-direction: column; gap: 5px; flex: none; }
+.stg .ghub.mail { background: var(--orange-d); }
 .stg .ghub { display: inline-flex; align-items: center; gap: 6px; flex: none; padding: 7px 10px; border-radius: 10px; background: var(--ink); color: #fff !important; font-size: 11.5px; font-weight: 650; }
 
 /* notices: a teammate's part, or a part to ask Zakaria about */

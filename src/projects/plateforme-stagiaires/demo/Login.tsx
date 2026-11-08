@@ -1,11 +1,12 @@
 // The login page: credentials, and the face login, whose scan is only an animation (no camera is ever turned on).
 import { useEffect, useRef, useState } from 'react';
 import { DEMO_PASSWORD } from './logic';
+import { OWNERS } from './Notices';
 import { Icon, Logo, Sv, type Ctx } from './shared';
 
 type Tab = 'password' | 'face';
 type Scan = 'idle' | 'running' | 'done';
-const REDOUANE = 'https://github.com/redouaneboulhimez';
+const REDOUANE = OWNERS.redouane;
 const SCAN_MS = 2600;
 
 export default function Login({ ctx, prefill }: { ctx: Ctx; prefill: { email: string; nonce: number } }) {
@@ -106,7 +107,7 @@ export default function Login({ ctx, prefill }: { ctx: Ctx; prefill: { email: st
             <button type="button" className="lg-reset" onClick={resetScan}>Réinitialiser la caméra</button>
             <div className="lg-credit">
               <p><b>{t.faceCredit}</b> {t.faceNote}</p>
-              <a className="ghub" href={REDOUANE} target="_blank" rel="noopener"><Icon name="github" />Redouane Boulhimez</a>
+              <span className="lg-links"><a className="ghub" href={REDOUANE.url} target="_blank" rel="noopener"><Icon name="github" />Redouane Boulhimez</a><a className="ghub mail" href={`mailto:${REDOUANE.email}`}><Icon name="mail" />{t.contact.mail}</a></span>
             </div>
           </>
         )}

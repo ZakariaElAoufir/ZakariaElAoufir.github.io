@@ -3,12 +3,12 @@ import profile from '../../../content/profile/profile.json';
 import { Icon, Logo, Sv, type Ctx } from './shared';
 
 export const OWNERS = {
-  redouane: { name: 'Redouane Boulhimez', url: 'https://github.com/redouaneboulhimez' },
-  aya: { name: 'Aya Amayou', url: 'https://github.com/ayaamayou' }
+  redouane: { name: 'Redouane Boulhimez', url: 'https://github.com/redouaneboulhimez', email: 'redouaneboulhimez2003@gmail.com' },
+  aya: { name: 'Aya Amayou', url: 'https://github.com/ayaamayou', email: 'ayaamayou18@gmail.com' }
 } as const;
 export type Owner = keyof typeof OWNERS;
 
-/** Centered in the page: this part belongs to a teammate, with a button to their GitHub. */
+/** Centered in the page: this part belongs to a teammate, with buttons to their GitHub and their mail. */
 export function Credit({ ctx, owner, module }: { ctx: Ctx; owner: Owner; module: string }) {
   const { t } = ctx, who = OWNERS[owner];
   return (
@@ -20,6 +20,7 @@ export function Credit({ ctx, owner, module }: { ctx: Ctx; owner: Owner; module:
         <p>{t.credit.demo}</p>
         <div className="notice-acts">
           <a className="cbtn dark" href={who.url} target="_blank" rel="noopener"><Icon name="github" />{t.credit.github}</a>
+          <a className="cbtn orange" href={`mailto:${who.email}`}><Icon name="mail" />{t.contact.mail}</a>
           {ctx.app.past.length > 0 && <button className="cbtn" onClick={ctx.back}><Sv n="left" />{t.credit.backTo}</button>}
         </div>
       </div>
