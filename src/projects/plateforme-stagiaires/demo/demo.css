@@ -385,9 +385,9 @@ body.demo-locked { overflow: hidden; }
 .stg .info-cards h4 { font-size: 13.5px; font-weight: 750; }
 .stg .viewport .info-cards p { margin-top: 3px; font-size: 12.5px; color: var(--mute); overflow-wrap: anywhere; }
 .stg .gh-row code { flex: none; padding: 2px 7px; border-radius: 6px; background: #f3efe9; font: 500 11.5px "Source Code Pro", ui-monospace, Consolas, monospace; }
-.stg .diff { display: flex; flex: none; gap: 5px; font: 650 11.5px "Source Code Pro", ui-monospace, Consolas, monospace; }
-.stg .diff i { font-style: normal; color: var(--green); }
-.stg .diff s { text-decoration: none; color: var(--red); }
+.stg .gh-delta { display: flex; flex: none; gap: 5px; font: 650 11.5px "Source Code Pro", ui-monospace, Consolas, monospace; }
+.stg .gh-delta i { font-style: normal; color: var(--green); }
+.stg .gh-delta s { text-decoration: none; color: var(--red); }
 .stg .branch { display: inline-flex; align-items: center; gap: 6px; height: 34px; padding: 0 8px; border: 1px solid var(--edge); border-radius: 10px; background: #fff; color: var(--mute); }
 .stg .branch select { max-width: 190px; border: 0; background: none; outline: none; font-size: 12.5px; }
 .stg .files { display: grid; grid-template-columns: 250px minmax(0, 1fr); gap: 10px; margin-top: 4px; }

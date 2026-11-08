@@ -87,7 +87,7 @@ function Commits({ ctx, repo }: { ctx: Ctx; repo: RepositoryDto }) {
       <div className="gh-head"><h3 className="gh-h">Commits récents</h3><BranchPick repo={repo} value={branch} onChange={setBranch} /></div>
       <ul className="rows flat">
         {list.map(c => (
-          <li key={c.id}><div className="gh-row"><Sv n="commit" /><span className="row-main"><b>{c.message}</b><small>{c.author_name}, @{c.author_login}, {dateTimeFr(c.committed_at)}</small></span><code>{c.sha}</code><span className="diff"><i>+{c.additions}</i><s>-{c.deletions}</s></span></div></li>
+          <li key={c.id}><div className="gh-row"><Sv n="commit" /><span className="row-main"><b>{c.message}</b><small>{c.author_name}, @{c.author_login}, {dateTimeFr(c.committed_at)}</small></span><code>{c.sha}</code><span className="gh-delta"><i>+{c.additions}</i><s>-{c.deletions}</s></span></div></li>
         ))}
       </ul>
     </>
