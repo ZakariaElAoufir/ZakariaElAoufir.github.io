@@ -48,7 +48,6 @@ await run(() => press('demo')); await wait(200);
 await run(() => press('rooms')); await wait(200);
 await run(() => press('ReservationService')); await wait(300);
 await run(() => { vp().querySelector('.view').scrollTop = 250; }); await wait(200);
-await shot('.stg .browser', 'shot-github');
 
 // the mission assistant answers from the specification
 await run(() => [...vp().querySelectorAll('.nav-bar nav button')].find(b => b.textContent.trim() === 'Missions').click()); await wait(300);
@@ -58,6 +57,30 @@ await run(() => press('Quelles règles')); await wait(4500);
 await run(() => { vp().querySelector('.chat-list').scrollTop = 0; }); await wait(200);
 await shot('.stg .browser', 'shot-chat');
 await shot('.stg .stage', 'thumbnail');
+await run(() => vp().querySelector('.pop.chat .round').click()); await wait(200);
+
+// a commit submitted as the mission's resolution, opened file by file
+await run(() => [...vp().querySelectorAll('.secs button')].find(b => b.textContent.trim().startsWith('Livrables')).click()); await wait(300);
+await run(() => vp().querySelector('.gh-banner').click()); await wait(300);
+await run(() => vp().querySelector('.commit-opt').click()); await wait(200);
+await run(() => press('Soumettre la sélection')); await wait(300);
+await run(() => vp().querySelector('.commit-chip').click()); await wait(400);
+await run(() => { const t = document.querySelector('.stg .toast'); if (t) t.style.display = 'none'; }); await wait(100);
+await shot('.stg .browser', 'shot-diff');
+await run(() => vp().querySelector('.diff .round').click()); await wait(200);
+
+// the supervisor asks the AI's opinion on the deliverable
+await run(() => vp().querySelector('.out').click()); await wait(300);
+await run(() => as(2)); await wait(300);
+await run(() => press('Accéder au dashboard')); await wait(400);
+await run(() => [...vp().querySelectorAll('.nav-bar nav button')].find(b => b.textContent.trim().startsWith('Mission')).click()); await wait(200);
+await run(() => press('Toutes les missions')); await wait(400);
+await run(() => vp().querySelector('.em-card').click()); await wait(300);
+await run(() => press('Ouvrir la mission')); await wait(400);
+await run(() => [...vp().querySelectorAll('.secs button')].find(b => b.textContent.trim().startsWith('Livrables')).click()); await wait(300);
+await run(() => vp().querySelector('.ai-trigger').click()); await wait(1600);
+await run(() => { const v = vp().querySelector('.view'), p = vp().querySelector('.dv-card'); v.scrollTop += p.getBoundingClientRect().top - v.getBoundingClientRect().top - 70; document.querySelector('.stg .toast')?.remove(); }); await wait(300);
+await shot('.stg .browser', 'shot-review');
 
 await browser.close();
 console.log('done');

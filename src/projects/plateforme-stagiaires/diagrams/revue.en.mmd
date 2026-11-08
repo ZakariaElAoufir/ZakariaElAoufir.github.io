@@ -1,0 +1,30 @@
+sequenceDiagram
+  actor S as Intern
+  participant I as intership-service
+  participant G as GitHub
+  actor E as Supervisor
+  participant A as AI assistant
+  participant K as Kafka
+  alt file
+    S->>I: POST /missions/{id}/deliverables
+  else commit
+    S->>I: POST /missions/{id}/commit-submissions
+    Note over I: linked Git identity, one commit per repository
+  end
+  I-->>S: mission To do or Rejected → In progress
+  E->>I: opens the proofs
+  I->>G: files changed by the commit
+  G-->>E: diff, file by file
+  opt AI opinion
+    E->>A: POST review-assistant
+    A-->>E: suggested verdict, proposed comment
+  end
+  E->>I: Approve, Needs changes or Reject
+  alt Needs changes or Reject
+    Note over E,I: comment required
+  else every member's latest proof accepted
+    I->>I: mission Completed, team points
+  end
+  E->>I: PUT /missions/{id}/validate
+  I->>K: points and skills events
+  K-->>S: notification

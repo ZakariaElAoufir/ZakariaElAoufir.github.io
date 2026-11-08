@@ -1,39 +1,58 @@
 {
   "overview": {
-    "width": 1040,
-    "height": 300,
+    "width": 1370,
+    "height": 886,
+    "nodeHeight": 96,
+    "nodeWidth": 262,
     "nodes": [
       {
         "id": "front",
-        "x": 20,
-        "y": 100,
+        "x": 10,
+        "y": 320,
         "logo": "angular",
         "title": {
-          "fr": "Application Angular",
-          "en": "Angular app"
+          "fr": "Angular 21",
+          "en": "Angular 21"
         },
         "subtitle": {
-          "fr": "Les écrans",
-          "en": "The screens"
-        }
+          "fr": "écrans de la plateforme",
+          "en": "the platform's screens"
+        },
+        "mine": false
       },
       {
-        "id": "gateway",
-        "x": 300,
-        "y": 100,
+        "id": "gw",
+        "x": 326,
+        "y": 320,
         "logo": "gateway",
         "title": {
           "fr": "API Gateway",
           "en": "API Gateway"
         },
         "subtitle": {
-          "fr": "Vérifie le JWT",
-          "en": "Checks the JWT"
-        }
+          "fr": "vérifie le JWT",
+          "en": "checks the JWT"
+        },
+        "mine": false
+      },
+      {
+        "id": "eureka",
+        "x": 326,
+        "y": 620,
+        "logo": "microservices",
+        "title": {
+          "fr": "Eureka et Config",
+          "en": "Eureka and Config"
+        },
+        "subtitle": {
+          "fr": "découverte, réglages",
+          "en": "discovery, settings"
+        },
+        "mine": false
       },
       {
         "id": "auth",
-        "x": 560,
+        "x": 712,
         "y": 20,
         "logo": "springsecurity",
         "title": {
@@ -41,112 +60,701 @@
           "en": "auth-service"
         },
         "subtitle": {
-          "fr": "Comptes et profils",
-          "en": "Accounts and profiles"
+          "fr": "comptes, JWT",
+          "en": "accounts, JWT"
         },
         "mine": true
       },
       {
-        "id": "internship",
-        "x": 560,
-        "y": 180,
+        "id": "user",
+        "x": 712,
+        "y": 170,
+        "logo": "user",
+        "title": {
+          "fr": "user-service",
+          "en": "user-service"
+        },
+        "subtitle": {
+          "fr": "profils, appels internes",
+          "en": "profiles, internal calls"
+        },
+        "mine": true
+      },
+      {
+        "id": "stage",
+        "x": 712,
+        "y": 320,
         "logo": "springboot",
         "title": {
           "fr": "intership-service",
           "en": "intership-service"
         },
         "subtitle": {
-          "fr": "Sujets, équipes, GitHub",
-          "en": "Subjects, teams, GitHub"
+          "fr": "sujets, équipes, GitHub",
+          "en": "subjects, teams, GitHub"
         },
         "mine": true
       },
       {
+        "id": "ai",
+        "x": 712,
+        "y": 470,
+        "logo": "fastapi",
+        "title": {
+          "fr": "chabot-assistant",
+          "en": "chabot-assistant"
+        },
+        "subtitle": {
+          "fr": "FastAPI, RAG",
+          "en": "FastAPI, RAG"
+        },
+        "mine": true
+      },
+      {
+        "id": "red",
+        "x": 712,
+        "y": 620,
+        "logo": "microservices",
+        "title": {
+          "fr": "Modules Redouane",
+          "en": "Redouane's parts"
+        },
+        "subtitle": {
+          "fr": "chat, social, boutique",
+          "en": "chat, social, store"
+        },
+        "mine": false
+      },
+      {
+        "id": "aya",
+        "x": 712,
+        "y": 770,
+        "logo": "microservices",
+        "title": {
+          "fr": "Modules Aya",
+          "en": "Aya's parts"
+        },
+        "subtitle": {
+          "fr": "dossiers, gamification",
+          "en": "files, gamification"
+        },
+        "mine": false
+      },
+      {
         "id": "db",
-        "x": 820,
-        "y": 100,
+        "x": 1098,
+        "y": 95,
         "logo": "postgresql",
         "title": {
           "fr": "PostgreSQL",
           "en": "PostgreSQL"
         },
         "subtitle": {
-          "fr": "Une base par service",
-          "en": "One database per service"
-        }
+          "fr": "une base par service",
+          "en": "one database per service"
+        },
+        "mine": false
+      },
+      {
+        "id": "gh",
+        "x": 1098,
+        "y": 320,
+        "logo": "github",
+        "title": {
+          "fr": "GitHub",
+          "en": "GitHub"
+        },
+        "subtitle": {
+          "fr": "GitHub App, webhooks",
+          "en": "GitHub App, webhooks"
+        },
+        "mine": false
+      },
+      {
+        "id": "ollama",
+        "x": 1098,
+        "y": 470,
+        "logo": "ollama",
+        "title": {
+          "fr": "Ollama",
+          "en": "Ollama"
+        },
+        "subtitle": {
+          "fr": "qwen3, nomic-embed",
+          "en": "qwen3, nomic-embed"
+        },
+        "mine": false
+      },
+      {
+        "id": "kafka",
+        "x": 1098,
+        "y": 695,
+        "logo": "kafka",
+        "title": {
+          "fr": "Kafka",
+          "en": "Kafka"
+        },
+        "subtitle": {
+          "fr": "événements",
+          "en": "events"
+        },
+        "mine": false
       }
     ],
     "wires": [
       {
         "from": "front",
-        "to": "gateway",
-        "path": "M220 150H300",
+        "to": "gw",
+        "path": "M272 368H326",
         "label": {
           "fr": "HTTP",
           "en": "HTTP"
         },
-        "labelX": 260,
-        "labelY": 140
+        "labelX": 299,
+        "labelY": 338.0,
+        "once": false
       },
       {
-        "from": "gateway",
+        "from": "gw",
         "to": "auth",
-        "path": "M500 130L560 80",
+        "path": "M588 368C660 368 640 68 712 68",
         "label": {
-          "fr": "JWT",
-          "en": "JWT"
+          "fr": "/auth",
+          "en": "/auth"
         },
-        "labelX": 530,
-        "labelY": 96
+        "labelX": 650,
+        "labelY": 68.0,
+        "once": false
       },
       {
-        "from": "gateway",
-        "to": "internship",
-        "path": "M500 170L560 220",
+        "from": "gw",
+        "to": "stage",
+        "path": "M588 368H712",
         "label": {
-          "fr": "REST",
-          "en": "REST"
+          "fr": "/stagiaire",
+          "en": "/stagiaire"
         },
-        "labelX": 530,
-        "labelY": 204
+        "labelX": 646,
+        "labelY": 368.0,
+        "once": false
+      },
+      {
+        "from": "gw",
+        "to": "ai",
+        "path": "M588 368C660 368 640 518 712 518",
+        "label": {
+          "fr": "/ai",
+          "en": "/ai"
+        },
+        "labelX": 650,
+        "labelY": 518.0,
+        "once": false
+      },
+      {
+        "from": "gw",
+        "to": "red",
+        "path": "M588 368C660 368 640 668 712 668",
+        "label": {
+          "fr": "/chat",
+          "en": "/chat"
+        },
+        "labelX": 650,
+        "labelY": 668.0,
+        "once": false
+      },
+      {
+        "from": "gw",
+        "to": "aya",
+        "path": "M588 368C660 368 640 818 712 818",
+        "label": {
+          "fr": "/dossiers",
+          "en": "/dossiers"
+        },
+        "labelX": 650,
+        "labelY": 818.0,
+        "once": false
+      },
+      {
+        "from": "gw",
+        "to": "eureka",
+        "path": "M457 416V620",
+        "label": {
+          "fr": "services\nenregistrés",
+          "en": "registered\nservices"
+        },
+        "labelX": 457.0,
+        "labelY": 510,
+        "once": true
+      },
+      {
+        "from": "auth",
+        "to": "user",
+        "path": "M843 116V170",
+        "label": {
+          "fr": "compte créé (Kafka)",
+          "en": "account created (Kafka)"
+        },
+        "labelX": 943.0,
+        "labelY": 143,
+        "once": true
+      },
+      {
+        "from": "ai",
+        "to": "stage",
+        "path": "M843 470V416",
+        "label": {
+          "fr": "contexte de mission",
+          "en": "mission context"
+        },
+        "labelX": 943.0,
+        "labelY": 443,
+        "once": false
       },
       {
         "from": "auth",
         "to": "db",
-        "path": "M760 80L820 130",
+        "path": "M974 68C1034 68 1038 125 1098 125",
         "label": {
-          "fr": "JPA",
-          "en": "JPA"
+          "fr": "authdb",
+          "en": "authdb"
         },
-        "labelX": 790,
-        "labelY": 96
+        "labelX": 1036,
+        "labelY": 92,
+        "once": false
       },
       {
-        "from": "internship",
+        "from": "user",
         "to": "db",
-        "path": "M760 220L820 170",
+        "path": "M974 218C1034 218 1038 165 1098 165",
         "label": {
-          "fr": "JPA",
-          "en": "JPA"
+          "fr": "user_db",
+          "en": "user_db"
         },
-        "labelX": 790,
-        "labelY": 204
+        "labelX": 1036,
+        "labelY": 200,
+        "once": false
+      },
+      {
+        "from": "stage",
+        "to": "gh",
+        "path": "M974 368H1098",
+        "label": {
+          "fr": "API,\nwebhooks",
+          "en": "API,\nwebhooks"
+        },
+        "labelX": 1036,
+        "labelY": 336.0,
+        "once": false
+      },
+      {
+        "from": "ai",
+        "to": "ollama",
+        "path": "M974 518H1098",
+        "label": {
+          "fr": "embeddings,\nchat",
+          "en": "embeddings,\nchat"
+        },
+        "labelX": 1036,
+        "labelY": 486.0,
+        "once": false
+      },
+      {
+        "from": "stage",
+        "to": "kafka",
+        "path": "M974 396H1060V725H1098",
+        "label": {
+          "fr": "points, notifs",
+          "en": "points, alerts"
+        },
+        "labelX": 1060,
+        "labelY": 625,
+        "once": true
+      },
+      {
+        "from": "aya",
+        "to": "kafka",
+        "path": "M974 818C1034 818 1038 760 1098 760",
+        "label": {
+          "fr": "gamification",
+          "en": "gamification"
+        },
+        "labelX": 1036,
+        "labelY": 800,
+        "once": true
       }
     ],
     "mineLabel": {
-      "fr": "Ma partie",
-      "en": "My part"
+      "fr": "Ma partie : authentification, profils, service des stages et IA",
+      "en": "My part: authentication, profiles, internship service and AI"
+    },
+    "caption": {
+      "fr": "Une application Angular, une gateway et des microservices Spring qui se découvrent par Eureka. Chaque service a sa base, y compris chabot_assistant_db pour l'assistant. En pointillés : les échanges asynchrones et la découverte. La connexion faciale passe par un service de Redouane.",
+      "en": "An Angular app, a gateway and Spring microservices that find each other through Eureka. Each service has its own database, including chabot_assistant_db for the assistant. Dashed: asynchronous exchanges and discovery. Face login goes through one of Redouane's services."
     }
   },
-  "stack": [],
-  "diagrams": [],
-  "choices": [],
+  "stack": [
+    {
+      "name": {
+        "fr": "Interface",
+        "en": "Interface"
+      },
+      "items": [
+        {
+          "name": "Angular 21",
+          "logo": "angular",
+          "note": {
+            "fr": "espaces stagiaire et encadrant",
+            "en": "intern and supervisor areas"
+          }
+        }
+      ]
+    },
+    {
+      "name": {
+        "fr": "Services",
+        "en": "Services"
+      },
+      "items": [
+        {
+          "name": "Java 21",
+          "logo": "java",
+          "note": {
+            "fr": "microservices",
+            "en": "microservices"
+          }
+        },
+        {
+          "name": "Spring Boot 3.5",
+          "logo": "springboot",
+          "note": {
+            "fr": "REST, JPA",
+            "en": "REST, JPA"
+          }
+        },
+        {
+          "name": "Spring Security",
+          "logo": "springsecurity",
+          "note": {
+            "fr": "JWT, BCrypt",
+            "en": "JWT, BCrypt"
+          }
+        },
+        {
+          "name": "Flyway",
+          "logo": "database",
+          "note": {
+            "fr": "migrations du schéma",
+            "en": "schema migrations"
+          }
+        }
+      ]
+    },
+    {
+      "name": {
+        "fr": "Microservices",
+        "en": "Microservices"
+      },
+      "items": [
+        {
+          "name": "Spring Cloud Gateway",
+          "logo": "gateway",
+          "note": {
+            "fr": "point d'entrée unique",
+            "en": "single entry point"
+          }
+        },
+        {
+          "name": "Eureka",
+          "logo": "microservices",
+          "note": {
+            "fr": "découverte des services",
+            "en": "service discovery"
+          }
+        },
+        {
+          "name": "Config Server",
+          "logo": "spring",
+          "note": {
+            "fr": "réglages centralisés",
+            "en": "central settings"
+          }
+        },
+        {
+          "name": "Kafka",
+          "logo": "kafka",
+          "note": {
+            "fr": "points et notifications",
+            "en": "points and notifications"
+          }
+        }
+      ]
+    },
+    {
+      "name": {
+        "fr": "Intelligence artificielle",
+        "en": "Artificial intelligence"
+      },
+      "items": [
+        {
+          "name": "FastAPI",
+          "logo": "fastapi",
+          "note": {
+            "fr": "service de l'assistant",
+            "en": "assistant service"
+          }
+        },
+        {
+          "name": "Ollama",
+          "logo": "ollama",
+          "note": {
+            "fr": "modèles exécutés en local",
+            "en": "models run locally"
+          }
+        },
+        {
+          "name": "qwen3:0.6b",
+          "logo": "python",
+          "note": {
+            "fr": "réponses et plans de travail",
+            "en": "answers and work plans"
+          }
+        },
+        {
+          "name": "nomic-embed-text",
+          "logo": "vectors",
+          "note": {
+            "fr": "embeddings des consignes",
+            "en": "instruction embeddings"
+          }
+        },
+        {
+          "name": "RAG",
+          "logo": "rag",
+          "note": {
+            "fr": "900 caractères, 6 passages",
+            "en": "900 characters, 6 passages"
+          }
+        }
+      ]
+    },
+    {
+      "name": {
+        "fr": "Données et intégration",
+        "en": "Data and integration"
+      },
+      "items": [
+        {
+          "name": "PostgreSQL",
+          "logo": "postgresql",
+          "note": {
+            "fr": "une base par service",
+            "en": "one database per service"
+          }
+        },
+        {
+          "name": "GitHub App",
+          "logo": "github",
+          "note": {
+            "fr": "dépôts, commits, webhooks",
+            "en": "repositories, commits, webhooks"
+          }
+        },
+        {
+          "name": "Docker",
+          "logo": "docker",
+          "note": {
+            "fr": "lancement de toute la pile",
+            "en": "runs the whole stack"
+          }
+        }
+      ]
+    }
+  ],
+  "diagrams": [
+    {
+      "id": "revue",
+      "title": {
+        "fr": "D'un livrable à la validation",
+        "en": "From deliverable to validation"
+      },
+      "caption": {
+        "fr": "Le stagiaire dépose un fichier ou un commit. L'encadrant peut demander l'avis de l'IA, mais c'est lui qui décide. La mission se complète seule quand la dernière preuve de chaque membre est acceptée, et l'équipe reçoit ses points une seule fois.",
+        "en": "The intern hands in a file or a commit. The supervisor can ask the AI's opinion, but makes the decision. The mission completes itself once every member's latest proof is accepted, and the team is paid only once."
+      }
+    },
+    {
+      "id": "assistant",
+      "title": {
+        "fr": "L'assistant de mission",
+        "en": "The mission assistant"
+      },
+      "caption": {
+        "fr": "Le document de consigne est découpé puis indexé une seule fois. À chaque question, les passages les plus proches sont retrouvés et envoyés au modèle local avec le contexte de la mission. Une question hors sujet est refusée.",
+        "en": "The instruction document is cut and indexed only once. For each question, the closest passages are found and sent to the local model with the mission context. An off-topic question is declined."
+      }
+    },
+    {
+      "id": "donnees",
+      "title": {
+        "fr": "Le modèle du service des stages",
+        "en": "The internship service's model"
+      },
+      "caption": {
+        "fr": "Une équipe réserve des places par poste : c'est team_position_slots qui empêche de dépasser la capacité. Les missions portent les preuves (livrables et commits), dont chaque revue est conservée.",
+        "en": "A team holds seats per position: team_position_slots is what prevents going over capacity. Missions carry the proofs (deliverables and commits), and every review is kept."
+      }
+    }
+  ],
+  "choices": [
+    {
+      "title": {
+        "fr": "Une base par service",
+        "en": "One database per service"
+      },
+      "why": {
+        "fr": "Chaque service garde la main sur ses tables : le service des stages évolue sans toucher aux comptes ni à la gamification.",
+        "en": "Each service owns its tables: the internship service evolves without touching accounts or gamification."
+      },
+      "alternative": {
+        "fr": "Une base unique partagée, avec des jointures.",
+        "en": "A single shared database, with joins."
+      },
+      "tradeoff": {
+        "fr": "Les informations d'une personne se récupèrent par appels entre services.",
+        "en": "A person's details have to be fetched through calls between services."
+      }
+    },
+    {
+      "title": {
+        "fr": "L'identité vérifiée une seule fois",
+        "en": "Identity checked only once"
+      },
+      "why": {
+        "fr": "La gateway vérifie le JWT et transmet l'identité aux services. Le code métier lit simplement qui appelle.",
+        "en": "The gateway checks the JWT and passes the identity to the services. Business code simply reads who is calling."
+      },
+      "alternative": {
+        "fr": "Faire valider le jeton par chaque service.",
+        "en": "Having every service validate the token."
+      },
+      "tradeoff": {
+        "fr": "Les services doivent rester joignables uniquement à travers la gateway.",
+        "en": "Services must stay reachable only through the gateway."
+      }
+    },
+    {
+      "title": {
+        "fr": "Kafka pour les effets secondaires",
+        "en": "Kafka for side effects"
+      },
+      "why": {
+        "fr": "Une mission validée déclenche points et notifications sans ralentir la réponse à l'encadrant.",
+        "en": "A validated mission triggers points and notifications without slowing the answer to the supervisor."
+      },
+      "alternative": {
+        "fr": "Appeler directement la gamification et les notifications.",
+        "en": "Calling gamification and notifications directly."
+      },
+      "tradeoff": {
+        "fr": "Les points et les alertes arrivent avec un léger décalage.",
+        "en": "Points and alerts arrive with a slight delay."
+      }
+    },
+    {
+      "title": {
+        "fr": "Une IA locale avec Ollama",
+        "en": "A local AI with Ollama"
+      },
+      "why": {
+        "fr": "Les consignes et les livrables restent sur nos serveurs : aucune donnée de stage ne part vers un service externe.",
+        "en": "Instructions and deliverables stay on our servers: no internship data goes to an external service."
+      },
+      "alternative": {
+        "fr": "Une API d'IA hébergée, plus puissante.",
+        "en": "A hosted AI API, more powerful."
+      },
+      "tradeoff": {
+        "fr": "Un modèle léger, qui donne des réponses plus simples.",
+        "en": "A lightweight model, giving simpler answers."
+      }
+    },
+    {
+      "title": {
+        "fr": "RAG sur les consignes de la mission",
+        "en": "RAG on the mission's instructions"
+      },
+      "why": {
+        "fr": "L'assistant répond à partir du document de la mission et sait dire quand une question sort du sujet.",
+        "en": "The assistant answers from the mission's document and can tell when a question is off topic."
+      },
+      "alternative": {
+        "fr": "Envoyer le document entier à chaque question.",
+        "en": "Sending the whole document with every question."
+      },
+      "tradeoff": {
+        "fr": "Une indexation à faire au premier usage de chaque document.",
+        "en": "Indexing to do the first time each document is used."
+      }
+    },
+    {
+      "title": {
+        "fr": "L'IA recommande, l'encadrant décide",
+        "en": "The AI recommends, the supervisor decides"
+      },
+      "why": {
+        "fr": "La vérification d'un livrable propose un verdict et un commentaire, mais ne change jamais un statut.",
+        "en": "Checking a deliverable suggests a verdict and a comment, but never changes a status."
+      },
+      "alternative": {
+        "fr": "Accepter ou refuser automatiquement les livrables.",
+        "en": "Accepting or rejecting deliverables automatically."
+      },
+      "tradeoff": {
+        "fr": "Une action humaine reste nécessaire pour chaque livrable.",
+        "en": "A human action is still needed for each deliverable."
+      }
+    },
+    {
+      "title": {
+        "fr": "Une GitHub App avec webhooks",
+        "en": "A GitHub App with webhooks"
+      },
+      "why": {
+        "fr": "L'équipe autorise ses dépôts une fois, et les commits arrivent d'eux-mêmes sur la plateforme.",
+        "en": "The team authorises its repositories once, and commits reach the platform by themselves."
+      },
+      "alternative": {
+        "fr": "Des jetons personnels et une interrogation régulière de GitHub.",
+        "en": "Personal tokens and regular polling of GitHub."
+      },
+      "tradeoff": {
+        "fr": "Une application à installer sur l'organisation GitHub de l'équipe.",
+        "en": "An app to install on the team's GitHub organisation."
+      }
+    }
+  ],
   "limits": {
-    "fr": [],
-    "en": []
+    "fr": [
+      "Le modèle local est volontairement léger : ses réponses restent simples.",
+      "L'assistant ne s'appuie que sur les documents de la mission.",
+      "Sous Docker Compose, chaque service tourne en une seule instance."
+    ],
+    "en": [
+      "The local model is deliberately light: its answers stay simple.",
+      "The assistant relies only on the mission's documents.",
+      "Under Docker Compose, each service runs as a single instance."
+    ]
   },
   "next": {
-    "fr": [],
-    "en": []
+    "fr": [
+      "Essayer un modèle plus puissant sur une machine dotée d'un GPU.",
+      "Faire comparer par l'IA le rapport et les commits soumis.",
+      "Afficher à l'encadrant une vue de l'avancement sur plusieurs promotions."
+    ],
+    "en": [
+      "Try a more powerful model on a machine with a GPU.",
+      "Have the AI compare the report with the submitted commits.",
+      "Give supervisors a progress view across several intakes."
+    ]
   }
 }

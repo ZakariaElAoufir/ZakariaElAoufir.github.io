@@ -1,0 +1,28 @@
+erDiagram
+  SUBJECTS ||--o{ SUBJECT_POSITIONS : "propose"
+  SUBJECTS ||--o{ TEAMS : "forme"
+  TEAMS ||--o{ TEAM_POSITION_SLOTS : "ouvre"
+  SUBJECT_POSITIONS ||--o{ TEAM_POSITION_SLOTS : "chiffre"
+  TEAM_POSITION_SLOTS ||--o{ TEAM_MEMBERSHIPS : "occupe"
+  TEAMS ||--o{ MISSIONS : "reçoit"
+  MISSIONS ||--o{ DELIVERABLES : "reçoit"
+  DELIVERABLES ||--o{ DELIVERABLE_REVIEW_HISTORIES : "garde"
+  MISSIONS ||--o{ MISSION_COMMIT_SUBMISSIONS : "reçoit"
+  MISSION_COMMIT_SUBMISSIONS ||--o{ MISSION_COMMIT_LINKS : "contient"
+  COMMIT_TRACES ||--o{ MISSION_COMMIT_LINKS : "soumis par"
+  PROJECT_REPOSITORIES ||--o{ COMMIT_TRACES : "enregistre"
+  TEAMS ||--o{ PROJECT_REPOSITORIES : "lie"
+  TEAM_POSITION_SLOTS {
+    int capacity
+    int occupied_count
+  }
+  MISSIONS {
+    string status
+    int team_points_reward
+    date deadline
+  }
+  DELIVERABLES {
+    string status
+    int submission_version
+    string review_comment
+  }

@@ -1,0 +1,21 @@
+sequenceDiagram
+  actor S as Intern
+  participant A as chabot-assistant
+  participant I as intership-service
+  participant O as Ollama
+  participant D as chabot_assistant_db
+  S->>A: POST /api/ai/missions/{id}/chat
+  A->>I: GET /missions/{id}/ai-context
+  I-->>A: mission and documents, if it concerns their team
+  opt document not indexed yet
+    A->>A: extracts the text, chunks of 900 characters
+    A->>O: nomic-embed-text on each chunk
+    A->>D: stores the chunks and their vectors
+  end
+  A->>O: embedding of the question
+  A->>A: cosine similarity, best 6 passages
+  A->>D: reads the latest messages
+  A->>O: qwen3:0.6b, context and passages
+  O-->>A: JSON answer with answer and scope
+  A->>D: stores the question and the answer
+  A-->>S: answer, or refusal if off topic
