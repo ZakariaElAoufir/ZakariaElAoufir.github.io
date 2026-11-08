@@ -148,7 +148,7 @@ function Thread({ ctx, m, reload, kind }: { ctx: Ctx; m: MissionDetailDto; reloa
     if (res.status >= 300) { setError(res.body?.message ?? 'Envoi impossible.'); return; }
     setText(''); setError(''); ctx.toast(help ? 'Demande d’aide envoyée.' : 'Commentaire publié.'); reload();
   };
-  const items: (MissionDetailDto['comments'][number] & { responses?: number })[] = help ? m.helpRequests : m.comments;
+  const items: (MissionDetailDto['comments'][number] & { responses?: number; status?: string; answers?: MissionDetailDto['helpRequests'][number]['answers'] })[] = help ? m.helpRequests : m.comments;
   return (
     <section className="card">
       <p className="eye">{help ? 'Demandes d’aide' : 'Commentaires'}</p>
@@ -165,7 +165,7 @@ function Thread({ ctx, m, reload, kind }: { ctx: Ctx; m: MissionDetailDto; reloa
         {items.map(x => (
           <li key={x.id}>
             <span className="ava">{x.author.initials}</span>
-            <div><span className="th-head"><b>{x.author.name}</b><small>{dateTimeFr(x.created_at)}</small>{x.responses !== undefined && <i className="chip-open">Ouverte, {x.responses} réponse{x.responses > 1 ? 's' : ''}</i>}</span><p>{x.content}</p></div>
+            <div><span className="th-head"><b>{x.author.name}</b><small>{dateTimeFr(x.created_at)}</small>{x.responses !== undefined && <i className="chip-open">{x.status === 'RESOLUE' ? 'Résolue' : x.status === 'DECLINEE' ? 'Déclinée' : 'Ouverte'}, {x.responses} réponse{x.responses > 1 ? 's' : ''}</i>}</span><p>{x.content}</p>{x.answers?.map(a => <p key={a.id} className="th-answer"><b>{a.responder.name}</b>{a.content}</p>)}</div>
           </li>
         ))}
       </ul>
@@ -173,8 +173,8 @@ function Thread({ ctx, m, reload, kind }: { ctx: Ctx; m: MissionDetailDto; reloa
   );
 }
 
-function DocViewer({ ctx, attachmentId, close }: { ctx: Ctx; attachmentId: number; close: () => void }) {
-  const [doc] = useState(() => ctx.api<{ name: string; pages: { page: number; text: string }[] }>('GET', `/api/stagiaire/missions/attachments/${attachmentId}/file`).body);
+export function DocViewer({ ctx, attachmentId, close, base = '/api/stagiaire/missions' }: { ctx: Ctx; attachmentId: number; close: () => void; base?: string }) {
+  const [doc] = useState(() => ctx.api<{ name: string; pages: { page: number; text: string }[] }>('GET', `${base}/attachments/${attachmentId}/file`).body);
   return (
     <div className="wz-back" role="dialog" aria-modal="true" aria-label={doc.name}>
       <div className="wz pdf">

@@ -74,4 +74,4 @@ export const dateFr = (s: string) => { const d = new Date(s); return `${pad(d.ge
 export const dateTimeFr = (s: string) => { const d = new Date(s); return `${dateFr(s)}, ${pad(d.getHours())}:${pad(d.getMinutes())}`; };
 
 export const DIFFICULTY = { EASY: 'Facile', MEDIUM: 'Moyenne', HARD: 'Difficile' } as const;
-export const STATUS = { A_FAIRE: 'À faire', EN_COURS: 'En cours', COMPLETEE: 'Complétée', VALIDEE: 'Validée' } as const;
+export const STATUS = { A_FAIRE: 'À faire', EN_COURS: 'En cours', COMPLETEE: 'Complétée', VALIDEE: 'Validée', REJETEE: 'Rejetée' } as const;

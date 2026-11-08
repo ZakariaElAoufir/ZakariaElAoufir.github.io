@@ -2,6 +2,7 @@
 // The three popups follow the platform's design: the deliverable form, the commit selector, and the commit diff.
 import { useMemo, useState, type ReactNode } from 'react';
 import { createPortal } from 'react-dom';
+import { DELIVERABLE_TEXT } from './ai';
 import type { AvailableRepo, CommitDetails, MemberDto, MissionDetailDto, SubmittedCommit } from './logic';
 import { dateTimeFr, Icon, Sv, type Ctx } from './shared';
 
@@ -14,7 +15,7 @@ const SUBMISSION = { PENDING_REVIEW: ['En attente de revue', 'orange'], CHANGES_
 const EXAMPLES = [['rapport-api-reservation-v2.pdf', 236], ['tests-regles-reservation.zip', 48], ['documentation-endpoints.pdf', 120]] as const;
 type Picked = { name: string; sizeKb: number };
 type Modal = { kind: 'submit' } | { kind: 'replace'; id: number; name: string; contributors: number[] } | { kind: 'preview'; id: number; name: string; sizeKb: number } | { kind: 'select' } | { kind: 'diff'; commit: SubmittedCommit } | null;
-const sizeLabel = (kb: number) => kb >= 1024 ? `${(kb / 1024).toFixed(1).replace('.', ',')} Mo` : `${kb} Ko`;
+export const sizeLabel = (kb: number) => kb >= 1024 ? `${(kb / 1024).toFixed(1).replace('.', ',')} Mo` : `${kb} Ko`;
 
 export default function Deliverables({ ctx, m, reload }: { ctx: Ctx; m: MissionDetailDto; reload: () => void }) {
   const [modal, setModal] = useState<Modal>(null);
@@ -112,7 +113,7 @@ export default function Deliverables({ ctx, m, reload }: { ctx: Ctx; m: MissionD
   );
 }
 
-function Backdrop({ close, children, label }: { close: () => void; children: ReactNode; label: string }) {
+export function Backdrop({ close, children, label }: { close: () => void; children: ReactNode; label: string }) {
   return <div className="md-back" role="dialog" aria-modal="true" aria-label={label} onClick={close}><div onClick={ev => ev.stopPropagation()} className="md-wrap">{children}</div></div>;
 }
 
@@ -210,7 +211,7 @@ function CommitSelector({ ctx, m, close, done }: { ctx: Ctx; m: MissionDetailDto
   );
 }
 
-function CommitDiff({ ctx, commit, close }: { ctx: Ctx; commit: SubmittedCommit; close: () => void }) {
+export function CommitDiff({ ctx, commit, close }: { ctx: Ctx; commit: SubmittedCommit; close: () => void }) {
   const [d] = useState(() => ctx.api<CommitDetails>('POST', `/api/github/commits/${commit.commitTraceId}/sync-details`).body);
   const [at, setAt] = useState(0);
   const file = d.files[at];
@@ -243,13 +244,9 @@ function CommitDiff({ ctx, commit, close }: { ctx: Ctx; commit: SubmittedCommit;
   );
 }
 
-const PREVIEW: Record<string, string[]> = {
-  'rapport-api-reservation.pdf': ['Rapport : API de réservation des salles', 'Choix de conception. La détection de chevauchement est faite par une requête unique sur la table reservation, avec la condition début < fin demandée et fin > début demandé.', 'Schéma. Deux tables, room et reservation, reliées par room_id. Une contrainte CHECK garantit que la fin suit le début.', 'Limites connues. Les créneaux récurrents ne sont pas encore gérés.'],
-  'rapport-api-reservation-v2.pdf': ['Rapport : API de réservation des salles, version 2', 'Ajouts. La règle R2 (fin après début) et ses tests. Les erreurs suivent maintenant le format commun : code, message et champ.', 'Limites connues. Les horaires d’ouverture (règle R4) restent à couvrir par un test d’intégration.']
-};
-function Preview({ ctx, modal, close }: { ctx: Ctx; modal: { kind: 'preview'; id: number; name: string; sizeKb: number }; close: () => void }) {
-  useState(() => ctx.api('GET', `/api/stagiaire/missions/deliverables/${modal.id}/file`));
-  const text = PREVIEW[modal.name];
+export function Preview({ ctx, modal, close, base = '/api/stagiaire/missions' }: { ctx: Ctx; modal: { id: number; name: string; sizeKb: number }; close: () => void; base?: string }) {
+  useState(() => ctx.api('GET', `${base}/deliverables/${modal.id}/file`));
+  const text = DELIVERABLE_TEXT[modal.name];
   return (
     <Backdrop close={close} label={modal.name}>
       <div className="md-card">

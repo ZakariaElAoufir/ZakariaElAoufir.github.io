@@ -6,7 +6,7 @@ import { dateTimeFr, Icon, Sv, type Ctx } from './shared';
 type Tab = 'summary' | 'branches' | 'commits' | 'files' | 'identity';
 const TABS: [Tab, string][] = [['summary', 'Résumé'], ['branches', 'Branches'], ['commits', 'Commits'], ['files', 'Fichiers'], ['identity', 'Identité Git']];
 
-export default function GithubSection({ ctx, teamId, teamName, members }: { ctx: Ctx; teamId: number; teamName: string; members: MemberDto[] }) {
+export default function GithubSection({ ctx, teamId, teamName, members, readOnly }: { ctx: Ctx; teamId: number; teamName: string; members: MemberDto[]; readOnly?: boolean }) {
   const [repo, setRepo] = useState<RepositoryDto | null>(() => ctx.api<RepositoryDto[]>('GET', `/api/github/teams/${teamId}/repositories`).body[0] ?? null);
   const [tab, setTab] = useState<Tab>('summary');
   const mock = () => ctx.toast(ctx.t.mockAction);
@@ -21,10 +21,10 @@ export default function GithubSection({ ctx, teamId, teamName, members }: { ctx:
     <section className="card gh">
       <div className="sec-top">
         <div><p className="eye">GitHub et équipe</p><h2>Workflow GitHub</h2><p className="sub-lead">Liaison du repository, synchronisation, branches, commits, fichiers et identité Git du stagiaire.</p></div>
-        <div className="gh-acts">
+        {!readOnly && <div className="gh-acts">
           <button className="sec" onClick={mock}><Icon name="github" />Modifier la sélection GitHub</button>
           <button className="prim" onClick={refresh}><Sv n="refresh" size={14} />Actualiser les repositories</button>
-        </div>
+        </div>}
       </div>
       {!repo ? (
         <div className="empty roomy">

@@ -27,8 +27,8 @@ function layout(tree: CompetenceTree) {
   return { members, width: cursor + 10, height: TOP + GAP_Y * 2 + ROW + 80 };
 }
 
-export default function SkillTree({ ctx, teamId }: { ctx: Ctx; teamId: number }) {
-  const [tree] = useState(() => ctx.api<CompetenceTree>('GET', `/api/stagiaire/teams/${teamId}/acquired-competences`).body);
+export default function SkillTree({ ctx, teamId, base = '/api/stagiaire' }: { ctx: Ctx; teamId: number; base?: string }) {
+  const [tree] = useState(() => ctx.api<CompetenceTree>('GET', `${base}/teams/${teamId}/acquired-competences`).body);
   const [q, setQ] = useState('');
   const [zoom, setZoom] = useState(.8);
   const [pan, setPan] = useState({ x: 0, y: 0 });

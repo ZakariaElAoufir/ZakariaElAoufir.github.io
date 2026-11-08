@@ -159,3 +159,50 @@ export function workPlan(missions: PlanMission[], dateFr: (s: string) => string)
   if (!watch.length) watch.push('Aucune échéance proche : profites-en pour avancer la mission la plus difficile.');
   return { order, why, plan, watch };
 }
+
+// ---------------------------------------------------------------- the review assistant of a supervisor
+/** The text extracted from the deliverables of the demo. A file the visitor picked has none: only its name is kept. */
+export const DELIVERABLE_TEXT: Record<string, string[]> = {
+  'rapport-api-reservation.pdf': ['Rapport : API de réservation des salles', 'Choix de conception. La détection de chevauchement est faite par une requête unique sur la table reservation, avec la condition début < fin demandée et fin > début demandé.', 'Schéma. Deux tables, room et reservation, reliées par room_id. Une contrainte CHECK garantit que la fin suit le début.', 'Limites connues. Les créneaux récurrents ne sont pas encore gérés.'],
+  'rapport-api-reservation-v2.pdf': ['Rapport : API de réservation des salles, version 2', 'Ajouts. La règle R2 (fin après début) et ses tests unitaires. La détection de chevauchement renvoie un 409. Les erreurs suivent maintenant le format commun : code, message et champ.', 'Schéma. Les tables room et reservation sont inchangées.', 'Limites connues. Les horaires d’ouverture restent à couvrir par un test d’intégration.'],
+  'documentation-endpoints.pdf': ['Documentation des points d’entrée', 'POST /api/reservations crée une réservation. Un chevauchement renvoie un 409 au format commun. DELETE /api/reservations/{id} permet l’annulation par son auteur.'],
+  'captures-ecran-reservation.pdf': ['Écran de réservation', 'Captures du planning par salle et du formulaire réactif de réservation en deux clics. Les appels HTTP vers l’API sont centralisés dans un service.'],
+  'conteneurisation.pdf': ['Conteneurisation', 'Dockerfile multi-étapes pour le backend et le frontend. Docker Compose lance l’API, l’écran et PostgreSQL.']
+};
+export type DeliverableReview = { readable: boolean; verdict: 'Approuver' | 'À corriger' | 'Rejeter' | 'Contenu insuffisant'; conformity: string; correct: string[]; gaps: string[]; fixes: string[]; comment: string };
+type Criterion = { label: string; found: RegExp; fix: string };
+const SPEC_CRITERIA: Criterion[] = [
+  { label: 'R1 : refus des chevauchements', found: /chevauch/, fix: 'Décrire la détection des chevauchements et le 409 associé.' },
+  { label: 'R2 : fin après le début', found: /fin (apres|suit)|r2/, fix: 'Expliquer le contrôle de la fin après le début.' },
+  { label: 'R3 : 4 heures au plus', found: /4 heures|r3/, fix: 'Ajouter le contrôle de la durée maximale de 4 heures.' },
+  { label: 'R4 : jours et horaires', found: /lundi|08:00/, fix: 'Couvrir les réservations du lundi au vendredi, de 08:00 à 20:00.' },
+  { label: 'R5 : capacité de la salle', found: /capacite|participants/, fix: 'Vérifier le nombre de participants par rapport à la capacité.' },
+  { label: 'R6 : annulation par l’auteur', found: /annul/, fix: 'Préciser qui peut annuler, et jusqu’à quand.' },
+  { label: 'erreurs au format commun', found: /format commun/, fix: 'Aligner les erreurs sur le format commun : code, message et champ.' },
+  { label: 'tests des règles', found: /test/, fix: 'Présenter les tests de chaque règle, cas limites compris.' },
+  { label: 'schéma des tables', found: /schema/, fix: 'Ajouter le schéma des tables.' },
+  { label: 'limites connues', found: /limites/, fix: 'Lister les limites connues.' }
+];
+/** Compares the extracted text with what the mission asks: never invents a requirement, and only recommends. */
+export function reviewDeliverable(fileName: string, m: { title: string; hasSpec: boolean; competences: string[] }): DeliverableReview {
+  const pages = DELIVERABLE_TEXT[fileName];
+  if (!pages) {
+    return {
+      readable: false, verdict: 'Contenu insuffisant', conformity: `Le contenu de ${fileName} n’a pas pu être extrait : la conformité à la mission ne peut pas être évaluée.`,
+      correct: [], gaps: ['Aucun texte exploitable dans ce fichier.'], fixes: ['Demander une version lisible du livrable, par exemple un PDF.'],
+      comment: 'Je ne peux pas évaluer ce fichier en l’état. Merci de déposer une version lisible.'
+    };
+  }
+  const text = fold(pages.join(' '));
+  const criteria: Criterion[] = m.hasSpec ? SPEC_CRITERIA : m.competences.map(c => ({ label: c, found: new RegExp(fold(c).split(/\s+/)[0].slice(0, 7)), fix: `Montrer ce qui a été fait pour : ${c}.` }));
+  const met = criteria.filter(c => c.found.test(text)), missing = criteria.filter(c => !c.found.test(text));
+  const ratio = criteria.length ? met.length / criteria.length : 0;
+  const verdict = ratio >= .85 ? 'Approuver' : ratio >= .25 ? 'À corriger' : 'Rejeter';
+  const ok = met.slice(0, 2).map(c => c.label).join(' et ');
+  return {
+    readable: true, verdict,
+    conformity: `Le livrable couvre ${met.length} point${met.length > 1 ? 's' : ''} sur ${criteria.length} attendus pour « ${m.title} ».`,
+    correct: met.map(c => c.label), gaps: missing.map(c => c.label), fixes: missing.slice(0, 4).map(c => c.fix),
+    comment: !missing.length ? `Livrable complet : ${ok} sont bien traités.` : `${ok ? `Bon travail sur ${ok}. ` : ''}Avant validation, merci de compléter : ${missing.slice(0, 3).map(c => c.label).join(', ')}.`
+  };
+}

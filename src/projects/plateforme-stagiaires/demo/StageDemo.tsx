@@ -4,6 +4,10 @@ import Login from './Login';
 import { Contact, Credit, Later, type Owner } from './Notices';
 import { Icon, Logo, Sv, type App, type Ctx } from './shared';
 import { strings } from './strings';
+import EncMissionDetail from './EncMissionDetail';
+import EncMissions from './EncMissions';
+import EncTeamDetail from './EncTeamDetail';
+import EncTeams from './EncTeams';
 import Missions from './Missions';
 import MissionDetail from './MissionDetail';
 import Subjects from './Subjects';
@@ -12,7 +16,7 @@ import './demo.css';
 
 type Props = { lang: 'fr' | 'en' };
 const FRESH = 1700;
-const STEPS: (Step & keyof typeof strings.fr.steps)[] = ['login', 'join', 'github', 'skills', 'deliver', 'chat', 'plan'];
+const STEPS: (Step & keyof typeof strings.fr.steps)[] = ['login', 'join', 'github', 'skills', 'deliver', 'chat', 'plan', 'review'];
 const LOGO: Record<Node, string> = { nginx: 'window', gateway: 'gateway', auth: 'springsecurity', face: 'user', internship: 'springboot', github: 'github', ai: 'fastapi', ollama: 'ollama', postgres: 'postgresql' };
 
 /** The pages that are not rebuilt: a teammate's module (credit) or a part of Zakaria's own (contact). */
@@ -21,10 +25,11 @@ const CREDITS: Record<string, [Owner, string]> = {
   '/publications': ['redouane', 'Fil d’actualités'], '/boutique': ['redouane', 'Boutique'], '/messagerie': ['redouane', 'Messagerie']
 };
 const CONTACTS: Record<string, string> = {
+  '/encadrant/subjects': 'Sujets', '/encadrant/subjects/new': 'Nouveau sujet', '/encadrant/teams/edit': 'Gestion des équipes', '/encadrant/missions/new': 'Nouvelle mission', '/encadrant/missions/edit': 'Modification de mission', '/encadrant/missions/by-subject': 'Missions par sujet', '/encadrant/help-requests': 'Demandes d’aide', '/encadrant/stagiaires': 'Stagiaires',
   '/accueil': 'Accueil et profil', '/profil': 'Profil', '/stagiaire/aide': 'Aide visible', '/mot-de-passe-oublie': 'Mot de passe oublié'
 };
-const LATER: Record<string, string> = { '/encadrant/teams': 'Espace encadrant' };
-const ROUTES = ['/login', '/stagiaire/subjects', '/stagiaire/team', '/stagiaire/missions', ...Object.keys(CREDITS), ...Object.keys(CONTACTS), ...Object.keys(LATER)];
+const LATER: Record<string, string> = {};
+const ROUTES = ['/login', '/stagiaire/subjects', '/stagiaire/team', '/stagiaire/missions', '/encadrant/teams', '/encadrant/missions', ...Object.keys(CREDITS), ...Object.keys(CONTACTS), ...Object.keys(LATER)];
 const PUBLIC = ['/login', '/mot-de-passe-oublie'];
 const newApp = (): App => ({ route: '/login', past: [], typed: null, token: null, me: null, dialog: null, toast: '', bell: false, menu: null });
 const NOTIFICATIONS = ['Karim Benali a commenté votre livrable.', 'Une nouvelle mission a été affectée à votre équipe.', 'Votre équipe a gagné 15 points.'];
@@ -77,7 +82,7 @@ export default function StageDemo({ lang }: Props) {
     let route = path.trim().replace(/^(https?:\/\/)?localhost:4200/, '').replace(/\/+$/, '') || '/';
     if (!route.startsWith('/')) route = `/${route}`;
     if (route === '/') route = app.me ? '/accueil' : '/login';
-    if (!ROUTES.includes(route) && !/^\/stagiaire\/missions\/\d+$/.test(route)) route = app.me ? home() : '/login';
+    if (!ROUTES.includes(route) && !/^\/(stagiaire\/missions|encadrant\/missions|encadrant\/teams)\/\d+$/.test(route)) route = app.me ? home() : '/login';
     if (!app.me && !PUBLIC.includes(route)) route = '/login';
     if (app.me && route === '/login') route = home();
     if (app.me?.role === 'ENCADRANT' && route.startsWith('/stagiaire')) route = '/encadrant/teams';
@@ -102,7 +107,7 @@ export default function StageDemo({ lang }: Props) {
   };
   const logout = () => {
     api('POST', '/api/auth/logout');
-    app.token = null; app.me = null; app.past = [];
+    app.token = null; app.me = null; app.past = []; app.toast = '';
     go('/login', false);
   };
   const ctx: Ctx = {
@@ -138,10 +143,11 @@ export default function StageDemo({ lang }: Props) {
           </div>
           <div className="ctrl">
             <span className="lab">{t.scenario}</span>
-            <span className="hint">{t.hint[0]}<b>{t.hint[1]}</b>{t.hint[2]}<b>{t.hint[3]}</b>{t.hint[4]}</span>
+            <span className="hint">{t.hint[0]}<b>{t.hint[1]}</b>{t.hint[2]}<b>{t.hint[3]}</b>{t.hint[4]}<b>{t.hint[5]}</b>{t.hint[6]}</span>
             <span className="accts">{t.accounts}
               <button className="btn small ghost" onClick={() => fill('sara.alaoui@estage.demo')}>Sara</button>
               <button className="btn small ghost" onClick={() => fill('yassine.idrissi@estage.demo')}>Yassine</button>
+              <button className="btn small ghost" onClick={() => fill('karim.benali@estage.demo')}>Karim</button>
             </span>
             <button className="btn small ghost" onClick={reset}><Icon name="arrow" />{t.reset}</button>
           </div>
@@ -271,6 +277,10 @@ function Screen({ ctx, prefill }: { ctx: Ctx; prefill: { email: string; nonce: n
   if (route === '/login') return <Login ctx={ctx} prefill={prefill} />;
   if (route === '/stagiaire/subjects') return <Subjects ctx={ctx} />;
   if (route === '/stagiaire/team') return <Team ctx={ctx} />;
+  if (route === '/encadrant/teams') return <EncTeams ctx={ctx} />;
+  if (route === '/encadrant/missions') return <EncMissions ctx={ctx} />;
+  if (/^\/encadrant\/teams\/\d+$/.test(route)) return <EncTeamDetail ctx={ctx} id={Number(route.split('/')[3])} />;
+  if (/^\/encadrant\/missions\/\d+$/.test(route)) return <EncMissionDetail ctx={ctx} id={Number(route.split('/')[3])} />;
   if (route === '/stagiaire/missions') return <Missions ctx={ctx} />;
   if (route.startsWith('/stagiaire/missions/')) return <MissionDetail ctx={ctx} id={Number(route.split('/')[3])} />;
   if (CREDITS[route]) return <div className="page"><Credit ctx={ctx} owner={CREDITS[route][0]} module={CREDITS[route][1]} /></div>;
@@ -310,7 +320,36 @@ function Navbar({ ctx, logout }: { ctx: Ctx; logout: () => void }) {
             {link('/messagerie', 'Messagerie')}
             {link('/dossier', 'Dossier')}
           </>
-        ) : link('/encadrant/teams', 'Équipes')}
+        ) : (
+          <>
+            {link('/accueil', 'Accueil')}
+            <div className="drop">
+              <button className={app.route.startsWith('/encadrant/teams') || app.route.startsWith('/encadrant/subjects') ? 'on' : ''} aria-expanded={app.menu === 'internship'} onClick={() => { app.menu = app.menu === 'internship' ? null : 'internship'; app.bell = false; ctx.refresh(); }}>Internship<Sv n="down" size={13} /></button>
+              {app.menu === 'internship' && (
+                <div className="drop-menu">
+                  <button onClick={() => go('/encadrant/subjects')}>Sujets</button>
+                  <button onClick={() => go('/encadrant/teams')}>Liste des équipes</button>
+                  <button onClick={() => go('/encadrant/subjects/new')}>Nouveau sujet</button>
+                </div>
+              )}
+            </div>
+            {link('/gamification', 'Gamification')}
+            <div className="drop">
+              <button className={app.route.startsWith('/encadrant/missions') || app.route === '/encadrant/help-requests' ? 'on' : ''} aria-expanded={app.menu === 'mission'} onClick={() => { app.menu = app.menu === 'mission' ? null : 'mission'; app.bell = false; ctx.refresh(); }}>Mission<Sv n="down" size={13} /></button>
+              {app.menu === 'mission' && (
+                <div className="drop-menu">
+                  <button onClick={() => go('/encadrant/missions')}>Toutes les missions</button>
+                  <button onClick={() => go('/encadrant/missions/by-subject')}>Missions par sujet</button>
+                  <button onClick={() => go('/encadrant/missions/new')}>Nouvelle mission</button>
+                  <button onClick={() => go('/encadrant/help-requests')}>Demandes d’aide</button>
+                </div>
+              )}
+            </div>
+            {link('/encadrant/stagiaires', 'Stagiaires')}
+            {link('/publications', 'Fil d’actualités')}
+            {link('/messagerie', 'Messagerie')}
+          </>
+        )}
       </nav>
       <div className="nav-end">
         <div className="drop">
