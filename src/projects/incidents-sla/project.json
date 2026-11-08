@@ -57,7 +57,52 @@
           "fr": "Les compteurs du technicien et ses tickets à l’échéance la plus proche.",
           "en": "The technician’s counters and the tickets with the nearest deadlines."
         }
+      },
+      {
+        "image": "./media/shot-group.png",
+        "title": {
+          "fr": "Tickets du groupe",
+          "en": "Group tickets"
+        },
+        "text": {
+          "fr": "Tous les tickets de l’équipe, avec recherche, filtres et tris.",
+          "en": "All the team’s tickets, with search, filters and sorting."
+        }
+      },
+      {
+        "image": "./media/shot-detail.png",
+        "title": {
+          "fr": "Détail d’un ticket",
+          "en": "Ticket detail"
+        },
+        "text": {
+          "fr": "Statut, priorité, échéance SLA et historique de chaque changement.",
+          "en": "Status, priority, SLA deadline and the history of each change."
+        }
+      },
+      {
+        "image": "./media/shot-action.png",
+        "title": {
+          "fr": "Résoudre ou escalader",
+          "en": "Resolve or escalate"
+        },
+        "text": {
+          "fr": "Le technicien assigné rédige son commentaire, puis résout le ticket ou l’escalade.",
+          "en": "The assigned technician writes a comment, then resolves or escalates the ticket."
+        }
+      },
+      {
+        "image": "./media/shot-sla.png",
+        "title": {
+          "fr": "Alertes SLA",
+          "en": "SLA alerts"
+        },
+        "text": {
+          "fr": "La vérification des échéances écrit ses alertes dans MySQL.",
+          "en": "The deadline check writes its alerts to MySQL."
+        }
       }
     ]
-  }
+  },
+  "thumbnail": "./media/thumbnail.png"
 }

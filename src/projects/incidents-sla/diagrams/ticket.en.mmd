@@ -1,0 +1,18 @@
+sequenceDiagram
+  actor C as Client
+  actor T as Technician
+  participant A as Spring Boot API
+  participant M as MySQL
+  C->>A: Reports an incident (impact, urgency)
+  Note over A: priority = impact × urgency<br/>deadline: 2 h, 8 h, 24 h or 48 h
+  A->>M: ticket OUVERT, SLA EN_COURS
+  T->>A: PUT /my-tickets/{id}
+  Note over A: same team, not assigned yet
+  A->>M: ticket EN_COURS, history, alert to admin
+  alt resolved
+    T->>A: POST /my-tickets/{id}/comment
+    A->>M: ticket RESOLU, resolution date, history
+  else too complex
+    T->>A: POST /my-tickets/{id}/escalate
+    A->>M: ticket ESCALADE, history, alert to admin
+  end

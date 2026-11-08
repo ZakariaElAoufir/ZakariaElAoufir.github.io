@@ -1,0 +1,9 @@
+flowchart TD
+  S[Each EN_COURS SLA] --> R{Time left}
+  R -->|deadline passed| E[SLA EXPIRE<br/>CRITIQUE alert]
+  R -->|under 30 min| C[CRITIQUE alert]
+  R -->|under 2 h| W[WARNING alert]
+  R -->|2 h or more| N[nothing to report]
+  E --> T[to the assigned technician]
+  C --> T
+  W --> T

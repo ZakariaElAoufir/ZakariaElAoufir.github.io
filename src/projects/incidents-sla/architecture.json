@@ -1,90 +1,529 @@
 {
   "overview": {
-    "width": 900,
-    "height": 200,
+    "width": 1360,
+    "height": 640,
     "nodeHeight": 96,
-    "nodeWidth": 240,
+    "nodeWidth": 262,
     "nodes": [
       {
-        "id": "front",
+        "id": "tech",
         "x": 10,
-        "y": 50,
+        "y": 40,
         "logo": "angular",
         "title": {
+          "fr": "Espace technicien",
+          "en": "Technician area"
+        },
+        "subtitle": {
           "fr": "Angular 20",
           "en": "Angular 20"
         },
-        "subtitle": {
-          "fr": "écrans",
-          "en": "screens"
-        },
         "mine": true
+      },
+      {
+        "id": "client",
+        "x": 10,
+        "y": 200,
+        "logo": "angular",
+        "title": {
+          "fr": "Espace client",
+          "en": "Client area"
+        },
+        "subtitle": {
+          "fr": "Angular 20",
+          "en": "Angular 20"
+        },
+        "mine": false
+      },
+      {
+        "id": "admin",
+        "x": 10,
+        "y": 360,
+        "logo": "angular",
+        "title": {
+          "fr": "Espace admin",
+          "en": "Admin area"
+        },
+        "subtitle": {
+          "fr": "Angular 20",
+          "en": "Angular 20"
+        },
+        "mine": false
+      },
+      {
+        "id": "sec",
+        "x": 352,
+        "y": 200,
+        "logo": "springsecurity",
+        "title": {
+          "fr": "Spring Security",
+          "en": "Spring Security"
+        },
+        "subtitle": {
+          "fr": "JWT, contrôle du rôle",
+          "en": "JWT, role check"
+        },
+        "mine": false
       },
       {
         "id": "api",
-        "x": 330,
-        "y": 50,
+        "x": 744,
+        "y": 40,
         "logo": "springboot",
         "title": {
-          "fr": "Spring Boot 3.5",
-          "en": "Spring Boot 3.5"
+          "fr": "API technicien",
+          "en": "Technician API"
         },
         "subtitle": {
-          "fr": "API REST",
-          "en": "REST API"
+          "fr": "contrôleur et service",
+          "en": "controller and service"
         },
         "mine": true
       },
       {
+        "id": "capi",
+        "x": 744,
+        "y": 200,
+        "logo": "springboot",
+        "title": {
+          "fr": "API client",
+          "en": "Client API"
+        },
+        "subtitle": {
+          "fr": "tickets, priorité, SLA",
+          "en": "tickets, priority, SLA"
+        },
+        "mine": false
+      },
+      {
+        "id": "aapi",
+        "x": 744,
+        "y": 360,
+        "logo": "springboot",
+        "title": {
+          "fr": "API admin",
+          "en": "Admin API"
+        },
+        "subtitle": {
+          "fr": "équipes, services",
+          "en": "teams, services"
+        },
+        "mine": false
+      },
+      {
+        "id": "job",
+        "x": 744,
+        "y": 520,
+        "logo": "spring",
+        "title": {
+          "fr": "Vérification SLA",
+          "en": "SLA check"
+        },
+        "subtitle": {
+          "fr": "seuils et alertes",
+          "en": "thresholds and alerts"
+        },
+        "mine": false
+      },
+      {
         "id": "db",
-        "x": 650,
-        "y": 50,
+        "x": 1086,
+        "y": 200,
         "logo": "mysql",
         "title": {
           "fr": "MySQL",
           "en": "MySQL"
         },
         "subtitle": {
-          "fr": "données",
-          "en": "data"
+          "fr": "tickets, SLA, alertes",
+          "en": "tickets, SLA, alerts"
         },
         "mine": false
       }
     ],
     "wires": [
       {
-        "from": "front",
-        "to": "api",
-        "path": "M250 98H330",
+        "from": "tech",
+        "to": "sec",
+        "path": "M272 88C312 88 312 248 352 248",
         "label": {
           "fr": "HTTP",
           "en": "HTTP"
         },
-        "labelX": 290,
-        "labelY": 70
+        "labelX": 312,
+        "labelY": 150,
+        "once": false
+      },
+      {
+        "from": "client",
+        "to": "sec",
+        "path": "M272 248H352",
+        "label": {
+          "fr": "HTTP",
+          "en": "HTTP"
+        },
+        "labelX": 312,
+        "labelY": 228,
+        "once": false
+      },
+      {
+        "from": "admin",
+        "to": "sec",
+        "path": "M272 408C312 408 312 248 352 248",
+        "label": {
+          "fr": "HTTP",
+          "en": "HTTP"
+        },
+        "labelX": 312,
+        "labelY": 346,
+        "once": false
+      },
+      {
+        "from": "sec",
+        "to": "api",
+        "path": "M614 248C679 248 679 88 744 88",
+        "label": {
+          "fr": "/api/techniciens",
+          "en": "/api/techniciens"
+        },
+        "labelX": 679,
+        "labelY": 134,
+        "once": false
+      },
+      {
+        "from": "sec",
+        "to": "capi",
+        "path": "M614 248H744",
+        "label": {
+          "fr": "/api/client",
+          "en": "/api/client"
+        },
+        "labelX": 679,
+        "labelY": 228,
+        "once": false
+      },
+      {
+        "from": "sec",
+        "to": "aapi",
+        "path": "M614 248C679 248 679 408 744 408",
+        "label": {
+          "fr": "/api/admin",
+          "en": "/api/admin"
+        },
+        "labelX": 679,
+        "labelY": 362,
+        "once": false
       },
       {
         "from": "api",
         "to": "db",
-        "path": "M570 98H650",
+        "path": "M1006 88C1046 88 1046 248 1086 248",
         "label": {
           "fr": "JPA",
           "en": "JPA"
         },
-        "labelX": 610,
-        "labelY": 70
+        "labelX": 1046,
+        "labelY": 150,
+        "once": false
+      },
+      {
+        "from": "capi",
+        "to": "db",
+        "path": "M1006 248H1086",
+        "label": {
+          "fr": "JPA",
+          "en": "JPA"
+        },
+        "labelX": 1046,
+        "labelY": 228,
+        "once": false
+      },
+      {
+        "from": "aapi",
+        "to": "db",
+        "path": "M1006 408C1046 408 1046 248 1086 248",
+        "label": {
+          "fr": "JPA",
+          "en": "JPA"
+        },
+        "labelX": 1046,
+        "labelY": 346,
+        "once": false
+      },
+      {
+        "from": "job",
+        "to": "db",
+        "path": "M1006 568C1170 568 1217 470 1217 296",
+        "label": {
+          "fr": "alertes",
+          "en": "alerts"
+        },
+        "labelX": 1140,
+        "labelY": 520,
+        "once": true
       }
+    ],
+    "mineLabel": {
+      "fr": "Ma partie : l’espace technicien, de l’écran à l’API",
+      "en": "My part: the technician area, from the screen to the API"
+    },
+    "caption": {
+      "fr": "Une application Angular et un backend Spring Boot unique, à trois sur le même code. Chaque requête passe par Spring Security, qui lit le JWT et vérifie le rôle avant d’atteindre l’API du bon espace. En pointillés : la vérification des échéances, indépendante des requêtes.",
+      "en": "One Angular app and a single Spring Boot backend, three of us on the same code. Each request goes through Spring Security, which reads the JWT and checks the role before reaching the API of the right area. Dashed: the deadline check, independent of requests."
+    }
+  },
+  "stack": [
+    {
+      "name": {
+        "fr": "Interface",
+        "en": "Interface"
+      },
+      "items": [
+        {
+          "name": "Angular 20",
+          "logo": "angular",
+          "note": {
+            "fr": "composants autonomes, gardes de routes",
+            "en": "standalone components, route guards"
+          }
+        }
+      ]
+    },
+    {
+      "name": {
+        "fr": "Backend",
+        "en": "Backend"
+      },
+      "items": [
+        {
+          "name": "Java 21",
+          "logo": "java"
+        },
+        {
+          "name": "Spring Boot 3.5",
+          "logo": "springboot",
+          "note": {
+            "fr": "API REST",
+            "en": "REST API"
+          }
+        },
+        {
+          "name": "Spring Security",
+          "logo": "springsecurity",
+          "note": {
+            "fr": "JWT, BCrypt, rôles",
+            "en": "JWT, BCrypt, roles"
+          }
+        },
+        {
+          "name": "Spring Data JPA",
+          "logo": "spring",
+          "note": {
+            "fr": "entités et requêtes JPQL",
+            "en": "entities and JPQL queries"
+          }
+        }
+      ]
+    },
+    {
+      "name": {
+        "fr": "Données",
+        "en": "Data"
+      },
+      "items": [
+        {
+          "name": "MySQL",
+          "logo": "mysql",
+          "note": {
+            "fr": "schéma généré depuis les entités",
+            "en": "schema generated from the entities"
+          }
+        }
+      ]
+    },
+    {
+      "name": {
+        "fr": "Travail en équipe",
+        "en": "Teamwork"
+      },
+      "items": [
+        {
+          "name": "Git",
+          "logo": "git",
+          "note": {
+            "fr": "une branche par personne",
+            "en": "one branch per person"
+          }
+        },
+        {
+          "name": "GitHub",
+          "logo": "github",
+          "note": {
+            "fr": "Agile Scrum",
+            "en": "Agile Scrum"
+          }
+        }
+      ]
+    }
+  ],
+  "diagrams": [
+    {
+      "id": "ticket",
+      "title": {
+        "fr": "La vie d’un ticket",
+        "en": "The life of a ticket"
+      },
+      "caption": {
+        "fr": "Le client déclare l’incident, le backend en déduit la priorité et l’échéance. Un technicien de l’équipe le prend en charge, puis le résout ou l’escalade. Chaque étape s’inscrit dans l’historique.",
+        "en": "The client reports the incident and the backend derives its priority and deadline. A technician from the team takes it, then resolves or escalates it. Each step goes into the history."
+      }
+    },
+    {
+      "id": "sla",
+      "title": {
+        "fr": "La vérification des échéances",
+        "en": "The deadline check"
+      },
+      "caption": {
+        "fr": "Pour chaque SLA en cours, le temps restant décide de l’alerte envoyée au technicien assigné. Dans la démo, c’est vous qui lancez cette vérification.",
+        "en": "For each running SLA, the time left decides which alert goes to the assigned technician. In the demo, you run this check yourself."
+      }
+    }
+  ],
+  "choices": [
+    {
+      "title": {
+        "fr": "Le technicien vient du jeton, pas de l’URL",
+        "en": "The technician comes from the token, not the URL"
+      },
+      "why": {
+        "fr": "Les routes sont en /me et /my-tickets : le backend retrouve le technicien grâce au JWT, un utilisateur ne peut donc pas demander les tickets d’un autre en changeant un identifiant.",
+        "en": "Routes use /me and /my-tickets: the backend finds the technician from the JWT, so a user cannot ask for someone else’s tickets by changing an id."
+      },
+      "alternative": {
+        "fr": "Passer l’identifiant du technicien dans chaque URL.",
+        "en": "Passing the technician’s id in every URL."
+      },
+      "tradeoff": {
+        "fr": "Chaque requête relit le technicien en base.",
+        "en": "Each request reads the technician from the database again."
+      }
+    },
+    {
+      "title": {
+        "fr": "Vérifier l’appartenance dans le service",
+        "en": "Checking ownership in the service"
+      },
+      "why": {
+        "fr": "Spring Security contrôle le rôle, le service contrôle le ticket : même équipe pour l’assignation, technicien assigné pour le reste.",
+        "en": "Spring Security checks the role, the service checks the ticket: same team to assign it, assigned technician for everything else."
+      },
+      "alternative": {
+        "fr": "Tout exprimer par des annotations de sécurité.",
+        "en": "Expressing everything with security annotations."
+      },
+      "tradeoff": {
+        "fr": "Le même contrôle revient au début de chaque action.",
+        "en": "The same check comes back at the start of each action."
+      }
+    },
+    {
+      "title": {
+        "fr": "Historique et alerte dans la même transaction",
+        "en": "History and alert in the same transaction"
+      },
+      "why": {
+        "fr": "Avec @Transactional, un changement de ticket, sa ligne d’historique et l’alerte à l’administrateur sont enregistrés ensemble ou pas du tout.",
+        "en": "With @Transactional, a ticket change, its history line and the alert to the administrator are saved together or not at all."
+      },
+      "alternative": {
+        "fr": "Écrire l’historique après coup, par un événement.",
+        "en": "Writing the history afterwards, through an event."
+      },
+      "tradeoff": {
+        "fr": "Chaque action de service porte aussi la traçabilité.",
+        "en": "Each service action also carries the traceability."
+      }
+    },
+    {
+      "title": {
+        "fr": "Des filtres dans une seule requête JPQL",
+        "en": "Filters in a single JPQL query"
+      },
+      "why": {
+        "fr": "Des paramètres optionnels (:status IS NULL OR …) couvrent toutes les combinaisons de statut, de priorité et de tri.",
+        "en": "Optional parameters (:status IS NULL OR …) cover every combination of status, priority and sort."
+      },
+      "alternative": {
+        "fr": "Construire la requête dynamiquement avec l’API Criteria.",
+        "en": "Building the query dynamically with the Criteria API."
+      },
+      "tradeoff": {
+        "fr": "Ajouter un filtre oblige à modifier la requête.",
+        "en": "Adding a filter means changing the query."
+      }
+    },
+    {
+      "title": {
+        "fr": "Des DTO plutôt que les entités",
+        "en": "DTOs rather than entities"
+      },
+      "why": {
+        "fr": "Un ticket est relié au client, à l’équipe, au SLA et à l’historique : le TicketDTO expose ce dont l’écran a besoin, sans mot de passe ni boucle de sérialisation.",
+        "en": "A ticket links to the client, the team, the SLA and the history: TicketDTO exposes what the screen needs, with no password and no serialization loop."
+      },
+      "alternative": {
+        "fr": "Renvoyer les entités JPA annotées.",
+        "en": "Returning annotated JPA entities."
+      },
+      "tradeoff": {
+        "fr": "Un code de conversion à maintenir.",
+        "en": "Mapping code to maintain."
+      }
+    },
+    {
+      "title": {
+        "fr": "Une table par rôle",
+        "en": "One table per role"
+      },
+      "why": {
+        "fr": "L’héritage JOINED garde dans utilisateur ce qui est commun, et dans technicien, client et administrateur ce qui est propre à chacun.",
+        "en": "JOINED inheritance keeps what is shared in utilisateur, and what is specific in technicien, client and administrateur."
+      },
+      "alternative": {
+        "fr": "Une seule table avec des colonnes vides selon le rôle.",
+        "en": "One table with columns left empty depending on the role."
+      },
+      "tradeoff": {
+        "fr": "Lire un utilisateur demande une jointure.",
+        "en": "Reading a user takes a join."
+      }
+    }
+  ],
+  "limits": {
+    "fr": [
+      "La vérification des SLA est écrite mais reste à activer dans la configuration Spring : la démo la déclenche à la main.",
+      "Les alertes sont enregistrées en base, la cloche de l’interface ne les affiche pas encore.",
+      "Justifier un SLA expiré et demander une extension existent dans l’API, sans bouton à l’écran pour l’instant.",
+      "La démo ajuste deux détails : les tris par date et par échéance, et le passage du SLA à RESPECTE quand un ticket est résolu."
+    ],
+    "en": [
+      "The SLA check is written but still has to be enabled in the Spring configuration: the demo triggers it by hand.",
+      "Alerts are saved in the database, the bell in the interface does not show them yet.",
+      "Justifying an expired SLA and asking for an extension exist in the API, with no on-screen button for now.",
+      "The demo adjusts two details: sorting by date and by deadline, and moving the SLA to RESPECTE when a ticket is resolved."
     ]
   },
-  "stack": [],
-  "diagrams": [],
-  "choices": [],
-  "limits": {
-    "fr": [],
-    "en": []
-  },
   "next": {
-    "fr": [],
-    "en": []
+    "fr": [
+      "Activer la planification et ne pas répéter une alerte déjà envoyée.",
+      "Ouvrir un panneau de notifications sur la cloche et ajouter les boutons de justification et d’extension.",
+      "Recalculer l’échéance quand la priorité change, et afficher le temps restant."
+    ],
+    "en": [
+      "Enable scheduling and avoid repeating an alert already sent.",
+      "Open a notification panel from the bell and add the justification and extension buttons.",
+      "Recompute the deadline when the priority changes, and show the time left."
+    ]
   }
 }

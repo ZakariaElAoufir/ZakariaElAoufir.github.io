@@ -1,0 +1,9 @@
+flowchart TD
+  S[Chaque SLA EN_COURS] --> R{Temps restant}
+  R -->|échéance passée| E[SLA EXPIRE<br/>alerte CRITIQUE]
+  R -->|moins de 30 min| C[alerte CRITIQUE]
+  R -->|moins de 2 h| W[alerte WARNING]
+  R -->|2 h ou plus| N[rien à signaler]
+  E --> T[au technicien assigné]
+  C --> T
+  W --> T
