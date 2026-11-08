@@ -1,0 +1,20 @@
+{
+  "order": 11,
+  "name": {
+    "fr": "Introduction to CSS3",
+    "en": "Introduction to CSS3"
+  },
+  "issuer": "Coursera",
+  "partner": "University of Michigan",
+  "date": {
+    "fr": "6 février 2024",
+    "en": "February 6, 2024"
+  },
+  "skills": [
+    "CSS",
+    "HTML",
+    "Responsive Web Design",
+    "Web Accessibility"
+  ],
+  "verifyUrl": "https://www.coursera.org/account/accomplishments/verify/PRPE8M387K5T"
+}

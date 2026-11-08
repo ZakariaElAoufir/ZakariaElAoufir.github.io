@@ -1,0 +1,19 @@
+{
+  "order": 10,
+  "name": {
+    "fr": "La recherche documentaire",
+    "en": "La recherche documentaire"
+  },
+  "issuer": "Coursera",
+  "partner": "École Polytechnique",
+  "date": {
+    "fr": "14 mars 2024",
+    "en": "March 14, 2024"
+  },
+  "skills": [
+    "Research",
+    "Research Methodologies",
+    "Information Management"
+  ],
+  "verifyUrl": "https://www.coursera.org/account/accomplishments/verify/4VU3FMN9DTA3"
+}

@@ -1,0 +1,12 @@
+{
+  "order": 1,
+  "name": {
+    "fr": "Claude Code in Action",
+    "en": "Claude Code in Action"
+  },
+  "issuer": "Anthropic Academy",
+  "skills": [
+    "Claude Code"
+  ],
+  "verifyUrl": "https://verify.skilljar.com/c/5eehqps2nnva"
+}

@@ -211,7 +211,7 @@ Voir l'arborescence validée : `src/projects/<slug>/` (un dossier autonome par p
 - **Site Astro en place** (toutes les pages sauf les démos), fidèle aux maquettes, en FR et EN :
   - `/` et `/en/` : accueil complet (hero, formation, expériences + cadran, 3 projets mis en avant, arbre de compétences, contact) ;
   - `/projets/` et `/en/projets/` : 9 projets, une ligne chacun ;
-  - `/certifications/` et `/en/certifications/` : liste vide pour l'instant (état « Bientôt »), les certificats fictifs des maquettes ne sont pas repris ;
+  - `/certifications/` et `/en/certifications/` : 17 certificats réels (Coursera et Anthropic Academy) avec leur lien de vérification, date facultative (absente sur les certificats Anthropic) ; l'état « Bientôt » ne s'affiche que si la liste est vide ;
   - `404`.
 - Structure : `src/content/` (profil, formation, expériences, compétences, certifications : JSON validés par schéma, champs `fr`/`en` obligatoires), `src/projects/<slug>/` (`project.json` + `fr.md` / `en.md`), `src/i18n/` (textes d'interface + `useTranslations`, `localePath`, `alternatePath`), `src/components/` (Header, Footer, Icon, `home/*`), `src/layouts/BaseLayout.astro`, `src/scripts/site.ts` (menu, scroll reveal, pluie), `src/styles/global.css` (tokens + Tailwind v4).
 - Images optimisées au build (`src/assets/profile.png`, `src/assets/ville-nuit.jpg` → WebP). Polices auto-hébergées via `@fontsource`. Logos dans `public/logos/`, sprite d'icônes `public/icons.svg`, CV dans `public/cv/`.

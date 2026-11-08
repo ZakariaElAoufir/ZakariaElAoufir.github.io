@@ -1,0 +1,19 @@
+{
+  "order": 16,
+  "name": {
+    "fr": "The Structured Query Language (SQL)",
+    "en": "The Structured Query Language (SQL)"
+  },
+  "issuer": "Coursera",
+  "partner": "University of Colorado Boulder",
+  "date": {
+    "fr": "2 mai 2023",
+    "en": "May 2, 2023"
+  },
+  "skills": [
+    "SQL",
+    "Relational Databases",
+    "Database Management"
+  ],
+  "verifyUrl": "https://www.coursera.org/account/accomplishments/verify/L5WDTEKXRUV8"
+}

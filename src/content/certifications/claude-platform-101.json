@@ -1,0 +1,12 @@
+{
+  "order": 2,
+  "name": {
+    "fr": "Claude Platform 101",
+    "en": "Claude Platform 101"
+  },
+  "issuer": "Anthropic Academy",
+  "skills": [
+    "Claude Platform"
+  ],
+  "verifyUrl": "https://verify.skilljar.com/c/hh22w8nnovea"
+}

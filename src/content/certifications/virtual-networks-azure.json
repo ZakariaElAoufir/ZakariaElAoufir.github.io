@@ -1,0 +1,21 @@
+{
+  "order": 7,
+  "name": {
+    "fr": "Virtual Networks in Azure",
+    "en": "Virtual Networks in Azure"
+  },
+  "issuer": "Coursera",
+  "partner": "Whizlabs",
+  "date": {
+    "fr": "25 avril 2025",
+    "en": "April 25, 2025"
+  },
+  "skills": [
+    "Microsoft Azure",
+    "Virtual Networking",
+    "VPN",
+    "Load Balancing",
+    "Network Security"
+  ],
+  "verifyUrl": "https://www.coursera.org/account/accomplishments/verify/384HTRXCULG1"
+}

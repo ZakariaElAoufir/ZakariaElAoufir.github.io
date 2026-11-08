@@ -1,0 +1,21 @@
+{
+  "order": 5,
+  "name": {
+    "fr": "Introduction to Containers w/ Docker, Kubernetes & OpenShift",
+    "en": "Introduction to Containers w/ Docker, Kubernetes & OpenShift"
+  },
+  "issuer": "Coursera",
+  "partner": "IBM",
+  "date": {
+    "fr": "27 avril 2025",
+    "en": "April 27, 2025"
+  },
+  "skills": [
+    "Docker",
+    "Kubernetes",
+    "OpenShift",
+    "Istio",
+    "Microservices"
+  ],
+  "verifyUrl": "https://www.coursera.org/account/accomplishments/verify/9EQ5I2U4X2MK"
+}

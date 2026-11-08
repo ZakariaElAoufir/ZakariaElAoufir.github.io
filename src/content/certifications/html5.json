@@ -1,0 +1,19 @@
+{
+  "order": 13,
+  "name": {
+    "fr": "Introduction to HTML5",
+    "en": "Introduction to HTML5"
+  },
+  "issuer": "Coursera",
+  "partner": "University of Michigan",
+  "date": {
+    "fr": "13 janvier 2024",
+    "en": "January 13, 2024"
+  },
+  "skills": [
+    "HTML",
+    "Front-End Web Development",
+    "Web Accessibility"
+  ],
+  "verifyUrl": "https://www.coursera.org/account/accomplishments/verify/GZQYCTEXDAVK"
+}

@@ -1,0 +1,19 @@
+{
+  "order": 17,
+  "name": {
+    "fr": "The Arduino Platform and C Programming",
+    "en": "The Arduino Platform and C Programming"
+  },
+  "issuer": "Coursera",
+  "partner": "University of California, Irvine",
+  "date": {
+    "fr": "8 avril 2023",
+    "en": "April 8, 2023"
+  },
+  "skills": [
+    "C",
+    "Embedded Systems",
+    "Debugging"
+  ],
+  "verifyUrl": "https://www.coursera.org/account/accomplishments/verify/ZBD4T8BAWUUC"
+}

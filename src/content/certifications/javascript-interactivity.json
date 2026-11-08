@@ -1,0 +1,19 @@
+{
+  "order": 14,
+  "name": {
+    "fr": "Interactivity with JavaScript",
+    "en": "Interactivity with JavaScript"
+  },
+  "issuer": "Coursera",
+  "partner": "University of Michigan",
+  "date": {
+    "fr": "13 janvier 2024",
+    "en": "January 13, 2024"
+  },
+  "skills": [
+    "JavaScript",
+    "Event-Driven Programming",
+    "Debugging"
+  ],
+  "verifyUrl": "https://www.coursera.org/account/accomplishments/verify/LJBDB4J3U5NP"
+}

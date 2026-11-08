@@ -1,0 +1,20 @@
+{
+  "order": 6,
+  "name": {
+    "fr": "Introduction to Git and GitHub",
+    "en": "Introduction to Git and GitHub"
+  },
+  "issuer": "Coursera",
+  "partner": "Google",
+  "date": {
+    "fr": "25 avril 2025",
+    "en": "April 25, 2025"
+  },
+  "skills": [
+    "Git",
+    "GitHub",
+    "Code Review",
+    "Continuous Integration"
+  ],
+  "verifyUrl": "https://www.coursera.org/account/accomplishments/verify/3Z4QKY7QL0ER"
+}

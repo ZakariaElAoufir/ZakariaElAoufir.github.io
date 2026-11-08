@@ -1,0 +1,18 @@
+{
+  "order": 12,
+  "name": {
+    "fr": "Introduction à la programmation orientée objet (en C++)",
+    "en": "Introduction à la programmation orientée objet (en C++)"
+  },
+  "issuer": "Coursera",
+  "partner": "EPFL",
+  "date": {
+    "fr": "4 février 2024",
+    "en": "February 4, 2024"
+  },
+  "skills": [
+    "C++",
+    "Object Oriented Programming"
+  ],
+  "verifyUrl": "https://www.coursera.org/account/accomplishments/verify/Q3DFCZY8R2QD"
+}

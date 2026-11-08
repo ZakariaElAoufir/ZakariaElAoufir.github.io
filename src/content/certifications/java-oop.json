@@ -1,0 +1,20 @@
+{
+  "order": 8,
+  "name": {
+    "fr": "Introduction to Java and Object-Oriented Programming",
+    "en": "Introduction to Java and Object-Oriented Programming"
+  },
+  "issuer": "Coursera",
+  "partner": "University of Pennsylvania",
+  "date": {
+    "fr": "24 décembre 2024",
+    "en": "December 24, 2024"
+  },
+  "skills": [
+    "Java",
+    "Object Oriented Programming",
+    "Unit Testing",
+    "Test Driven Development"
+  ],
+  "verifyUrl": "https://www.coursera.org/account/accomplishments/verify/9E60YND4EGHC"
+}

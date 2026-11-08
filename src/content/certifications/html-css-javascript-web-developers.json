@@ -1,0 +1,20 @@
+{
+  "order": 15,
+  "name": {
+    "fr": "HTML, CSS, and Javascript for Web Developers",
+    "en": "HTML, CSS, and Javascript for Web Developers"
+  },
+  "issuer": "Coursera",
+  "partner": "Johns Hopkins University",
+  "date": {
+    "fr": "17 mai 2023",
+    "en": "May 17, 2023"
+  },
+  "skills": [
+    "HTML",
+    "CSS",
+    "JavaScript",
+    "Responsive Web Design"
+  ],
+  "verifyUrl": "https://www.coursera.org/account/accomplishments/verify/RF97ZGYPQDNW"
+}

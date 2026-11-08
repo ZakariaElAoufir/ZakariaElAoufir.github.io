@@ -1,0 +1,12 @@
+{
+  "order": 3,
+  "name": {
+    "fr": "Claude Code 101",
+    "en": "Claude Code 101"
+  },
+  "issuer": "Anthropic Academy",
+  "skills": [
+    "Claude Code"
+  ],
+  "verifyUrl": "https://verify.skilljar.com/c/9itryvuf3rpe"
+}

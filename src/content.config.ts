@@ -65,7 +65,7 @@ const certifications = defineCollection({
     name: localized,
     issuer: z.string(),
     partner: z.string().optional(),
-    date: localized,
+    date: localized.optional(),
     skills: z.array(z.string()),
     verifyUrl: z.string().url()
   })

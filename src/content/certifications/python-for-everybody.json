@@ -1,0 +1,19 @@
+{
+  "order": 9,
+  "name": {
+    "fr": "Programming for Everybody (Getting Started with Python)",
+    "en": "Programming for Everybody (Getting Started with Python)"
+  },
+  "issuer": "Coursera",
+  "partner": "University of Michigan",
+  "date": {
+    "fr": "24 mars 2024",
+    "en": "March 24, 2024"
+  },
+  "skills": [
+    "Python",
+    "Debugging",
+    "Programming Principles"
+  ],
+  "verifyUrl": "https://www.coursera.org/account/accomplishments/verify/YJGZ7DHW9T4K"
+}
