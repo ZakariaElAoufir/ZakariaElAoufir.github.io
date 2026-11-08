@@ -1,0 +1,90 @@
+{
+  "overview": {
+    "width": 900,
+    "height": 200,
+    "nodeHeight": 96,
+    "nodeWidth": 240,
+    "nodes": [
+      {
+        "id": "front",
+        "x": 10,
+        "y": 50,
+        "logo": "angular",
+        "title": {
+          "fr": "Angular 20",
+          "en": "Angular 20"
+        },
+        "subtitle": {
+          "fr": "écrans",
+          "en": "screens"
+        },
+        "mine": true
+      },
+      {
+        "id": "api",
+        "x": 330,
+        "y": 50,
+        "logo": "springboot",
+        "title": {
+          "fr": "Spring Boot 3.5",
+          "en": "Spring Boot 3.5"
+        },
+        "subtitle": {
+          "fr": "API REST",
+          "en": "REST API"
+        },
+        "mine": true
+      },
+      {
+        "id": "db",
+        "x": 650,
+        "y": 50,
+        "logo": "mysql",
+        "title": {
+          "fr": "MySQL",
+          "en": "MySQL"
+        },
+        "subtitle": {
+          "fr": "données",
+          "en": "data"
+        },
+        "mine": false
+      }
+    ],
+    "wires": [
+      {
+        "from": "front",
+        "to": "api",
+        "path": "M250 98H330",
+        "label": {
+          "fr": "HTTP",
+          "en": "HTTP"
+        },
+        "labelX": 290,
+        "labelY": 70
+      },
+      {
+        "from": "api",
+        "to": "db",
+        "path": "M570 98H650",
+        "label": {
+          "fr": "JPA",
+          "en": "JPA"
+        },
+        "labelX": 610,
+        "labelY": 70
+      }
+    ]
+  },
+  "stack": [],
+  "diagrams": [],
+  "choices": [],
+  "limits": {
+    "fr": [],
+    "en": []
+  },
+  "next": {
+    "fr": [],
+    "en": []
+  }
+}

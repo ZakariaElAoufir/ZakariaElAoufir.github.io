@@ -22,5 +22,42 @@
     "Angular",
     "MySQL"
   ],
-  "hasDemo": false
+  "hasDemo": true,
+  "detail": {
+    "problem": {
+      "fr": "Un service de support doit traiter chaque incident dans un délai convenu selon sa gravité. Sans outil commun, difficile de savoir qui s'occupe de quoi et quelle échéance approche.",
+      "en": "A support team has to handle each incident within a time agreed according to its severity. Without a shared tool, it is hard to know who is on what and which deadline is coming."
+    },
+    "does": {
+      "fr": "Les clients déclarent leurs incidents. La priorité découle de l'impact et de l'urgence, et fixe l'échéance SLA. Les techniciens prennent en charge les tickets de leur équipe, les résolvent ou les escaladent à un administrateur.",
+      "en": "Clients report their incidents. Priority follows from impact and urgency, and sets the SLA deadline. Technicians take on their team's tickets, then resolve them or escalate them to an administrator."
+    },
+    "role": {
+      "fr": "Dans une équipe Agile Scrum de trois personnes, j'ai réalisé l'espace technicien, de l'API Spring Boot aux écrans Angular. L'espace administrateur est l'œuvre de Younes9976 et l'espace client celle de hslimi212.",
+      "en": "In a three-person Agile Scrum team, I built the technician area, from the Spring Boot API to the Angular screens. The administrator area is the work of Younes9976 and the client area that of hslimi212."
+    },
+    "teammates": [
+      {
+        "name": "Younes9976",
+        "url": "https://github.com/Younes9976"
+      },
+      {
+        "name": "hslimi212",
+        "url": "https://github.com/hslimi212"
+      }
+    ],
+    "gallery": [
+      {
+        "image": "./media/shot-dashboard.png",
+        "title": {
+          "fr": "Tableau de bord",
+          "en": "Dashboard"
+        },
+        "text": {
+          "fr": "Les compteurs du technicien et ses tickets à l’échéance la plus proche.",
+          "en": "The technician’s counters and the tickets with the nearest deadlines."
+        }
+      }
+    ]
+  }
 }
