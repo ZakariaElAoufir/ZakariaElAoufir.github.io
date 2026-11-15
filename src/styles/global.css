@@ -47,9 +47,9 @@
 }
 
 @layer base {
-  /* iOS Safari ignores overflow-x on body alone: clipping the root too stops any sideways scroll on phones */
+  /* No sideways scroll on phones: iOS Safari needs the root clipped too. clip, never hidden: hidden on body would make it a scroll container and break position: sticky (the experiences dial) */
   html { scroll-behavior: smooth; overflow-x: clip; }
-  body { background: var(--night); color: var(--ivory); font: 400 17px/1.6 var(--text); -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+  body { background: var(--night); color: var(--ivory); font: 400 17px/1.6 var(--text); -webkit-font-smoothing: antialiased; overflow-x: clip; }
   a { color: inherit; text-decoration: none; }
   img { display: block; max-width: 100%; }
   h1, h2, h3 { font-weight: inherit; font-size: inherit; }
