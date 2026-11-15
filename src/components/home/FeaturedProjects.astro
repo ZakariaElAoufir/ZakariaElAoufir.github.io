@@ -44,8 +44,9 @@ const projectsPage = localePath(lang, '/projets/');
 </section>
 
 <style>
-  .towers { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; align-items: end; }
-  .proj { display: flex; flex-direction: column; background: var(--deep); padding-top: 20px; }
+  /* minmax(0, ...) and min-width: 0 keep each card within its column: with a plain 1fr, Safari lets a card grow to its content (the screenshot) and the page scrolls sideways on phones */
+  .towers { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 28px; align-items: end; }
+  .proj { display: flex; flex-direction: column; min-width: 0; background: var(--deep); padding-top: 20px; }
   .proj:nth-child(2) { margin-bottom: 60px; }
   .proj:hover { transform: translateY(-8px); background: var(--raise); --frame: var(--accent-text); }
   /* a lit facade drawn in CSS stands in for the project picture */
@@ -72,7 +73,7 @@ const projectsPage = localePath(lang, '/projets/');
   .links { margin-top: auto; padding-top: 22px; }
   .all { display: flex; justify-content: center; margin-top: 56px; }
   @media (max-width: 960px) {
-    .towers { grid-template-columns: 1fr; }
+    .towers { grid-template-columns: minmax(0, 1fr); }
     .proj:nth-child(2) { margin-bottom: 0; }
   }
 </style>
